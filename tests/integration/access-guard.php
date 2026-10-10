@@ -42,6 +42,9 @@ $restore_ob = function ( $level ) {
 	}
 };
 
+// Restore the caller afterwards: Novamira re-checks the current user when it responds.
+$original_user = get_current_user_id();
+
 $wpdb->query( 'START TRANSACTION' );
 try {
 	$mk_user = function ( $login ) use ( $wpdb ) {
@@ -62,8 +65,12 @@ try {
 	$learner_b = $mk_user( 'bsa_test_learner_b' );
 	$parent_a  = $mk_user( 'bsa_test_parent_a' );
 
-	$wpdb->insert( "{$p}wlsm_class_school", array( 'class_id' => 1, 'school_id' => 1 ) );
-	$class_school = (int) $wpdb->insert_id;
+	// Form 1 is linked to the school since Phase 3; reuse that link (it is unique per class and school).
+	$class_school = (int) $wpdb->get_var( "SELECT ID FROM {$p}wlsm_class_school WHERE class_id = 1 AND school_id = 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	if ( ! $class_school ) {
+		$wpdb->insert( "{$p}wlsm_class_school", array( 'class_id' => 1, 'school_id' => 1 ) );
+		$class_school = (int) $wpdb->insert_id;
+	}
 	$wpdb->insert( "{$p}wlsm_sections", array( 'label' => 'TEST', 'class_school_id' => $class_school ) );
 	$section = (int) $wpdb->insert_id;
 
@@ -178,7 +185,7 @@ try {
 	$restore_ob( $ob_level );
 	$_POST    = array();
 	$_REQUEST = array();
-	wp_set_current_user( 0 );
+	wp_set_current_user( $original_user );
 	wp_cache_flush();
 	remove_filter( 'wp_die_handler', $die_handler );
 	remove_filter( 'wp_die_ajax_handler', $die_handler );

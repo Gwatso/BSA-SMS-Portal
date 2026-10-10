@@ -4,8 +4,23 @@
  * Overrides are scoped to Weblizar's own wrappers so nothing else is affected.
  */
 
-/* Signed-out: the sign-in form as a centred card. */
-.bsa-account-page #loginform {
+/* Signed-out: page title, sign-in card, password link and help text share one centred column. */
+.bsa-account-signed-out .hero-section .page-title {
+	max-width: 400px;
+	margin-inline: auto;
+	text-align: center;
+}
+
+.bsa-account-page .entry-content > a[href*="action=lostpassword"] {
+	display: block;
+	max-width: 400px;
+	margin: 16px auto 0;
+	text-align: center;
+	font-weight: 600;
+	color: #1B3674;
+}
+
+.bsa-account-page #wlsm-login-form {
 	max-width: 400px;
 	margin: 8px auto 0;
 	padding: 24px;
@@ -15,11 +30,11 @@
 	box-shadow: 0 8px 24px rgba(27, 54, 116, 0.08);
 }
 
-.bsa-account-page #loginform p {
+.bsa-account-page #wlsm-login-form p {
 	margin: 0 0 16px;
 }
 
-.bsa-account-page #loginform label {
+.bsa-account-page #wlsm-login-form label {
 	display: block;
 	margin-bottom: 6px;
 	font-weight: 600;
@@ -27,13 +42,13 @@
 	color: #1D212B;
 }
 
-.bsa-account-page #loginform .login-remember label {
+.bsa-account-page #wlsm-login-form .login-remember label {
 	display: inline;
 	font-weight: 400;
 }
 
-.bsa-account-page #loginform input[type="text"],
-.bsa-account-page #loginform input[type="password"] {
+.bsa-account-page #wlsm-login-form input[type="text"],
+.bsa-account-page #wlsm-login-form input[type="password"] {
 	width: 100%;
 	min-height: 44px;
 	padding: 8px 12px;
@@ -42,14 +57,14 @@
 	font-size: 16px;
 }
 
-.bsa-account-page #loginform input[type="text"]:focus,
-.bsa-account-page #loginform input[type="password"]:focus {
+.bsa-account-page #wlsm-login-form input[type="text"]:focus,
+.bsa-account-page #wlsm-login-form input[type="password"]:focus {
 	border-color: #1B3674;
 	box-shadow: 0 0 0 2px rgba(27, 54, 116, 0.25);
 	outline: none;
 }
 
-.bsa-account-page #loginform .button-primary {
+.bsa-account-page #wlsm-login-form .button-primary {
 	width: 100%;
 	min-height: 44px;
 	border: 0;
@@ -60,8 +75,8 @@
 	cursor: pointer;
 }
 
-.bsa-account-page #loginform .button-primary:hover,
-.bsa-account-page #loginform .button-primary:focus {
+.bsa-account-page #wlsm-login-form .button-primary:hover,
+.bsa-account-page #wlsm-login-form .button-primary:focus {
 	background: #132653;
 }
 
@@ -75,6 +90,7 @@
 
 .bsa-account-help a {
 	color: #1B3674;
+	overflow-wrap: anywhere;
 }
 
 /* Signed-in: greeting bar. */
@@ -109,24 +125,84 @@
 	padding: 8px;
 }
 
-.wlsm-container .wlsm-navigation-link {
+.wlsm-container .wlsm-navigation-links li {
+	margin: 0;
+}
+
+.wlsm-container .wlsm-navigation-links li a.wlsm-navigation-link {
 	display: block;
+	margin: 0 0 2px;
 	padding: 9px 12px;
+	border: 0;
 	border-radius: 6px;
+	box-shadow: none;
 	color: #343A48;
+	font-size: 15px;
 	font-weight: 500;
 	text-decoration: none;
 }
 
-.wlsm-container .wlsm-navigation-link:hover,
-.wlsm-container .wlsm-navigation-link:focus-visible {
+.wlsm-container .wlsm-navigation-links li a.wlsm-navigation-link:hover,
+.wlsm-container .wlsm-navigation-links li a.wlsm-navigation-link:focus-visible {
 	background: #F6F7F9;
 	color: #1B3674;
 }
 
-.wlsm-container .wlsm-navigation-link.active {
+.wlsm-container .wlsm-navigation-links li a.wlsm-navigation-link.active {
 	background: #1B3674;
 	color: #FFFFFF;
+}
+
+/* Learner dashboard: school details as one tidy block. */
+.wlsm-student-dashboard > .wlsm-pl-2,
+.wlsm-student-dashboard .wlsm-fex > .wlsm-pl-2 {
+	display: inline-block;
+	margin: 0 16px 4px 0;
+	padding-left: 0;
+}
+
+.wlsm-container .wlsm-student-dashboard .wlsm-st-details {
+	padding: 0 8px;
+	box-shadow: none;
+}
+
+/* Start the two columns below the floated "Account Settings" link, not beside it. */
+.wlsm-container .wlsm-student-dashboard .wlsm-flex-between {
+	clear: both;
+}
+
+/* Weblizar reserves 300px for the noticeboard even when it is empty. */
+.wlsm-container .wlsm-st-recent-notices-section {
+	min-height: 0;
+}
+
+/* Parent dashboard: one card per child. */
+.wlsm-container .wlsm-parent-student-section {
+	margin-bottom: 16px;
+	padding: 24px;
+	background: #FFFFFF;
+	border: 1px solid #E5E7EB;
+	border-radius: 10px;
+	box-shadow: none;
+}
+
+.wlsm-container .wlsm-parent-student-links li {
+	border-bottom: 1px solid #E5E7EB;
+	padding: 6px 0;
+}
+
+.wlsm-container .wlsm-parent-student-links li:last-child {
+	border-bottom: 0;
+}
+
+.wlsm-container .wlsm-parent-student-links a {
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.wlsm-container .wlsm-parent-student-links a:hover,
+.wlsm-container .wlsm-parent-student-links a:focus-visible {
+	text-decoration: underline;
 }
 
 /* Content panels and detail lists. */
@@ -184,5 +260,54 @@
 	.wlsm-container .wlsm-content-area {
 		padding: 16px;
 		overflow-x: auto;
+	}
+
+	/* Collapsed menu: no frame until it is opened (Weblizar hides the list with max-height). */
+	.wlsm-container .wlsm-navigation-links {
+		padding: 0;
+		border-width: 0;
+	}
+
+	.wlsm-container .wlsm-menu-btn:checked ~ .wlsm-navigation-links {
+		padding: 8px;
+		border-width: 1px;
+		margin-bottom: 16px;
+	}
+
+	.wlsm-container .wlsm-menu-label {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		float: none;
+		width: 100%;
+		box-sizing: border-box;
+		margin-bottom: 12px;
+		padding: 12px 16px;
+		background: #FFFFFF;
+		border: 1px solid #E5E7EB;
+		border-radius: 10px;
+	}
+
+	.wlsm-container .wlsm-menu-label::after {
+		content: "Account menu";
+		font-weight: 600;
+		color: #1D212B;
+	}
+
+	.wlsm-container .wlsm-student-dashboard .wlsm-flex-item {
+		width: 100%;
+	}
+
+	/* Weblizar's phone rule (wlsm.css) forces 45px side padding with !important. */
+	.bsa-account-page .wlsm-container .wlsm-student-dashboard .wlsm-st-details {
+		padding: 0 !important;
+	}
+
+	.bsa-account-page .wlsm-container .wlsm-parent-student-section {
+		padding: 16px !important;
+	}
+
+	.wlsm-container .wlsm-parent-student-links {
+		margin-top: 12px;
 	}
 }

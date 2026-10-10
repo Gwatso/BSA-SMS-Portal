@@ -5,10 +5,14 @@ By owner decision (2026-10-10) changes go directly to production. Each deploymen
 1. **Snapshot**: manual backup to `/home/thwxghpf/bsa-backups/<date>-<label>/` (see `backup-and-recovery.md`).
 2. **Build**: `bin/build.sh` lints every PHP file and writes `dist/bsa-school-management-<version>.zip`.
 3. **Transfer**: this cloud session cannot reach the portal over HTTP, so the zip is sent base64-encoded through Novamira `execute-php` to `/home/thwxghpf/bsa-deploy/` (outside the web root). Its SHA-256 is compared with the local build before going further.
-4. **Install**: `wp plugin install /home/thwxghpf/bsa-deploy/<zip> --force` (inactive on first install).
-5. **Lint on server**: `php -l` on every file with the server's PHP 8.1.
-6. **Activate**: `wp plugin activate bsa-school-management`. WP-CLI loads the plugin first, so a fatal error aborts activation instead of breaking the site.
-7. **Verify**: HTTP checks (front page, login, admin redirect, headers) and `tests/integration/access-guard.php`.
+4. **Install**: first install with `wp plugin install /home/thwxghpf/bsa-deploy/<zip>` (inactive). Updates are unpacked into a stage folder next to the zip, linted, then copied over the live plugin folder (`cp -a`).
+5. **Lint on server**: `php -l` on every file with the server's PHP 8.1 before anything goes live.
+6. **Activate** (first install only): `wp plugin activate bsa-school-management`. WP-CLI loads the plugin first, so a fatal error aborts activation instead of breaking the site.
+7. **Verify**: HTTP checks (front page, login, admin redirect, headers) and the integration tests in `tests/integration/`.
+
+Small theme updates (CSS or a few lines of PHP) may instead be written file by file
+through `execute-php`: each file is staged, its SHA-256 compared with the repo copy,
+PHP linted, and only then copied into the theme. The table records the file checksums.
 8. **Commit and push** to the repo.
 
 ## Deployed versions
@@ -16,6 +20,7 @@ By owner decision (2026-10-10) changes go directly to production. Each deploymen
 | Date | Component | Version | SHA-256 (zip) | Verified |
 |---|---|---|---|---|
 | 2026-10-10 | bsa-school-management | 0.1.0 | `beef319e6fa8764067c0b9a42c452ab814dd5c9690f8fe51e0906a3a3dbcabf4` | HTTP checks + 20/20 integration checks |
+| 2026-10-10 | bsa-school-management | 0.2.0 | `2a3a506ff4e5869ff3538ef371da43944d341dbd8a10ccfe89c759c95b7fbb55` | boot check; migration; private store 403; 60/60 + 20/20 integration checks |
 
 ### Child theme deployment (bsa-portal)
 
@@ -30,6 +35,9 @@ revalidates every 2 s, so wait a few seconds before verifying.
 | 2026-10-10 | bsa-portal | 0.1.0 | `ce5e07d60258f5c72d33dcbabaa8871d73ecef1c314bf046c18b2962d8b5fb6d` | fonts hash-matched; home/login 200 |
 | 2026-10-10 | bsa-portal | 0.1.1 | `3203052a3c92ccef1cc6f72cc8edd7fc5262441f597dd9f090ab6a75ffd18d6e` | footer credit fixed |
 | 2026-10-10 | bsa-portal | 0.1.2 | `76debf331de0a6864d3c8088ea3331717cdc5a2ef8f8e6592cb4baf645a664f1` | header layout; rendered at 1366 px and 390 px; design pre-flight ok |
+| 2026-10-10 | bsa-portal | 0.2.0 | `4d6cfcacd842abe80321db07e4406f58355e1236811b9c76a4ed5e784a6825e8` | Portal home template, account styles; home and account 200 |
+| 2026-10-10 | bsa-portal | 0.2.1 | files: functions.php, style.css, account.css, home.css (SHA-256 matched repo) | sign-in card and phone overflow fixes; rendered |
+| 2026-10-10 | bsa-portal | 0.2.2 | files: functions.php `d0a9970b…`, style.css `5546f3bb…`, account.css `7520062f…` (matched repo) | signed-in dashboards; rendered at 1366 px and 390 px; design pre-flight ok |
 
 ## Third-party plugins installed (2026-10-10, from wordpress.org)
 
@@ -54,6 +62,10 @@ the Novamira/Claude session). They come from wordpress.org; owner to confirm.
 | WP-Optimize | 4.7.0 | Page caching must exclude logged-in users and portal pages with personal data |
 
 ## Rollback
-- BSA extension: `wp plugin deactivate bsa-school-management` (stores no data).
+- BSA extension: `wp plugin deactivate bsa-school-management`. Since 0.2.0 it keeps
+  admission documents (table `bsa_admission_records`, files in `uploads/bsa-private/`);
+  deactivating leaves them in place, they are just not reachable until reactivated.
+- Portal pages: Settings → Reading can point the front page elsewhere; the Home and My
+  Account pages can be unpublished.
 - Any plugin: deactivate via WP-CLI or wp-admin.
 - Full: restore the pre-change snapshot.

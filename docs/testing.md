@@ -92,7 +92,69 @@ plugins; temporary resources deleted.
 | Contrast: navy on white 11.5:1, body text 11.4:1, muted 4.8:1, white on navy 11.5:1 | PASS (WCAG AA) |
 
 Limitation: renders used the server's HTML and CSS without JavaScript (this session cannot
-reach the portal directly). Logged-in screens were not rendered.
+reach the portal directly). Logged-in screens were not rendered at the time (see below).
+
+### Staff roles, admission documents, portal pages (2026-10-10)
+
+#### Plugin 0.2.0 deployment checks
+| Check | Result |
+|---|---|
+| Plugin boots on the server (WP-CLI load before activation) | PASS |
+| Migration creates `bsa_admission_records` with a unique key per learner | PASS |
+| Probe file in `uploads/bsa-private/` returns 403, content not leaked; folder listing 403 | PASS |
+| Anonymous `/wp-json/wp/v2/media` returns 404 | PASS |
+| Home and login 200 | PASS |
+
+#### Integration test: `tests/integration/admission-and-portal.php` (60/60 PASS)
+Synthetic teacher, bursar, office clerk (`manage_admissions`), clerk of a second test
+school, learner, parent and an account without learners; one learner record in Form 3
+Sciences. All inside a transaction, rolled back; files written to the private store
+deleted afterwards (checked).
+
+| Area | Checks | Result |
+|---|---|---|
+| Roles | Teacher and Bursar exist; teacher has attendance/homework/study materials/assigned class and no fees, admissions or students; bursar has fees/invoices/income/expenses, no `delete_*`, no admissions or students | PASS |
+| Who may manage admission documents | Administrator and office clerk yes; teacher, bursar, other school's clerk, learner, parent, visitor no | PASS |
+| Field validation | Good input normalised; bad certificate number, year 1990, 0 units, future year rejected; HTML tags stripped | PASS |
+| Private file store | PDF accepted under a random 24-character name in the learner's folder; not world-readable; direct web request 403; PHP file refused; PHP renamed to `.pdf` refused; file over 5 MB refused; upload path requires a real HTTP upload | PASS |
+| Records | Save and read back; update keeps one row per learner | PASS |
+| Handlers | Download and save refused (403) for teacher, bursar, learner and parent even with their own valid nonce; bad nonce refused for permitted staff; unknown field 404; permitted staff reach the file; download links carry a nonce | PASS |
+| Sign-in routing | Learner and parent count as family, staff/admin/no-learner accounts do not; learner and parent go to My Account (parent even when wp-admin was requested); teacher goes to the dashboard; staff keep a requested page; failed sign-in untouched; toolbar hidden for learner, unchanged for staff | PASS |
+| Cleanup and PHP notices | No test users or files left; no notices or warnings | PASS |
+
+Runs before the passing one, recorded because they touched production:
+- Two runs were cut short with HTTP 403: inside a REST request `wp_die()` uses the JSON
+  handler, which the test did not intercept, so the first expected refusal ended the
+  request. The database rolled back (connection closed mid-transaction; verified: no
+  test users, records or school). Each run left one 45-byte synthetic PDF in the
+  private store; both were found and deleted. The test now intercepts every `wp_die`
+  handler and deletes any file it wrote to the test learner's folder.
+- The earlier fixture also failed (Form 1 is now linked to the school, so inserting
+  that link again was a duplicate); the test now uses the Sciences section.
+- Novamira rejects the response format after the expected refusals, so results are
+  read from the `bsa_test_admission_and_portal` transient.
+
+#### Access guard re-run (20/20 PASS)
+`tests/integration/access-guard.php` had the same duplicate class-school fixture; it now
+reuses the existing Form 1 link. Re-run: 20/20, no synthetic data left.
+
+#### Portal pages
+| Check | Result |
+|---|---|
+| Home page is the front page (template "Portal home"); My Account page holds `[school_management_account]`; both 200 | PASS |
+| Header menu: Home, My Account, School website (desktop and mobile locations) | PASS |
+| Dashboard items Live Classes and Books Issued off; others unchanged | PASS |
+| Theme 0.2.1/0.2.2 files on the server match the repo (SHA-256) | PASS |
+| Rendered offline at 1366 px and 390 px: home, My Account signed out, learner dashboard, parent dashboard with two children (synthetic, rolled back) | PASS after fixes (`docs/screenshots/`) |
+| Fixed during review: sign-in card styles targeted the wrong form ID; home page overflowed on phones (long email address); collapsed account menu showed a sliver; learner details squeezed beside a floated link; Weblizar's phone rule forced 45 px padding with `!important` | Fixed in theme 0.2.1–0.2.2 |
+| Novamira design pre-flight on home and My Account | PASS (ok: true). Warnings: fallback serif font (kept on purpose); "inter" matched inside an ordinary word; `#003388` is the `&#038;` entity in a link, not a colour |
+
+Limitations: renders use the server's HTML and CSS without JavaScript; the signed-in
+dashboards were rendered from Weblizar's shortcode output for synthetic accounts placed
+into the page shell, so links in those renders point at the REST endpoint that produced
+them. The greeting shows the account's login name (Weblizar behaviour).
 
 ### Not yet tested
-- Logged-in browser journeys (no learner/parent accounts or pages exist yet).
+- A real sign-in through the browser with a learner or parent account (none exist yet).
+- File upload through the Admission Documents screen in a browser (the upload path is
+  covered except PHP's own `is_uploaded_file`, which needs a real HTTP upload).

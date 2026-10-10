@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BSA_PORTAL_VERSION', '0.2.0' );
+define( 'BSA_PORTAL_VERSION', '0.2.2' );
 
 /**
  * URL of a file inside this child theme.
@@ -59,6 +59,7 @@ function bsa_portal_is_account_page() {
 function bsa_portal_body_class( $classes ) {
 	if ( bsa_portal_is_account_page() ) {
 		$classes[] = 'bsa-account-page';
+		$classes[] = is_user_logged_in() ? 'bsa-account-signed-in' : 'bsa-account-signed-out';
 	}
 	return $classes;
 }
@@ -74,7 +75,12 @@ function bsa_portal_account_help( $content ) {
 	if ( is_user_logged_in() || ! bsa_portal_is_account_page() || ! in_the_loop() || ! is_main_query() ) {
 		return $content;
 	}
-	return $content . '<p class="bsa-account-help">' . esc_html__( 'Accounts are created by the school office. If you cannot sign in, contact info@bindurascienceacademy.co.zw or +263 77 260 9503.', 'bsa-portal' ) . '</p>';
+	return $content . '<p class="bsa-account-help">' . sprintf(
+		/* translators: 1: school email link, 2: school phone link. */
+		esc_html__( 'Accounts are created by the school office. If you cannot sign in, contact %1$s or %2$s.', 'bsa-portal' ),
+		'<a href="mailto:info@bindurascienceacademy.co.zw">info@bindurascienceacademy.co.zw</a>',
+		'<a href="tel:+263772609503">+263 77 260 9503</a>'
+	) . '</p>';
 }
 add_filter( 'the_content', 'bsa_portal_account_help', 20 );
 

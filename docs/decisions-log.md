@@ -13,7 +13,7 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | **Extra lessons deferred.** | Owner | Phase 7 on hold. Q5 answered later. |
 | 2026-10-10 | Fees: **USD 250 per term**, paid by **bank transfer or cash at school**. | Owner | Offline payments recorded by staff. No online gateways. |
 | 2026-10-10 | Communication: **email and WhatsApp** now; **SMS later**. | Owner | SMS settings stay off. |
-| 2026-10-10 | Admission documents collected: **birth certificate** and **Grade 7 results**. Blood group **not** collected. | Owner | Admission form config in Phase 3. Religion/caste handling still to confirm (Q7b). |
+| 2026-10-10 | Admission documents collected: **birth certificate** and **Grade 7 results**. Blood group **not** collected. | Owner | Built as the Admission Documents screen (plugin 0.2.0). Religion collected (owner, below). |
 | 2026-10-10 | Slogan: **"Passion for Excellence"**. | Owner | Use everywhere on the portal; not "Excellence Through Science". |
 | 2026-10-10 | Report card: owner will supply a **template letter**; **grade bands** come with it. | Owner | Grading and report cards wait for the template. |
 | 2026-10-10 | Subjects: take them from the **public website**. | Owner | O' Level list (13) used for Forms 1–4 (see below). |
@@ -29,7 +29,12 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | All 13 website subjects assigned to every form, type "Theory", no subject codes. | Claude (Q2b default) | Remove subjects per form or add ZIMSEC codes when confirmed. |
 | 2026-10-10 | Online learner/staff self-registration through Weblizar blocked (staff-only) until online admissions are wanted. | Claude (security default) | Re-enable through the `bsa_sm_staff_only_ajax_actions` filter. |
 | 2026-10-10 | Work directly on the production portal; commit and push every change. | Owner | Snapshot before each risky change. |
-| 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` (+ future child theme), never in vendor files. | Claude | — |
+| 2026-10-10 | AIOS, Burst Statistics and WP-Optimize were installed together with UpdraftPlus. | Owner (confirmed) | Kept. AIOS and Limit Login Attempts Reloaded overlap (login lockout): recommend keeping one. WP-Optimize page cache must stay off for logged-in users and the My Account page. |
+| 2026-10-10 | Staff roles **Teacher** (own assigned class: attendance, leave, study materials, homework, lessons; timetable view) and **Bursar** (fee types, invoices create/edit, income, expenses, finance statistics; **no delete**). Marks/exams for teachers wait for the grading rules, because Weblizar's single `manage_exams` permission also creates exams and publishes results. | Owner (roles) + Claude (least-privilege split) | `scripts/05-staff-roles.php`; `docs/permission-matrix.md`. Role edits do not reach existing staff (Weblizar copies permissions at creation). |
+| 2026-10-10 | Birth certificate and Grade 7 results kept in a **BSA table and a private upload folder**, not in Weblizar's custom fields: number, primary school, Grade 7 year and units, plus scans (PDF/JPG/PNG, 5 MB). Only administrators and staff with admissions or students rights can see them; learners and parents cannot. | Claude (implementation of owner decision) | Weblizar custom fields cannot hold files privately and show on printouts. No vendor files edited. |
+| 2026-10-10 | Portal pages: **Home** (front page) and **My Account** (Weblizar's account shortcode, which shows the sign-in form when signed out). Learners and parents sign in there and never see wp-admin; staff use wp-admin. Header menu: Home, My Account, School website. | Claude (within owner's request) | `scripts/06-portal-pages.php`. Site title still "BSA School Management System" (owner may rename). |
+| 2026-10-10 | Weblizar dashboard items **Live Classes** and **Books Issued** switched off (modules not used). | Claude | Re-enable in School Management → Settings → Dashboard. |
+| 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
 ## Verified facts to reuse
@@ -55,9 +60,12 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | Two Factor enabled on the administrator account |
 | 2026-10-10 | Test email "BSA portal: test email" received in the info@ inbox |
 | 2026-10-10 | Confirmed Sciences/Commercials streams continue into Form 4 |
+| 2026-10-10 | Confirmed AIOS, Burst Statistics and WP-Optimize came with UpdraftPlus |
 
 ## Pending owner actions
 
 | Action | Where |
 |---|---|
 | Publish the DKIM record for bindurascienceacademy.co.zw at the domain's DNS provider (value: cPanel → Email Deliverability) | DNS provider |
+| Choose one login-lockout tool (AIOS or Limit Login Attempts Reloaded) | wp-admin → Plugins |
+| Create the first staff accounts (Teacher/Bursar) and learner/parent logins at admission | School Management |

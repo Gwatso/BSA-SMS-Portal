@@ -133,7 +133,7 @@
 
 .bsa-contact {
 	display: grid;
-	grid-template-columns: auto 1fr;
+	grid-template-columns: auto minmax(0, 1fr);
 	gap: 8px 16px;
 	margin: 16px 0;
 }
@@ -146,6 +146,7 @@
 .bsa-contact dd {
 	margin: 0;
 	color: #343A48;
+	overflow-wrap: anywhere;
 }
 
 .bsa-contact a,
@@ -160,7 +161,7 @@
 
 @media (max-width: 767px) {
 	.bsa-home__hero-inner {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 24px;
 		padding-block: 32px;
 	}
@@ -171,7 +172,11 @@
 	}
 
 	.bsa-home__grid {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 32px;
+	}
+
+	.bsa-panel {
+		padding: 20px;
 	}
 }

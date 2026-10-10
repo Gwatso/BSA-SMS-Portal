@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-10-10: Staff roles, admission documents, portal pages (production)
+
+- **Staff roles** in Weblizar (`scripts/05-staff-roles.php`): **Teacher** (own assigned
+  class: attendance, leave requests, study materials, homework, lessons; timetable view;
+  marks wait for the grading rules) and **Bursar** (fee types, invoices, income,
+  expenses, finance statistics; no delete rights). See `docs/permission-matrix.md`.
+- `bsa-school-management` **0.2.0**:
+  - **Admission Documents** screen (School Management staff with admissions rights and
+    administrators): birth certificate number and scan, primary school, Grade 7 year,
+    units and results slip, per learner. Scans (PDF, JPG, PNG, up to 5 MB) are stored
+    under random names in `uploads/bsa-private/` (web access denied) and downloaded only
+    through a permission- and nonce-checked link. New table `bsa_admission_records`.
+    Saves and downloads are logged in Simple History without personal data.
+  - **Sign-in routing**: learners and parents go to My Account, have no toolbar and are
+    kept out of wp-admin; staff go to the dashboard.
+  - REST media listing hidden from users who cannot upload.
+- `bsa-portal` theme **0.2.0–0.2.2**: Portal home template (sign-in call to action that
+  adapts to the visitor, what the portal offers, school contacts); branded My Account
+  area (centred sign-in card with help text, account navigation, learner dashboard,
+  one card per child for parents, phone layouts).
+- Pages (`scripts/06-portal-pages.php`): **Home** (front page), **My Account**; header
+  menu Home / My Account / School website; Weblizar dashboard items Live Classes and
+  Books Issued switched off.
+- Tests: `tests/integration/admission-and-portal.php` (60/60); access-guard fixture
+  updated for the configured classes (20/20).
+
 ## 2026-10-10: Branding (child theme)
 
 - New Blocksy child theme `bsa-portal` 0.1.2, activated (`scripts/04-activate-branding.php`,
