@@ -75,18 +75,25 @@ class BSA_Hardening {
 	}
 
 	/**
-	 * Removes the users endpoints for anyone who cannot list users.
+	 * Removes the users endpoints for anyone who cannot list users, and the media
+	 * endpoints for anyone who cannot upload (the media list is otherwise public).
 	 *
 	 * @param array $endpoints Registered REST endpoints.
 	 * @return array
 	 */
 	public static function restrict_user_endpoints( $endpoints ) {
-		if ( current_user_can( 'list_users' ) ) {
-			return $endpoints;
+		$hide = array();
+		if ( ! current_user_can( 'list_users' ) ) {
+			$hide[] = '/wp/v2/users';
+		}
+		if ( ! current_user_can( 'upload_files' ) ) {
+			$hide[] = '/wp/v2/media';
 		}
 		foreach ( array_keys( $endpoints ) as $route ) {
-			if ( 0 === strpos( $route, '/wp/v2/users' ) ) {
-				unset( $endpoints[ $route ] );
+			foreach ( $hide as $prefix ) {
+				if ( 0 === strpos( $route, $prefix ) ) {
+					unset( $endpoints[ $route ] );
+				}
 			}
 		}
 		return $endpoints;

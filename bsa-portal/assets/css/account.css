@@ -1,0 +1,188 @@
+/*
+ * Weblizar account area ([school_management_account]) in BSA branding.
+ * Loaded only on pages containing that shortcode. Tokens: docs/DESIGN.md.
+ * Overrides are scoped to Weblizar's own wrappers so nothing else is affected.
+ */
+
+/* Signed-out: the sign-in form as a centred card. */
+.bsa-account-page #loginform {
+	max-width: 400px;
+	margin: 8px auto 0;
+	padding: 24px;
+	background: #FFFFFF;
+	border: 1px solid #E5E7EB;
+	border-radius: 10px;
+	box-shadow: 0 8px 24px rgba(27, 54, 116, 0.08);
+}
+
+.bsa-account-page #loginform p {
+	margin: 0 0 16px;
+}
+
+.bsa-account-page #loginform label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 600;
+	font-size: 14px;
+	color: #1D212B;
+}
+
+.bsa-account-page #loginform .login-remember label {
+	display: inline;
+	font-weight: 400;
+}
+
+.bsa-account-page #loginform input[type="text"],
+.bsa-account-page #loginform input[type="password"] {
+	width: 100%;
+	min-height: 44px;
+	padding: 8px 12px;
+	border: 1px solid #E5E7EB;
+	border-radius: 6px;
+	font-size: 16px;
+}
+
+.bsa-account-page #loginform input[type="text"]:focus,
+.bsa-account-page #loginform input[type="password"]:focus {
+	border-color: #1B3674;
+	box-shadow: 0 0 0 2px rgba(27, 54, 116, 0.25);
+	outline: none;
+}
+
+.bsa-account-page #loginform .button-primary {
+	width: 100%;
+	min-height: 44px;
+	border: 0;
+	border-radius: 6px;
+	background: #1B3674;
+	color: #FFFFFF;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.bsa-account-page #loginform .button-primary:hover,
+.bsa-account-page #loginform .button-primary:focus {
+	background: #132653;
+}
+
+.bsa-account-help {
+	max-width: 400px;
+	margin: 16px auto 0;
+	text-align: center;
+	font-size: 15px;
+	color: #6B7280;
+}
+
+.bsa-account-help a {
+	color: #1B3674;
+}
+
+/* Signed-in: greeting bar. */
+.wlsm-logged-in-info {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 16px;
+	margin-bottom: 16px;
+	color: #343A48;
+}
+
+.wlsm-logged-in-info br {
+	display: none;
+}
+
+.wlsm-logged-in-text {
+	font-weight: 600;
+	color: #1D212B;
+}
+
+.wlsm-logout-link {
+	color: #1B3674;
+	font-weight: 600;
+}
+
+/* Account navigation. */
+.wlsm-container .wlsm-navigation-links {
+	background: #FFFFFF;
+	border: 1px solid #E5E7EB;
+	border-radius: 10px;
+	padding: 8px;
+}
+
+.wlsm-container .wlsm-navigation-link {
+	display: block;
+	padding: 9px 12px;
+	border-radius: 6px;
+	color: #343A48;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.wlsm-container .wlsm-navigation-link:hover,
+.wlsm-container .wlsm-navigation-link:focus-visible {
+	background: #F6F7F9;
+	color: #1B3674;
+}
+
+.wlsm-container .wlsm-navigation-link.active {
+	background: #1B3674;
+	color: #FFFFFF;
+}
+
+/* Content panels and detail lists. */
+.wlsm-container .wlsm-content-area {
+	background: #FFFFFF;
+	border: 1px solid #E5E7EB;
+	border-radius: 10px;
+	padding: 24px;
+}
+
+.wlsm-container .wlsm-st-details-heading {
+	font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+	font-size: 20px;
+	line-height: 1.2;
+	color: #1D212B;
+	border-bottom: 1px solid #E5E7EB;
+	padding-bottom: 8px;
+	margin-bottom: 12px;
+}
+
+.wlsm-container .wlsm-st-details-list-key {
+	color: #6B7280;
+	font-weight: 600;
+}
+
+.wlsm-container .wlsm-st-details-list-value {
+	color: #1D212B;
+}
+
+.wlsm-container a:not(.wlsm-navigation-link) {
+	color: #1B3674;
+}
+
+.wlsm-container table th {
+	background: #F6F7F9;
+	color: #1D212B;
+	font-weight: 600;
+}
+
+.wlsm-container table td,
+.wlsm-container table th {
+	border-color: #E5E7EB;
+}
+
+.wlsm-container .button,
+.wlsm-container .btn-primary,
+.wlsm-container button[type="submit"] {
+	background: #1B3674;
+	border-color: #1B3674;
+	border-radius: 6px;
+	color: #FFFFFF;
+}
+
+@media (max-width: 767px) {
+	.wlsm-container .wlsm-content-area {
+		padding: 16px;
+		overflow-x: auto;
+	}
+}

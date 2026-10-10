@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BSA_PORTAL_VERSION', '0.1.2' );
+define( 'BSA_PORTAL_VERSION', '0.2.0' );
 
 /**
  * URL of a file inside this child theme.
@@ -30,8 +30,53 @@ function bsa_portal_enqueue() {
 	wp_enqueue_style( 'bsa-portal-fonts', bsa_portal_asset( 'assets/fonts/fonts.css' ), array(), BSA_PORTAL_VERSION );
 	$deps = wp_style_is( 'ct-main-styles', 'registered' ) ? array( 'ct-main-styles', 'bsa-portal-fonts' ) : array( 'bsa-portal-fonts' );
 	wp_enqueue_style( 'bsa-portal-brand', bsa_portal_asset( 'assets/css/brand.css' ), $deps, BSA_PORTAL_VERSION );
+
+	if ( is_page_template( 'templates/page-portal-home.php' ) ) {
+		wp_enqueue_style( 'bsa-portal-home', bsa_portal_asset( 'assets/css/home.css' ), array( 'bsa-portal-brand' ), BSA_PORTAL_VERSION );
+	}
+	if ( bsa_portal_is_account_page() ) {
+		wp_enqueue_style( 'bsa-portal-account', bsa_portal_asset( 'assets/css/account.css' ), array( 'bsa-portal-brand' ), BSA_PORTAL_VERSION );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'bsa_portal_enqueue', 20 );
+
+/**
+ * Whether the current page shows the Weblizar account area.
+ *
+ * @return bool
+ */
+function bsa_portal_is_account_page() {
+	$post = get_queried_object();
+	return is_singular() && $post instanceof WP_Post && has_shortcode( $post->post_content, 'school_management_account' );
+}
+
+/**
+ * Body class used to scope the account styles.
+ *
+ * @param string[] $classes Body classes.
+ * @return string[]
+ */
+function bsa_portal_body_class( $classes ) {
+	if ( bsa_portal_is_account_page() ) {
+		$classes[] = 'bsa-account-page';
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'bsa_portal_body_class' );
+
+/**
+ * Below the account sign-in form: how to get an account (signed-out visitors only).
+ *
+ * @param string $content Page content.
+ * @return string
+ */
+function bsa_portal_account_help( $content ) {
+	if ( is_user_logged_in() || ! bsa_portal_is_account_page() || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	return $content . '<p class="bsa-account-help">' . esc_html__( 'Accounts are created by the school office. If you cannot sign in, contact info@bindurascienceacademy.co.zw or +263 77 260 9503.', 'bsa-portal' ) . '</p>';
+}
+add_filter( 'the_content', 'bsa_portal_account_help', 20 );
 
 /**
  * Preload the two faces used above the fold.
