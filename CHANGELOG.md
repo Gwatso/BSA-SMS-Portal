@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-10-10: Branding (child theme)
+
+- New Blocksy child theme `bsa-portal` 0.1.2, activated (`scripts/04-activate-branding.php`,
+  snapshot `portal-db-pre-branding.sql` first):
+  - Self-hosted Playfair Display (headings) and Plus Jakarta Sans (body); nothing loaded from Google.
+  - Blocksy palette: navy #1B3674 (action), #132653 hover, #343A48 text, #1D212B headings,
+    #E5E7EB borders, #F6F7F9 / #FAFBFC surfaces, #FFFFFF.
+  - Header: crest beside the site name (56 px desktop, 44 px mobile).
+  - Footer: "Copyright © {year} Bindura Science Academy" replaces Blocksy's theme credit.
+  - Branded login screen: crest, motto, white card, navy button, error/notice colours.
+- Official crest added to the Media Library (unmodified) as the site logo; 512 px square
+  site icon generated from it; tagline "Passion for Excellence".
+- Design direction `docs/DESIGN.md` saved and activated in Novamira (`bsa-portal`).
+- `bin/build-theme.sh`; screenshots in `docs/screenshots/`.
+
 ## 2026-10-10: Restore test
 
 - Restore test passed: backup retrieved from Google Drive (checksums match) and restored

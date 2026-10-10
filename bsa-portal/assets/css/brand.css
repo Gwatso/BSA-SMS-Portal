@@ -1,0 +1,117 @@
+/*
+ * BSA Portal brand layer on top of Blocksy.
+ * Tokens: docs/DESIGN.md. Palette colours come from Blocksy's palette (Customizer):
+ *   1 #1B3674 navy (action)  2 #132653 navy hover  3 #343A48 text  4 #1D212B headings
+ *   5 #E5E7EB border         6 #F6F7F9 surface     7 #FAFBFC surface  8 #FFFFFF
+ */
+
+:root {
+	--bsa-font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--bsa-font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+	--bsa-gold: #CEA378;
+	--bsa-crest-red: #A71B32;
+	--bsa-muted: #6B7280;
+	--bsa-radius-control: 6px;
+	--bsa-radius-container: 10px;
+	--bsa-shadow: 0 8px 24px rgba(27, 54, 116, 0.08);
+
+	/* Blocksy reads its base face from this stack. */
+	--theme-font-stack-default: var(--bsa-font-body);
+}
+
+body {
+	font-family: var(--bsa-font-body);
+}
+
+/* Headings and the site title use the school's display face, set tight. */
+h1, h2, h3, h4, h5, h6,
+.site-title,
+.entry-title {
+	--theme-font-family: var(--bsa-font-heading);
+	--theme-line-height: 1.2;
+	font-family: var(--bsa-font-heading);
+	letter-spacing: 0;
+}
+
+/* Header: crest beside the site name, shown whole at a readable size.
+ * [data-header] matches the specificity of Blocksy's generated header rules. */
+[data-header] .ct-header [data-id="logo"] {
+	--logo-max-height: 56px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 14px;
+}
+
+[data-header] .ct-header [data-id="logo"] .site-logo-container img {
+	max-height: var(--logo-max-height);
+	width: auto;
+}
+
+[data-header] .ct-header [data-id="logo"] .site-title {
+	--theme-font-size: 22px;
+	--theme-line-height: 1.2;
+}
+
+@media (max-width: 689px) {
+	[data-header] .ct-header [data-id="logo"] {
+		--logo-max-height: 44px;
+		gap: 10px;
+	}
+
+	[data-header] .ct-header [data-id="logo"] .site-title {
+		--theme-font-size: 17px;
+	}
+}
+
+/* Controls: one 6px radius scale, navy focus ring. */
+.ct-button,
+button,
+input[type="submit"],
+input[type="button"],
+.wp-element-button,
+.wp-block-button__link {
+	border-radius: var(--bsa-radius-control);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+input[type="search"],
+select,
+textarea {
+	border-radius: var(--bsa-radius-control);
+}
+
+:focus-visible {
+	outline: 2px solid var(--theme-palette-color-1, #1B3674);
+	outline-offset: 2px;
+}
+
+::selection {
+	background: var(--theme-palette-color-1, #1B3674);
+	color: #FFFFFF;
+}
+
+/* Tables: hairline rows, tinted header, scroll inside their own box on small screens. */
+.entry-content table th,
+.wp-block-table th {
+	background: var(--theme-palette-color-6, #F6F7F9);
+	color: var(--theme-palette-color-4, #1D212B);
+	font-weight: 600;
+}
+
+.entry-content table td,
+.entry-content table th {
+	border-color: var(--theme-palette-color-5, #E5E7EB);
+}
+
+@media (max-width: 767px) {
+	.entry-content table {
+		display: block;
+		overflow-x: auto;
+	}
+}

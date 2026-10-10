@@ -17,6 +17,20 @@ By owner decision (2026-10-10) changes go directly to production. Each deploymen
 |---|---|---|---|---|
 | 2026-10-10 | bsa-school-management | 0.1.0 | `beef319e6fa8764067c0b9a42c452ab814dd5c9690f8fe51e0906a3a3dbcabf4` | HTTP checks + 20/20 integration checks |
 
+### Child theme deployment (bsa-portal)
+
+The theme zip (`bin/build-theme.sh`) carries only text files. The server downloads the
+font files from the URLs in `bsa-portal/assets/fonts/SOURCES.txt` and keeps each one only
+if its SHA-256 matches. Updates to an active theme are unpacked over the existing
+folder (not `wp theme install --force`, which would delete the fonts). PHP opcache
+revalidates every 2 s, so wait a few seconds before verifying.
+
+| Date | Component | Version | SHA-256 (code zip) | Verified |
+|---|---|---|---|---|
+| 2026-10-10 | bsa-portal | 0.1.0 | `ce5e07d60258f5c72d33dcbabaa8871d73ecef1c314bf046c18b2962d8b5fb6d` | fonts hash-matched; home/login 200 |
+| 2026-10-10 | bsa-portal | 0.1.1 | `3203052a3c92ccef1cc6f72cc8edd7fc5262441f597dd9f090ab6a75ffd18d6e` | footer credit fixed |
+| 2026-10-10 | bsa-portal | 0.1.2 | `76debf331de0a6864d3c8088ea3331717cdc5a2ef8f8e6592cb4baf645a664f1` | header layout; rendered at 1366 px and 390 px; design pre-flight ok |
+
 ## Third-party plugins installed (2026-10-10, from wordpress.org)
 
 | Plugin | Version | Configuration |
@@ -24,8 +38,8 @@ By owner decision (2026-10-10) changes go directly to production. Each deploymen
 | Simple History | 5.35.0 | Defaults; also receives "BSA blocked …" events |
 | UpdraftPlus | 1.26.8 | See `backup-and-recovery.md` |
 | Limit Login Attempts Reloaded | 3.3.10 | Defaults (local lockouts) |
-| FluentSMTP | 2.4.1 | **Not configured**: needs the school mailbox's SMTP details |
-| Two Factor | 0.17.0 | **Not enabled for any user yet**: the owner turns it on in their profile |
+| FluentSMTP | 2.4.1 | PHP mail() connection sending as Bindura Science Academy <info@bindurascienceacademy.co.zw> |
+| Two Factor | 0.17.0 | Enabled on the administrator account (owner, 2026-10-10) |
 
 ## Plugins added outside this repo
 

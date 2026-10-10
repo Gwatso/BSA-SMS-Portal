@@ -1,0 +1,14 @@
+/*
+Theme Name:   BSA Portal
+Theme URI:    https://portal.bindurascienceacademy.co.zw/
+Description:  Bindura Science Academy branding for the school portal: crest, colours and typefaces from the school's identity, on top of Blocksy.
+Author:       Bindura Science Academy
+Template:     blocksy
+Version:      0.1.2
+Requires at least: 6.5
+Requires PHP: 8.1
+License:      GPL-2.0-or-later
+Text Domain:  bsa-portal
+*/
+
+/* Styles live in assets/css/; this file only declares the child theme. */

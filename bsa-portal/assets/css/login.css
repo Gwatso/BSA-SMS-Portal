@@ -1,0 +1,137 @@
+/*
+ * Branded sign-in screen (wp-login.php). Tokens: docs/DESIGN.md.
+ * The crest image is added inline from the Media Library (functions.php).
+ */
+
+body.login {
+	background: #F6F7F9;
+	color: #343A48;
+	font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.login #login {
+	width: 360px;
+	max-width: calc(100% - 32px);
+	padding-top: 6vh;
+}
+
+/* Crest: shown whole, never cropped or recoloured. */
+.login h1 a {
+	width: 120px;
+	height: 142px;
+	margin: 0 auto 12px;
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.login .bsa-login-intro {
+	margin: 0 0 20px;
+	text-align: center;
+	font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+	font-size: 20px;
+	line-height: 1.2;
+	font-weight: 700;
+	color: #1D212B;
+}
+
+.login form {
+	margin-top: 0;
+	padding: 24px;
+	background: #FFFFFF;
+	border: 1px solid #E5E7EB;
+	border-radius: 10px;
+	box-shadow: 0 8px 24px rgba(27, 54, 116, 0.08);
+}
+
+.login label {
+	color: #1D212B;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.login input[type="text"],
+.login input[type="password"],
+.login input[type="email"],
+.login input[type="number"],
+.login input[type="tel"] {
+	border: 1px solid #E5E7EB;
+	border-radius: 6px;
+	box-shadow: none;
+	font-size: 16px;
+}
+
+.login input[type="text"]:focus,
+.login input[type="password"]:focus,
+.login input[type="email"]:focus,
+.login input[type="number"]:focus,
+.login input[type="tel"]:focus {
+	border-color: #1B3674;
+	box-shadow: 0 0 0 2px rgba(27, 54, 116, 0.25);
+	outline: none;
+}
+
+.login .button-primary,
+.wp-core-ui.login .button-primary {
+	background: #1B3674;
+	border: 0;
+	border-radius: 6px;
+	box-shadow: none;
+	text-shadow: none;
+	color: #FFFFFF;
+	font-weight: 600;
+	min-height: 40px;
+	padding: 0 20px;
+}
+
+.login .button-primary:hover,
+.login .button-primary:focus,
+.wp-core-ui.login .button-primary:hover,
+.wp-core-ui.login .button-primary:focus {
+	background: #132653;
+	color: #FFFFFF;
+}
+
+.login .button-primary:focus-visible {
+	outline: 2px solid #1B3674;
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+.login .button.wp-hide-pw .dashicons {
+	color: #1B3674;
+}
+
+.login #nav,
+.login #backtoblog {
+	text-align: center;
+	padding: 0;
+}
+
+.login #nav a,
+.login #backtoblog a,
+.login .privacy-policy-page-link a {
+	color: #1B3674;
+}
+
+.login #nav a:hover,
+.login #backtoblog a:hover {
+	color: #132653;
+	text-decoration: underline;
+}
+
+/* Notices: navy for information, crest red for errors, always with their text. */
+.login .message,
+.login .notice,
+.login .success {
+	border-left: 4px solid #1B3674;
+	border-radius: 6px;
+	box-shadow: none;
+}
+
+.login #login_error,
+.login .notice-error {
+	border-left: 4px solid #A71B32;
+	border-radius: 6px;
+	box-shadow: none;
+}

@@ -80,5 +80,19 @@ Details in `backup-and-recovery.md`: Google Drive retrieval with matching checks
 isolated restore with 118/118 tables and matching row counts; the copy boots with all
 plugins; temporary resources deleted.
 
+### Branding (2026-10-10)
+| Check | Result |
+|---|---|
+| Child theme active (stylesheet bsa-portal, template blocksy) | PASS |
+| Home and login 200, no critical error | PASS |
+| brand.css, fonts.css, login.css served; no fonts.googleapis.com request | PASS |
+| Font files on server match repo SHA-256 (4/4) | PASS |
+| Rendered offline from the server's HTML/CSS at 1366×900 and 390×844: Playfair Display and Plus Jakarta Sans load; crest beside title; footer credit correct | PASS (`docs/screenshots/`) |
+| Novamira design pre-flight on login HTML + theme CSS | PASS (ok: true; one warning, fallback system fonts in the font stacks, kept on purpose) |
+| Contrast: navy on white 11.5:1, body text 11.4:1, muted 4.8:1, white on navy 11.5:1 | PASS (WCAG AA) |
+
+Limitation: renders used the server's HTML and CSS without JavaScript (this session cannot
+reach the portal directly). Logged-in screens were not rendered.
+
 ### Not yet tested
 - Logged-in browser journeys (no learner/parent accounts or pages exist yet).
