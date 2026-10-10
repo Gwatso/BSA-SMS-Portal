@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-10: Phase 3 school configuration (production)
+
+Applied through Weblizar's own admin handlers by `scripts/configure-school.php`
+(snapshot first: `/home/thwxghpf/bsa-backups/2026-10-10-pre-phase3/portal-db.sql`).
+
+- School: "Default School" → **Bindura Science Academy**, phone +263 77 260 9503,
+  info@bindurascienceacademy.co.zw, 3159 Aerodrome Medium, Bindura.
+- Classes: default "1st"–"4th" renamed **Form 1–Form 4**; unused "5th"–"12th" deleted;
+  Forms 1–4 assigned to the school with section "A".
+- Sessions: 2026-2027 / 2027-2028 (Apr–Mar) → **2026** and **2027** (Jan–Dec).
+- Subjects: 13 website subjects for each form (52 records).
+- Fees: Term 1, Term 2, Term 3 Fees, USD 250 each, per form (12 records), one-time, active on admission.
+
 ## 2026-10-10: Phase 1 safety baseline (production)
 
 ### Added

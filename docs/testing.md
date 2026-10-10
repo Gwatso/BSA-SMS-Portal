@@ -41,6 +41,17 @@ Limitation: REST checks call the guard filter and the Weblizar handler methods
 directly, not a full HTTP dispatch. Novamira's OAuth credential is scoped to its own
 routes and was deliberately left in place.
 
+### Phase 3 configuration read-back (database, after run)
+| Check | Result |
+|---|---|
+| School label/phone/email updated | PASS |
+| Classes = Form 1–4 only | PASS |
+| 4 class-school links, each with default section "A" | PASS |
+| Sessions 2026 and 2027 with Jan 1 – Dec 31 dates | PASS |
+| 13 subjects per form, no duplicates | PASS (first attempt saved 0: handler needs `class_id[]`; fixed and re-run) |
+| 12 fee rows (3 terms × 4 forms), USD 250, one-time | PASS |
+| Front page still 200 | PASS |
+
 ### Not yet tested
 - Restoring from backup (no second environment yet).
 - Logged-in browser journeys (no learner/parent accounts or pages exist yet).

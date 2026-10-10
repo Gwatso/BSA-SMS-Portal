@@ -17,6 +17,9 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | Slogan: **"Passion for Excellence"**. | Owner | Use everywhere on the portal; not "Excellence Through Science". |
 | 2026-10-10 | Report card: owner will supply a **template letter**; **grade bands** come with it. | Owner | Grading and report cards wait for the template. |
 | 2026-10-10 | Subjects: take them from the **public website**. | Owner | O' Level list (13) used for Forms 1–4 (see below). |
+| 2026-10-10 | Fees modelled as **three one-time fee types "Term 1/2/3 Fees", USD 250 each, per form**, active on admission. Invoices are issued per term by the bursar. | Claude (implementation) | Weblizar has no "term" period; its "quadrimester" option is ignored in totals and auto-invoicing, and a single one-time fee would show USD 250/year instead of 750. |
+| 2026-10-10 | Sessions "2026" and "2027", January–December; one section "A" per form. | Claude (Q1b default) | Change in wp-admin (School Management → Sessions / Sections) if BSA uses streams or another calendar. |
+| 2026-10-10 | All 13 website subjects assigned to every form, type "Theory", no subject codes. | Claude (Q2b default) | Remove subjects per form or add ZIMSEC codes when confirmed. |
 | 2026-10-10 | Online learner/staff self-registration through Weblizar blocked (staff-only) until online admissions are wanted. | Claude (security default) | Re-enable through the `bsa_sm_staff_only_ajax_actions` filter. |
 | 2026-10-10 | Work directly on the production portal; commit and push every change. | Owner | Snapshot before each risky change. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` (+ future child theme), never in vendor files. | Claude | — |
