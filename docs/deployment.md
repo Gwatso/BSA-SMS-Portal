@@ -27,6 +27,18 @@ By owner decision (2026-10-10) changes go directly to production. Each deploymen
 | FluentSMTP | 2.4.1 | **Not configured**: needs the school mailbox's SMTP details |
 | Two Factor | 0.17.0 | **Not enabled for any user yet**: the owner turns it on in their profile |
 
+## Plugins added outside this repo
+
+Simple History shows these were installed and activated through the administrator
+account in wp-admin at 2026-10-10 15:32 UTC (17:32 Harare), from IP 66.9.171.x (not
+the Novamira/Claude session). They come from wordpress.org; owner to confirm.
+
+| Plugin | Version | Notes |
+|---|---|---|
+| All-In-One Security (AIOS) | 5.4.9 | Overlaps with Limit Login Attempts Reloaded (login lockout) and with BSA hardening (XML-RPC, headers); keep one lockout tool |
+| Burst Statistics | 3.7.2 | Adds the must-use plugin `burst_rest_api_optimizer.php` |
+| WP-Optimize | 4.7.0 | Page caching must exclude logged-in users and portal pages with personal data |
+
 ## Rollback
 - BSA extension: `wp plugin deactivate bsa-school-management` (stores no data).
 - Any plugin: deactivate via WP-CLI or wp-admin.

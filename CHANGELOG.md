@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-10: Restore test
+
+- Restore test passed: backup retrieved from Google Drive (checksums match) and restored
+  into an isolated temporary copy (118/118 tables, copy boots with all plugins).
+  Temporary database, user and folder deleted.
+- Found and documented: AIOS 5.4.9, Burst Statistics 3.7.2 and WP-Optimize 4.7.0, installed
+  via wp-admin as the administrator at 15:32 UTC (owner to confirm).
+
 ## 2026-10-10: Phase 3 step 3 + backups off-site (production)
 
 - Form 4: section "A" renamed **Sciences**; **Commercials** added (`scripts/03-form4-streams.php`,

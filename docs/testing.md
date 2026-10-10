@@ -75,6 +75,10 @@ opens a spare buffer layer.
 | UpdraftPlus backup 17:49 sent to Google Drive; log "no errors in the uploads … backup succeeded" | PASS |
 | Two Factor active for administrator (`Two_Factor_Core::is_user_using_two_factor(1)`) | PASS |
 
+### Restore test (2026-10-10): PASS
+Details in `backup-and-recovery.md`: Google Drive retrieval with matching checksums;
+isolated restore with 118/118 tables and matching row counts; the copy boots with all
+plugins; temporary resources deleted.
+
 ### Not yet tested
-- Restoring from backup (no second environment yet).
 - Logged-in browser journeys (no learner/parent accounts or pages exist yet).

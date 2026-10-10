@@ -41,5 +41,25 @@ tar -xzf /home/thwxghpf/bsa-backups/<snapshot>/portal-files.tar.gz -C .
 **Rolling back the BSA extension only:** `wp plugin deactivate bsa-school-management`.
 It stores no data, so deactivating it is fully reversible.
 
-## Not yet tested
-- A restore has **not** been tested, because there is no second environment to restore into. Before real learner data is entered, restore into a temporary subdomain or a local copy to prove the backups work.
+## Restore test: 2026-10-10 (PASS)
+
+Restored the UpdraftPlus set of 2026-10-10 17:49 into an isolated copy. Live site untouched.
+
+1. **Retrieval from Google Drive:** local copies of the `db` and `themes` archives moved
+   aside; both re-downloaded with UpdraftPlus's own `get_remote_file()`. SHA-256 of each
+   download matched the checksum recorded at backup time.
+2. **Isolated environment:** a temporary MySQL database/user (cPanel `setup_db_and_user`) and
+   folder `/home/thwxghpf/bsa-restore-test` (outside every web root), WordPress 7.1.3
+   core, `wp-config.php` with `DISABLE_WP_CRON`, `DISALLOW_FILE_MODS` and
+   `WP_HOME=https://restore-test.invalid`, so the copy could not act as the live site.
+3. **Restore:** plugins, themes, uploads, others and mu-plugins archives extracted; database
+   dump (118 tables) imported with `wp db import`.
+4. **Verification:** 118/118 tables present; 116 tables with identical row counts to live.
+   The only two differences were changes made *after* the backup (Form 4 "Commercials"
+   section +1, options +2). School name, 46 subjects and 12 fee rows correct. The copy
+   booted through WP-CLI with all 12 plugins active, Weblizar 10.3.9, the BSA guard
+   loaded and the admin user present.
+5. **Clean-up:** temporary database, user and folder deleted; live verified (home 200,
+   database `thwxghpf_wp_ak9qh`, data intact).
+
+Repeat at least once a term, and after major changes.
