@@ -4,37 +4,47 @@ Keeps project context across Claude Code sessions. Newest entries first.
 
 ## Decisions
 
-| Date | Decision | By | Reason / consequence |
+| Date | Decision | By | Consequence |
 |---|---|---|---|
-| 2026-10-10 | **Work directly on the production portal** `portal.bindurascienceacademy.co.zw`; no staging site. Commit and push every change to this repo. | Owner | Overrides master prompt §3. Mitigations: back up before any write; the site has no learner data yet; all code is kept in git. |
-| 2026-10-10 | Phase 0 audit done read-only. See `docs/audit-report.md`. | Claude | — |
-| 2026-10-10 | Weblizar tables stay the system of record; BSA code goes in a separate plugin and a Blocksy child theme, never in vendor files. | Claude (architecture default) | Master prompt §10. |
-| 2026-10-10 | Library, transport and hostel modules stay unused. | Claude (scope default) | Master prompt §2. |
+| 2026-10-10 | Weblizar plugin licence: owner uses a "WordPress IT" licence; **no Weblizar purchase**. Current copy stays. | Owner | Audit finding §7.2 accepted by owner. No vendor updates; the BSA version check warns if the plugin changes. |
+| 2026-10-10 | Approved plugins: UpdraftPlus, FluentSMTP, Simple History, Limit Login Attempts Reloaded, Two Factor. | Owner | Installed 2026-10-10. Wordfence not installed (it was an either/or). |
+| 2026-10-10 | Off-site backups to Google Drive account **info.afriflarenet@gmail.com**. | Owner | Needs the owner to authorise in UpdraftPlus (see `backup-and-recovery.md`). |
+| 2026-10-10 | Formal school = **Form 1–4 only**. A' Level classes belong to the extra-lessons programme, not the formal school. | Owner | Lower/Upper Sixth are not created as formal classes. |
+| 2026-10-10 | **Extra lessons deferred.** | Owner | Phase 7 on hold. Q5 answered later. |
+| 2026-10-10 | Fees: **USD 250 per term**, paid by **bank transfer or cash at school**. | Owner | Offline payments recorded by staff. No online gateways. |
+| 2026-10-10 | Communication: **email and WhatsApp** now; **SMS later**. | Owner | SMS settings stay off. |
+| 2026-10-10 | Admission documents collected: **birth certificate** and **Grade 7 results**. Blood group **not** collected. | Owner | Admission form config in Phase 3. Religion/caste handling still to confirm (Q7b). |
+| 2026-10-10 | Slogan: **"Passion for Excellence"**. | Owner | Use everywhere on the portal; not "Excellence Through Science". |
+| 2026-10-10 | Report card: owner will supply a **template letter**; **grade bands** come with it. | Owner | Grading and report cards wait for the template. |
+| 2026-10-10 | Subjects: take them from the **public website**. | Owner | O' Level list (13) used for Forms 1–4 (see below). |
+| 2026-10-10 | Online learner/staff self-registration through Weblizar blocked (staff-only) until online admissions are wanted. | Claude (security default) | Re-enable through the `bsa_sm_staff_only_ajax_actions` filter. |
+| 2026-10-10 | Work directly on the production portal; commit and push every change. | Owner | Snapshot before each risky change. |
+| 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` (+ future child theme), never in vendor files. | Claude | — |
+| 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
 ## Verified facts to reuse
 
 - Brand: navy `#1B3674`, gold `#CEA378`, crest red `#A71B32`, primary-light `#376DBE`; Playfair Display (headings) + Plus Jakarta Sans (body); logo URL in audit §3.
 - Contact: 3159 Aerodrome Medium, Bindura, Mashonaland Central · info@bindurascienceacademy.co.zw · +263 77 260 9503 / +263 77 807 0422 / +263 78 365 5488. EMIS 4770. Founded 2022.
+- Subjects published on the website (O' Level, 13): Mathematics, English Language, Combined Science, History, Geography, Principles of Accounting, Chemistry, Physics, Biology, Shona Language, Computer Science, Business Enterprise Skills, Heritage Studies.
 - Hosting: shared cPanel account; account-level backups unavailable.
 
-## Open questions (first batch, 2026-10-10)
+## Open questions
 
-| # | Topic | Question | Recommended default | Blocks |
-|---|---|---|---|---|
-| Q1 | Academic structure | Forms 1–4 only, or also Lower/Upper Sixth (website advertises A' Level, Jan 2027 intake)? Calendar Jan–Dec with 3 terms? Streams per form (e.g. 1A/1B, Science/Commercial)? | Forms 1–4 + Lower/Upper 6th; one session per calendar year; 3 terms; one section per form until told otherwise | School configuration |
-| Q2 | Subjects | Approved subject list per form (website shows O' Level 13 / A' Level 8 / ZJC)? | Use website lists as a draft for you to confirm | Subject setup |
-| Q3 | Assessment | Components and weights (coursework, tests, end-of-term exam), grade bands, pass mark; who approves results before learners/parents see them? | Teacher enters → Head approves → publish | Grading, results |
-| Q4 | Report card | Existing template to reproduce? Which comments and signatures? | Logo, learner details, subject marks/grades, class-teacher + Head comments, attendance summary | Report cards |
-| Q5 | Extra lessons | Approve option A (separate Weblizar school "BSA Extra Lessons")? Organised by subject, form, group or tutor? Cambridge included? Logins for participants/parents? | Option A; groups by subject + level; parent/learner logins optional | Extra-lessons module |
-| Q6 | Finance & messaging | Currencies (USD only, or ZiG too)? Payment methods (cash, bank, EcoCash, swipe)? Fees per term per form? Which mailbox for outgoing email; any SMS provider? | USD; offline payments recorded by bursar; fees per term per form; SMTP via school mailbox; SMS later | Fees, notifications |
-| Q7 | Data minimisation | May we hide religion, caste, blood group, ID-proof uploads? Who is responsible for data-protection compliance? | Hide them; collect medical/emergency info only if the school asks | Admission forms |
-| Q8 | Tagline | "Passion for Excellence" (crest/motto) or "Excellence Through Science" (website title) for the portal? | "Passion for Excellence" | Branding text only |
+| # | Question | Default if unanswered | Blocks |
+|---|---|---|---|
+| Q1b | School year: January–December with 3 terms? One stream per form, or streams (e.g. 1A/1B)? | Jan–Dec, 3 terms, one stream per form | Session and section setup |
+| Q2b | Do Forms 1–2 take all 13 subjects, or a subset (e.g. no separate Chemistry/Physics/Biology before Form 3)? | All 13 for every form; easy to change | Subject assignment per form |
+| Q3 | Assessment components/weights, grade bands, who approves results | Comes with report template | Grading, results |
+| Q4 | Report-card template | Owner to send | Report cards |
+| Q5 | Extra lessons design | Deferred | Phase 7 |
+| Q6b | Which mailbox sends portal email (e.g. info@bindurascienceacademy.co.zw) and its SMTP details | — | FluentSMTP / notifications |
+| Q7b | Hide religion and caste fields? | Hide (not relevant to BSA) | Admission form |
 
-## Pending approvals
+## Pending owner actions
 
-| Item | Status |
+| Action | Where |
 |---|---|
-| Install UpdraftPlus + choose off-site storage (e.g. Google Drive) | Awaiting owner |
-| Install FluentSMTP, Simple History, Limit Login Attempts Reloaded, Two Factor | Awaiting owner |
-| Buy Weblizar School Management licence and replace the nulled copy | Awaiting owner |
-| Hardening (disable XML-RPC, security headers, DISALLOW_FILE_EDIT, timezone Africa/Harare) | Awaiting owner (low risk) |
+| Authorise Google Drive in UpdraftPlus as info.afriflarenet@gmail.com | `backup-and-recovery.md` |
+| Turn on Two Factor for the administrator account (authenticator app) | wp-admin → Users → Profile → Two-Factor Options |
+| Provide SMTP details for the sending mailbox | Q6b |

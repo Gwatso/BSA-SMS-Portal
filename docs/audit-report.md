@@ -194,9 +194,22 @@ parent handler checks that `student_id` is the parent's own child, then returns
 **another learner's** unpaid invoice if any ID is supplied. Exposed fields: learner
 name, enrolment number, class, section, invoice number and amounts. The payment,
 exam-result and attendance handlers do scope correctly to the learner.
-**Fix:** a BSA extension `rest_request_before_callbacks` guard that verifies
-`invoice.student_record_id` belongs to the current student or parent. The shortcode
-account pages need the same review.
+**Fix (deployed 2026-10-10, bsa-school-management 0.1.0):** a
+`rest_request_before_callbacks` guard verifies `invoice.student_record_id` belongs to
+the current learner or parent. Tested 20/20 (see `docs/testing.md`).
+
+**Owner decision 2026-10-10 on §7.2:** the owner holds a "WordPress IT" licence and keeps the current copy.
+
+### 7.1b Anonymous learner lookups through Weblizar front-end AJAX: **High** · VERIFIED (code) · FIXED 2026-10-10
+Found during Phase 1. Weblizar registers `wp_ajax_nopriv_` handlers that need only a
+nonce, and its public pages hand those nonces to any visitor:
+- `wlsm-p-get-students-with-pending-invoices`: search learners by class plus name or admission number.
+- `wlsm-p-get-student-pending-invoice(s)`, `-bulk`, `wlsm-p-pay-invoice-amount`: invoices by ID.
+- `wlsm-p-get-exam-result` / `-admit-card` (by roll number), `wlsm-p-get-certificate` (by enrolment number).
+- `wlsm-p-submit-registration`, `wlsm-p-submit-staff-registration`: create learner/staff accounts.
+
+**Fix (bsa-school-management 0.1.0):** blocked for visitors who are not logged in;
+staff-only, or ownership-checked, for logged-in users. Tested (see `docs/testing.md`).
 
 ### 7.2 Probable nulled premium plugin: **Critical (supply-chain / legal)** · VERIFIED (code)
 - `admin/inc/manager/WLSM_LM.php`: `public function is_valid() { return true; …`

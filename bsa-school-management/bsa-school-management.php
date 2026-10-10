@@ -1,0 +1,34 @@
+<?php
+/**
+ * Plugin Name:       Bindura Science Academy - School Management Extension
+ * Description:       BSA-specific security hardening and extensions for the Weblizar School Management plugin.
+ * Version:           0.1.0
+ * Requires at least: 6.5
+ * Requires PHP:      8.1
+ * Author:            Bindura Science Academy
+ * License:           GPL-2.0-or-later
+ * Text Domain:       bsa-school-management
+ *
+ * @package BSA_School_Management
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+define( 'BSA_SM_VERSION', '0.1.0' );
+define( 'BSA_SM_FILE', __FILE__ );
+define( 'BSA_SM_DIR', plugin_dir_path( __FILE__ ) );
+
+/*
+ * Weblizar School Management version this extension has been reviewed against.
+ * The access guard reads Weblizar tables directly, so a different major.minor
+ * version must be re-reviewed (see docs/architecture.md).
+ */
+define( 'BSA_SM_TESTED_WLSM', '10.3' );
+
+require_once BSA_SM_DIR . 'includes/class-bsa-hardening.php';
+require_once BSA_SM_DIR . 'includes/class-bsa-access-guard.php';
+require_once BSA_SM_DIR . 'includes/class-bsa-compat.php';
+
+BSA_Hardening::init();
+BSA_Access_Guard::init();
+BSA_Compat::init();
