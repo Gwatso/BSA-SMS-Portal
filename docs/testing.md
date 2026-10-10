@@ -52,6 +52,22 @@ routes and was deliberately left in place.
 | 12 fee rows (3 terms × 4 forms), USD 250, one-time | PASS |
 | Front page still 200 | PASS |
 
+### Phase 3 step 2 read-back
+| Check | Result |
+|---|---|
+| Forms 1–2 = 10 subjects, Forms 3–4 = 13 | PASS |
+| Form 3 sections = Sciences, Commercials | PASS |
+| Registration settings: religion on; caste, blood group, transport off | PASS |
+| Weblizar email carrier = wp_mail | PASS |
+| FluentSMTP default connection = info@bindurascienceacademy.co.zw | PASS |
+| `wp_mail` test to info@ returns true; FluentSMTP log status "sent" | PASS (inbox arrival to be confirmed by owner) |
+| SPF for bindurascienceacademy.co.zw | PASS (`v=spf1 +a +mx +ip4:45.86.220.2 ~all`) |
+| DKIM for bindurascienceacademy.co.zw | FAIL: not published (DNS SERVFAIL); owner action |
+
+Note: the script's first run reported two false "FAIL" lines because those Weblizar
+handlers close one buffer too many; the read-back confirmed success. The helper now
+opens a spare buffer layer.
+
 ### Not yet tested
 - Restoring from backup (no second environment yet).
 - Logged-in browser journeys (no learner/parent accounts or pages exist yet).

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-10: Phase 3 step 2: subjects, streams, admission fields, email (production)
+
+Applied by `scripts/02-subjects-streams-fields-email.php` after snapshot
+`/home/thwxghpf/bsa-backups/2026-10-10-pre-phase3/portal-db-step2.sql`.
+
+- Forms 1–2: removed Combined Science, Business Enterprise Skills, Heritage Studies (10 subjects each).
+- Form 3: section "A" renamed **Sciences**; section **Commercials** added.
+- Admission fields: caste, blood group, transport off; religion stays on.
+- Email: Weblizar carrier → wp_mail; FluentSMTP connection "PHP mail()" sending as
+  Bindura Science Academy <info@bindurascienceacademy.co.zw> (forced from name/email).
+  One test email sent to info@ (FluentSMTP log: sent).
+- `scripts/configure-school.php` renamed `scripts/01-configure-school.php`.
+
 ## 2026-10-10: Phase 3 school configuration (production)
 
 Applied through Weblizar's own admin handlers by `scripts/configure-school.php`
