@@ -1,16 +1,18 @@
 # Bindura Science Academy — School Management System (BSA SMS)
 
-Development repository for the BSA school management system, built on the
-existing WordPress portal (Weblizar School Management + Blocksy) with a
-BSA-specific extension plugin where the audit shows one is needed.
+Development repository for the BSA school management system, built on the WordPress
+portal `portal.bindurascienceacademy.co.zw` (Weblizar School Management + Blocksy).
+BSA-specific code goes in a separate extension plugin and child theme.
 
 ## Current status
 
-**Phase 0 (environment safety and audit): BLOCKED.**
+| Phase | Status |
+|---|---|
+| 0. Environment safety & read-only audit | **Done**: see [docs/audit-report.md](docs/audit-report.md) |
+| 1. Requirements & design | **Waiting for owner decisions**: see [docs/decisions-log.md](docs/decisions-log.md) |
+| 2+ Implementation | Not started |
 
-The only WordPress connection available (Novamira MCP) appears to point at the
-live production portal, so no remote operations have been performed. See
-[docs/audit-report.md](docs/audit-report.md) and
-[docs/decisions-log.md](docs/decisions-log.md).
+By owner decision, work happens directly on the production portal. Every change is
+committed here.
 
-No plugin code exists yet. Nothing has been installed, changed or deployed.
+Nothing has been installed or changed on the portal yet.
