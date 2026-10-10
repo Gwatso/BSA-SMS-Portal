@@ -18,7 +18,7 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | Report card: owner will supply a **template letter**; **grade bands** come with it. | Owner | Grading and report cards wait for the template. |
 | 2026-10-10 | Subjects: take them from the **public website**. | Owner | O' Level list (13) used for Forms 1–4 (see below). |
 | 2026-10-10 | **Forms 1–2 take 10 subjects** (ZJC list on the website): Mathematics, English Language, Principles of Accounting, History, Geography, Chemistry, Physics, Biology, Shona Language, Computer Science. Combined Science, Business Enterprise Skills and Heritage Studies start at Form 3. | Owner (count) + website (list) | Applied. Forms 3–4 keep all 13. |
-| 2026-10-10 | **Form 3 has two streams: Sciences and Commercials** (Weblizar sections). | Owner | Applied. Weblizar subjects belong to the form; a learner's stream subjects are chosen per learner at admission. Form 4 streams: see Q1c. |
+| 2026-10-10 | **Forms 3 and 4 have two streams: Sciences and Commercials** (Weblizar sections). Learners are promoted into the matching Form 4 stream. | Owner | Applied (Form 3 in step 2, Form 4 in step 3). Weblizar subjects belong to the form; stream subjects are chosen per learner at admission. |
 | 2026-10-10 | School year **January–December** confirmed. | Owner | Sessions already Jan–Dec. |
 | 2026-10-10 | **Religion is collected**; caste and blood group are not. Transport field off (module out of scope). | Owner (religion, blood group) + Claude (caste, transport) | Applied in Weblizar registration settings, which drive both the admin admission form and the public form. |
 | 2026-10-10 | Portal email sent **from info@bindurascienceacademy.co.zw** ("Bindura Science Academy") through FluentSMTP using the server's PHP mail. No mailbox password stored. Weblizar's carrier set to wp_mail. | Owner (address) + Claude (method) | Test email to info@ logged as sent. SPF valid. **DKIM not published** in the domain's DNS (owner action). Switch to authenticated SMTP later if deliverability is poor. |
@@ -41,16 +41,21 @@ Keeps project context across Claude Code sessions. Newest entries first.
 
 | # | Question | Default if unanswered | Blocks |
 |---|---|---|---|
-| Q1c | Do Sciences/Commercials continue as streams in Form 4 (so Form 3 learners are promoted into matching Form 4 streams)? | Leave Form 4 as one section until confirmed | Promotions at end of year |
 | Q3 | Assessment components/weights, grade bands, who approves results | Comes with report template | Grading, results |
 | Q4 | Report-card template | Owner to send | Report cards |
 | Q5 | Extra lessons design | Deferred | Phase 7 |
+
+## Completed owner actions
+
+| Date | Action |
+|---|---|
+| 2026-10-10 | Google Drive authorised in UpdraftPlus (account owner "Afriflarenet Pty Ltd") |
+| 2026-10-10 | Two Factor enabled on the administrator account |
+| 2026-10-10 | Test email "BSA portal: test email" received in the info@ inbox |
+| 2026-10-10 | Confirmed Sciences/Commercials streams continue into Form 4 |
 
 ## Pending owner actions
 
 | Action | Where |
 |---|---|
-| Authorise Google Drive in UpdraftPlus as info.afriflarenet@gmail.com | `backup-and-recovery.md` |
-| Turn on Two Factor for the administrator account (authenticator app) | wp-admin → Users → Profile → Two-Factor Options |
-| Confirm the test email "BSA portal: test email" arrived in the info@ inbox (check spam too) | Webmail |
 | Publish the DKIM record for bindurascienceacademy.co.zw at the domain's DNS provider (value: cPanel → Email Deliverability) | DNS provider |

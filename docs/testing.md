@@ -60,13 +60,20 @@ routes and was deliberately left in place.
 | Registration settings: religion on; caste, blood group, transport off | PASS |
 | Weblizar email carrier = wp_mail | PASS |
 | FluentSMTP default connection = info@bindurascienceacademy.co.zw | PASS |
-| `wp_mail` test to info@ returns true; FluentSMTP log status "sent" | PASS (inbox arrival to be confirmed by owner) |
+| `wp_mail` test to info@ returns true; FluentSMTP log status "sent" | PASS (owner confirmed receipt 2026-10-10) |
 | SPF for bindurascienceacademy.co.zw | PASS (`v=spf1 +a +mx +ip4:45.86.220.2 ~all`) |
 | DKIM for bindurascienceacademy.co.zw | FAIL: not published (DNS SERVFAIL); owner action |
 
 Note: the script's first run reported two false "FAIL" lines because those Weblizar
 handlers close one buffer too many; the read-back confirmed success. The helper now
 opens a spare buffer layer.
+
+### Phase 3 step 3 and backup verification
+| Check | Result |
+|---|---|
+| Form 4 sections = Sciences, Commercials (handlers report success; read-back matches) | PASS |
+| UpdraftPlus backup 17:49 sent to Google Drive; log "no errors in the uploads … backup succeeded" | PASS |
+| Two Factor active for administrator (`Two_Factor_Core::is_user_using_two_factor(1)`) | PASS |
 
 ### Not yet tested
 - Restoring from backup (no second environment yet).

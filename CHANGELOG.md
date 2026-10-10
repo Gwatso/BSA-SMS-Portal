@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-10: Phase 3 step 3 + backups off-site (production)
+
+- Form 4: section "A" renamed **Sciences**; **Commercials** added (`scripts/03-form4-streams.php`,
+  snapshot `portal-db-step3.sql` first).
+- UpdraftPlus: Google Drive authorised by owner; verification backup 17:49 uploaded with no
+  errors; "delete local after upload" switched on.
+- Two Factor enabled on the administrator account (owner).
+
 ## 2026-10-10: Phase 3 step 2: subjects, streams, admission fields, email (production)
 
 Applied by `scripts/02-subjects-streams-fields-email.php` after snapshot

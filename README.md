@@ -18,8 +18,8 @@ portal `portal.bindurascienceacademy.co.zw` (Weblizar School Management + Blocks
 | Phase | Status |
 |---|---|
 | 0. Audit | Done ([audit](docs/audit-report.md)) |
-| 1. Safety baseline | **Done** except owner actions: Google Drive authorisation, 2FA, SMTP details ([decisions](docs/decisions-log.md)) |
-| 3. School configuration | **Core done** (school, Forms 1–4, sessions, subjects, term fees). Next: staff roles, admission form fields, branding |
+| 1. Safety baseline | **Done** (off-site backups, 2FA, email verified). Open: DKIM DNS record |
+| 3. School configuration | **Core done**: school, Forms 1–4 (Sciences/Commercials streams in Forms 3–4), sessions, subjects, term fees, admission fields, email. Next: branding, staff roles, admission documents |
 | 4. Academics & report cards | Waiting for the report template and grade bands |
 | 7. Extra lessons | Deferred by owner |
 
