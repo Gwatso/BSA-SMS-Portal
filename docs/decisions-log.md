@@ -34,6 +34,7 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | Birth certificate and Grade 7 results kept in a **BSA table and a private upload folder**, not in Weblizar's custom fields: number, primary school, Grade 7 year and units, plus scans (PDF/JPG/PNG, 5 MB). Only administrators and staff with admissions or students rights can see them; learners and parents cannot. | Claude (implementation of owner decision) | Weblizar custom fields cannot hold files privately and show on printouts. No vendor files edited. |
 | 2026-10-10 | Portal pages: **Home** (front page) and **My Account** (Weblizar's account shortcode, which shows the sign-in form when signed out). Learners and parents sign in there and never see wp-admin; staff use wp-admin. Header menu: Home, My Account, School website. | Claude (within owner's request) | `scripts/06-portal-pages.php`. Site title still "BSA School Management System" (owner may rename). |
 | 2026-10-10 | Weblizar dashboard items **Live Classes** and **Books Issued** switched off (modules not used). | Claude | Re-enable in School Management → Settings → Dashboard. |
+| 2026-10-13 | Login lockout: **Limit Login Attempts Reloaded** kept; All-In-One Security removed. | Owner | Verified 2026-10-13: AIOS folder, tables and firewall files gone; LLAR active with defaults (4 tries, 20-minute lockout, 24 h after 4 lockouts, email notice). Two AIOS cron events and two AIOS options remain (inert). |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
@@ -61,11 +62,12 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | Test email "BSA portal: test email" received in the info@ inbox |
 | 2026-10-10 | Confirmed Sciences/Commercials streams continue into Form 4 |
 | 2026-10-10 | Confirmed AIOS, Burst Statistics and WP-Optimize came with UpdraftPlus |
+| 2026-10-13 | Chose Limit Login Attempts Reloaded; removed AIOS |
+| 2026-10-13 | Created the first accounts (administrator, teacher, bursar login, one learner); review findings given to the owner |
 
 ## Pending owner actions
 
 | Action | Where |
 |---|---|
 | Publish the DKIM record for bindurascienceacademy.co.zw at the domain's DNS provider (value: cPanel → Email Deliverability) | DNS provider |
-| Choose one login-lockout tool (AIOS or Limit Login Attempts Reloaded) | wp-admin → Plugins |
 | Create the first staff accounts (Teacher/Bursar) and learner/parent logins at admission | School Management |

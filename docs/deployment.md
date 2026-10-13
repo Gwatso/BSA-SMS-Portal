@@ -57,7 +57,7 @@ the Novamira/Claude session). They come from wordpress.org; owner to confirm.
 
 | Plugin | Version | Notes |
 |---|---|---|
-| All-In-One Security (AIOS) | 5.4.9 | Overlaps with Limit Login Attempts Reloaded (login lockout) and with BSA hardening (XML-RPC, headers); keep one lockout tool |
+| All-In-One Security (AIOS) | 5.4.9 | **Removed by owner 2026-10-13** (Limit Login Attempts Reloaded kept) |
 | Burst Statistics | 3.7.2 | Adds the must-use plugin `burst_rest_api_optimizer.php` |
 | WP-Optimize | 4.7.0 | Page caching must exclude logged-in users and portal pages with personal data |
 
