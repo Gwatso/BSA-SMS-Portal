@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -21,6 +21,12 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   Weblizar staff with Manage Admissions / Manage Students.
 * Portal routing: learners and parents land on the My Account page after sign-in, have
   no toolbar and are kept out of wp-admin; staff go to the dashboard.
+* Fees: payments are recorded as Cash or Bank Transfer only (a bank reference is
+  required for transfers); every unpaid invoice accepts part-payments; duplicate invoice
+  numbers (from Weblizar's admission screen) are renumbered; payments recorded or
+  deleted and invoices deleted are logged in Simple History. "Fee Reports" screen for
+  the bursar and administrators: balances by class and payments received (cash-up),
+  with CSV export.
 
 Data: table {prefix}bsa_admission_records and files in uploads/bsa-private/. Neither is
 removed when the plugin is deactivated or deleted.
@@ -29,6 +35,11 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.3.0 =
+* Fee rules (cash/bank transfer, bank reference, part-payments, unique invoice numbers).
+* Payment and invoice audit trail in Simple History.
+* Fee Reports: balances and payments received, CSV export.
 
 = 0.2.0 =
 * Admission Documents module with private file store and authenticated downloads.

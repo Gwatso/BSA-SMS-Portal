@@ -21,6 +21,7 @@ PHP linted, and only then copied into the theme. The table records the file chec
 |---|---|---|---|---|
 | 2026-10-10 | bsa-school-management | 0.1.0 | `beef319e6fa8764067c0b9a42c452ab814dd5c9690f8fe51e0906a3a3dbcabf4` | HTTP checks + 20/20 integration checks |
 | 2026-10-10 | bsa-school-management | 0.2.0 | `2a3a506ff4e5869ff3538ef371da43944d341dbd8a10ccfe89c759c95b7fbb55` | boot check; migration; private store 403; 60/60 + 20/20 integration checks |
+| 2026-10-13 | bsa-school-management | 0.3.0 | `f99e5bc64a8c71b61ab58a6a68f782669f41deb0c0fd1ca05e211c8180c9f106` (files: class-bsa-finance.php `100831c9…`, main `1d1d82eb…`, readme `35a2b1ca…`, all matched) | staged copy tested 49/49 before going live; pages 200; hooks registered |
 
 ### Child theme deployment (bsa-portal)
 
@@ -62,6 +63,8 @@ the Novamira/Claude session). They come from wordpress.org; owner to confirm.
 | WP-Optimize | 4.7.0 | Page caching must exclude logged-in users and portal pages with personal data |
 
 ## Rollback
+- Fee rules only: remove `BSA_Finance::init();` from the main plugin file (Weblizar then
+  behaves as before; invoice numbers already fixed stay fixed).
 - BSA extension: `wp plugin deactivate bsa-school-management`. Since 0.2.0 it keeps
   admission documents (table `bsa_admission_records`, files in `uploads/bsa-private/`);
   deactivating leaves them in place, they are just not reachable until reactivated.

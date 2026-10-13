@@ -174,7 +174,48 @@ Cause: Weblizar caches the first user's details for the whole request
 sign-ins are separate requests and unaffected. Re-run with the cache cleared before each
 check: 19/19 PASS. The script now clears it itself.
 
+### Finance, plugin 0.3.0 (2026-10-13)
+
+#### Integration test: `tests/integration/finance.php` (49/49 PASS)
+Run against the **staged** copy (`/home/thwxghpf/bsa-deploy/stage-0.3.0`, byte-identical
+to what went live) before activation. Synthetic Form 1 learner with three term invoices
+sharing one number (as Weblizar's admission screen makes them); payments through
+Weblizar's real payment handler as the bursar; all rolled back (invoice and receipt
+counters checked unchanged afterwards).
+
+| Area | Checks | Result |
+|---|---|---|
+| Report access | Administrator and bursar yes; teacher, learner, visitor no | PASS |
+| Payment rules | Cash and bank transfer with reference accepted; transfer without reference, card, cheque, UPI, demand draft, empty refused; amount over balance refused | PASS |
+| Invoice rules | Oldest invoice keeps its number, the others renumbered; no duplicates left in the school; part-payments on for unpaid invoices; second run changes nothing | PASS |
+| Through Weblizar's handler | Card and reference-less transfer refused before Weblizar; USD 100 cash and USD 150 transfer recorded; Term 1 marked paid; USD 1 on the paid invoice, USD 251 on a USD 250 balance, zero, negative and an unknown invoice refused; USD 50 monthly part-payment recorded | PASS |
+| Payments | 3 rows, all recorded by the bursar, unique receipt numbers, bank reference stored | PASS |
+| Reports | Balance 750 / 300 / 450; class filter; cash-up for today lists the 3 payments (USD 300); method filter; recorded-by name; yesterday excludes today; bad filters sanitised | PASS |
+| CSV | Formula-like cells neutralised | PASS |
+| Audit | 3 payments and a payment deletion written to Simple History | PASS |
+| Clean-up | No synthetic data left; no PHP notices | PASS |
+
+Found while testing, and fixed before going live:
+- **Weblizar does not check payment amounts at all.** Its validation only checks the
+  method name; a USD 1 payment on a fully paid invoice was accepted. BSA now refuses
+  zero, negative, non-numeric and over-balance amounts.
+- Weblizar's payment handler runs its own `COMMIT`. Inside a test transaction this would
+  have kept the synthetic data; the test turns the handler's COMMIT/ROLLBACK into no-ops
+  (checked: nothing left behind).
+- A negative class filter was read as a class ID; now treated as "all classes".
+
+#### After going live
+| Check | Result |
+|---|---|
+| Plugin 0.3.0 loaded; home, My Account, login 200; wp-admin 302 when signed out | PASS |
+| Payment check, query watcher and end-of-request hooks registered | PASS |
+| Learner BSA001's invoices renumbered 00001/00002/00003 and opened to part-payments; two "renumbered" entries in Simple History | PASS |
+| Fee Reports menu: owner, school administrator, bursar yes; teacher, learner, parent no | PASS |
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
   covered except PHP's own `is_uploaded_file`, which needs a real HTTP upload).
+- Weblizar's payment form in a browser (the hidden payment methods are removed by a
+  small script; the server refuses them regardless).
+- Parent bank-transfer submissions (off until the bank details arrive).

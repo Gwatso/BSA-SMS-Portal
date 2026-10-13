@@ -21,6 +21,7 @@ portal `portal.bindurascienceacademy.co.zw` (Weblizar School Management + Blocks
 | 0. Audit | Done ([audit](docs/audit-report.md)) |
 | 1. Safety baseline | **Done** (off-site backups, 2FA, email verified). Open: DKIM DNS record |
 | 3. School configuration | **Done**: school, Forms 1–4 (Sciences/Commercials streams in Forms 3–4), sessions, subjects, term fees, admission fields and documents, email, Teacher and Bursar roles ([permissions](docs/permission-matrix.md)). Branding and portal pages live (Home, My Account) |
+| 6. Finance | **Core done** (plugin 0.3.0): cash/bank rules, part-payments, unique invoice numbers, audit trail, Fee Reports. Waiting: bank details, term dates |
 | 4. Academics & report cards | Waiting for the report template and grade bands |
 | 7. Extra lessons | Deferred by owner |
 

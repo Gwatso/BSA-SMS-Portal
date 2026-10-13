@@ -31,6 +31,7 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Payments | Record, delete | — | Record (through invoices); **cannot delete** |
 | Income and expenses | Manage | — | Manage |
 | Finance statistics | View | — | View |
+| Fee Reports (balances, payments received, CSV) | Yes | — | Yes |
 | Admissions and learner records | Manage | — | — |
 | Admission documents (birth certificate, Grade 7 results) | View, edit, download | — | — |
 | Staff, roles, settings | Manage | — | — |
@@ -40,6 +41,10 @@ Weblizar keys: Teacher = `view_timetable`, `manage_attendance`, `manage_student_
 Bursar = `manage_fees`, `manage_invoices`, `edit_invoices`, `manage_income`,
 `manage_expenses`, `stats_payments`, `stats_amount_fees_structure`, `stats_income`,
 `stats_expense`.
+
+**Payments** (BSA rules, all staff): Cash or Bank Transfer only, bank reference required for
+transfers, amount above zero and at most the invoice balance. **Fee Reports** are open to
+administrators, Weblizar "admin" staff, and staff with `manage_invoices` or `stats_payments`.
 
 **Admission documents** are open to administrators and to any staff member given
 `manage_admissions` or `manage_students` (for example, a future "Office" role). Staff of

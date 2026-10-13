@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-10-13: Finance (plugin 0.3.0, production)
+
+- Fee rules enforced on the server (Weblizar checks none of these):
+  - payments are **Cash** or **Bank Transfer** only; a bank transfer needs the bank
+    reference; other methods are also hidden from Weblizar's payment form;
+  - the amount must be above zero and at most the invoice balance (Weblizar accepted
+    zero, negative and overpayments);
+  - every unpaid invoice accepts **part-payments** (parents who pay monthly);
+  - **unique invoice numbers**: Weblizar's admission screen gives all of a new learner's
+    fee invoices one number; duplicates are renumbered at the end of the request.
+- Audit trail in Simple History: payments recorded or deleted, invoices deleted,
+  invoices renumbered (record IDs and amounts, no learner names).
+- **Fee Reports** screen (administrators, the school administrator, bursar): balances by
+  class for the current session, and payments received for a date range with a
+  cash-up summary by method and by staff member; CSV export (formula-safe).
+- Existing invoices for learner BSA001 renumbered 00001/00002/00003 and opened to
+  part-payments. Snapshot `2026-10-13-pre-finance` first.
+- `tests/integration/finance.php` (49/49).
+
 ## 2026-10-13: Account clean-up (production)
 
 - The second school administrator's login is no longer a WordPress administrator and is now linked to his Weblizar
