@@ -160,7 +160,7 @@ Snapshot first: `/home/thwxghpf/bsa-backups/2026-10-13-pre-accounts/portal-db.sq
 | Check | Result |
 |---|---|
 | Only one WordPress administrator left (the owner) | PASS |
-| Head's login: subscriber in WordPress, linked to his Weblizar admin staff record; School Management manage students, invoices, settings, delete invoices | PASS |
+| The second school administrator's login: subscriber in WordPress, linked to his Weblizar admin staff record; School Management manage students, invoices, settings, delete invoices | PASS |
 | Bursar login linked to a new Bursar staff record: manage invoices, fees, edit invoices yes; delete invoices, delete payments, students, admissions, attendance no | PASS |
 | Teacher login created and linked; class teacher of Form 1 A; attendance, homework, assigned class yes; fees, invoices, students, exams no | PASS |
 | Teacher password-setup email: FluentSMTP log "sent" | PASS |
@@ -170,7 +170,7 @@ Snapshot first: `/home/thwxghpf/bsa-backups/2026-10-13-pre-accounts/portal-db.sq
 
 The script's first self-check reported that the bursar and teacher had every permission.
 Cause: Weblizar caches the first user's details for the whole request
-(`wp_cache_get( 'wlsm_user_info' )`), so all checks reused the head's admin rights. Real
+(`wp_cache_get( 'wlsm_user_info' )`), so all checks reused the first account's admin rights. Real
 sign-ins are separate requests and unaffected. Re-run with the cache cleared before each
 check: 19/19 PASS. The script now clears it itself.
 

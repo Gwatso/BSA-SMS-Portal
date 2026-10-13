@@ -2,7 +2,7 @@
 
 ## 2026-10-13: Account clean-up (production)
 
-- Head's login is no longer a WordPress administrator and is now linked to his Weblizar
+- The second school administrator's login is no longer a WordPress administrator and is now linked to his Weblizar
   admin staff record; the owner's account is the only WordPress administrator.
 - Class teacher (Form 1 A) given a login linked to the staff record; password-setup
   email sent.
