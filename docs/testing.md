@@ -154,6 +154,26 @@ dashboards were rendered from Weblizar's shortcode output for synthetic accounts
 into the page shell, so links in those renders point at the REST endpoint that produced
 them. The greeting shows the account's login name (Weblizar behaviour).
 
+### Account clean-up (2026-10-13, `scripts/07-accounts.php`)
+Snapshot first: `/home/thwxghpf/bsa-backups/2026-10-13-pre-accounts/portal-db.sql` (560 KB, dump complete).
+
+| Check | Result |
+|---|---|
+| Only one WordPress administrator left (the owner) | PASS |
+| Head's login: subscriber in WordPress, linked to his Weblizar admin staff record; School Management manage students, invoices, settings, delete invoices | PASS |
+| Bursar login linked to a new Bursar staff record: manage invoices, fees, edit invoices yes; delete invoices, delete payments, students, admissions, attendance no | PASS |
+| Teacher login created and linked; class teacher of Form 1 A; attendance, homework, assigned class yes; fees, invoices, students, exams no | PASS |
+| Teacher password-setup email: FluentSMTP log "sent" | PASS |
+| Learner BSA001 has a separate (sample) parent login; parent counts as family and sees only BSA001 | PASS |
+| All three staff count as staff for the BSA plugin, none as family | PASS |
+| All-In-One Security leftovers (2 scheduled tasks, 2 options) removed | PASS |
+
+The script's first self-check reported that the bursar and teacher had every permission.
+Cause: Weblizar caches the first user's details for the whole request
+(`wp_cache_get( 'wlsm_user_info' )`), so all checks reused the head's admin rights. Real
+sign-ins are separate requests and unaffected. Re-run with the cache cleared before each
+check: 19/19 PASS. The script now clears it itself.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is

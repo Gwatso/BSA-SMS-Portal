@@ -45,6 +45,11 @@ Bursar = `manage_fees`, `manage_invoices`, `edit_invoices`, `manage_income`,
 `manage_admissions` or `manage_students` (for example, a future "Office" role). Staff of
 another school are refused.
 
+**Linking logins:** a staff record works only when it is linked to a WordPress login
+(School Management → Staff → Edit → Login details). Weblizar refuses to link a WordPress
+administrator, so staff logins stay ordinary WordPress users; the Weblizar role decides
+what they can do. The owner's account is the only WordPress administrator.
+
 **Important:** Weblizar copies a role's permissions onto each staff member when they are
 created. Editing a role later does **not** change staff who already have it; update
 those staff members individually (School Management → Staff → Edit).

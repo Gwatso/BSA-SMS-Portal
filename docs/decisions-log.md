@@ -35,6 +35,10 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | Portal pages: **Home** (front page) and **My Account** (Weblizar's account shortcode, which shows the sign-in form when signed out). Learners and parents sign in there and never see wp-admin; staff use wp-admin. Header menu: Home, My Account, School website. | Claude (within owner's request) | `scripts/06-portal-pages.php`. Site title still "BSA School Management System" (owner may rename). |
 | 2026-10-10 | Weblizar dashboard items **Live Classes** and **Books Issued** switched off (modules not used). | Claude | Re-enable in School Management → Settings → Dashboard. |
 | 2026-10-13 | Login lockout: **Limit Login Attempts Reloaded** kept; All-In-One Security removed. | Owner | Verified 2026-10-13: AIOS folder, tables and firewall files gone; LLAR active with defaults (4 tries, 20-minute lockout, 24 h after 4 lockouts, email notice). Two AIOS cron events and two AIOS options remain (inert). |
+| 2026-10-13 | The head (Weblizar "admin" staff role) is **not** a WordPress administrator; he manages the school through School Management only. The owner's account is the only WordPress administrator. | Owner | Weblizar refuses to link staff records to WordPress administrators, so this is also what makes his School Management login work. |
+| 2026-10-13 | Staff logins are created from the email on the Weblizar staff record; staff set their own password through WordPress's password-setup email (no passwords are chosen or shared by others). | Owner (approved) + Claude | First email sent to the Form 1 A class teacher. |
+| 2026-10-13 | The bursar uses the `bursar` login with a staff record named "Bursar" until the person is known; a personal login is preferred so the activity log shows who recorded each payment. | Claude (owner did not name the bursar) | Rename the staff record and login when known. |
+| 2026-10-13 | Learner BSA001's parents are **sample data** for now (names marked "(sample)", login `bsa001.parent` with a non-deliverable email). | Owner | Replace with the real parents before the account is used; the owner sets the parent's password in Users → Edit. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
@@ -64,10 +68,12 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-10 | Confirmed AIOS, Burst Statistics and WP-Optimize came with UpdraftPlus |
 | 2026-10-13 | Chose Limit Login Attempts Reloaded; removed AIOS |
 | 2026-10-13 | Created the first accounts (administrator, teacher, bursar login, one learner); review findings given to the owner |
+| 2026-10-13 | Approved the account fixes (head no longer WordPress admin, logins linked, sample parent) |
 
 ## Pending owner actions
 
 | Action | Where |
 |---|---|
 | Publish the DKIM record for bindurascienceacademy.co.zw at the domain's DNS provider (value: cPanel → Email Deliverability) | DNS provider |
-| Create the first staff accounts (Teacher/Bursar) and learner/parent logins at admission | School Management |
+| Name the bursar (rename the "Bursar" staff record and give them a personal login) | School Management → Staff |
+| Replace BSA001's sample parents with the real parents and set the parent login's password | School Management → Students; Users → Edit |

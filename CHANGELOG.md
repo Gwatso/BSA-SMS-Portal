@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-13: Account clean-up (production)
+
+- Head's login is no longer a WordPress administrator and is now linked to his Weblizar
+  admin staff record; the owner's account is the only WordPress administrator.
+- Class teacher (Form 1 A) given a login linked to the staff record; password-setup
+  email sent.
+- Bursar staff record (role Bursar) created for the `bursar` login.
+- Learner BSA001: separate sample parent login and sample parent names; religion
+  spelling corrected.
+- Limit Login Attempts Reloaded kept; All-In-One Security removed by the owner and its
+  leftover scheduled tasks and options deleted.
+- `scripts/07-accounts.php`; snapshot `2026-10-13-pre-accounts` first.
+
 ## 2026-10-10: Staff roles, admission documents, portal pages (production)
 
 - **Staff roles** in Weblizar (`scripts/05-staff-roles.php`): **Teacher** (own assigned
