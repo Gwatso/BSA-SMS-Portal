@@ -173,9 +173,23 @@
 	clear: both;
 }
 
-/* Weblizar reserves 300px for the noticeboard even when it is empty. */
+/*
+ * Weblizar reserves 300px for the noticeboard even when it is empty, and scrolls the
+ * notices as a ticker starting below the box. Without the 300px the ticker ran outside
+ * the box and notices were invisible: show them as a still list instead.
+ */
 .wlsm-container .wlsm-st-recent-notices-section {
 	min-height: 0;
+}
+
+.wlsm-container .wlsm-st-recent-notices {
+	top: 0;
+	animation: none;
+}
+
+/* The greeting bar has "Account settings"; drop the dashboard's second copy. */
+.wlsm-container .wlsm-student-dashboard .wlsm-fex > a[href*="action=settings"] {
+	display: none;
 }
 
 /* Parent dashboard: one card per child. */
