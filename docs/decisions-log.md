@@ -49,6 +49,9 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-14 | **Exam marks** decide position, subjects passed and result; term marks shown for information. | Owner | |
 | 2026-10-14 | USD 250 per term **covers everything**; the register's Levy / G.P.F. / Other columns are not charged separately. | Owner | Fee setup unchanged. |
 | 2026-10-14 | Position = rank by average exam mark over subjects recorded, within class and stream; ties share a position; fractional marks rounded half up before grading; Present and Late count as attended, Holiday and days without a register are not possible attendances. | Claude (defaults) | Change on request. |
+| 2026-10-14 | Weblizar student types renamed **Day Scholar** / **Boarder** for the register; learners without a type count as day scholars. | Claude (from the register layout) | `scripts/08-student-types.php`. |
+| 2026-10-14 | The class teacher's Pupil details page shows the birth certificate **number** (as the paper register does); the scans stay restricted to administrators. | Claude | |
+| 2026-10-14 | Weekly register checks can be recorded by the owner and Weblizar "admin" staff (head / deputy / teacher in charge). | Claude | Matches "School Head/Deputy/T.I.C" on the register. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
@@ -87,6 +90,6 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | Publish the DKIM record for bindurascienceacademy.co.zw at the domain's DNS provider (value: cPanel → Email Deliverability) | DNS provider |
 | Name the bursar (rename the "Bursar" staff record and give them a personal login) | School Management → Staff |
 | Send the bank details (bank, account name, account number, branch) to show on invoices | — |
-| 2026 term dates / fee due dates | — |
+| Enter 2026 and 2027 term dates | wp-admin → School Terms |
 | Decide whether new admissions should still create all three term invoices at once (Weblizar does this for fee types marked "active on admission") | School Management → Fees |
 | Replace BSA001's sample parents with the real parents and set the parent login's password | School Management → Students; Users → Edit |

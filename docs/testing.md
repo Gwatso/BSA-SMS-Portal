@@ -212,6 +212,31 @@ Found while testing, and fixed before going live:
 | Learner BSA001's invoices renumbered 00001/00002/00003 and opened to part-payments; two "renumbered" entries in Simple History | PASS |
 | Fee Reports menu: owner, school administrator, bursar yes; teacher, learner, parent no | PASS |
 
+### School Terms and Class Register, plugin 0.4.0 (2026-10-14)
+
+#### Integration test: `tests/integration/register.php` (53/53 PASS)
+Run against the staged copy before activation. Term dates for 2026/2027, three synthetic
+Form 1 A learners (day boy, day girl, boarder girl) and one register week, all rolled back
+(checked: no learners, types, checks or term dates left). The checks table itself was
+created first, outside the transaction (it is the plugin's real table).
+
+| Area | Checks | Result |
+|---|---|---|
+| Rights | Owner and school administrator: all registers, can record checks; teacher: Form 1 A only, no checks; bursar: none | PASS |
+| Term dates | Missing end, end before start, overlap, outside the school year and impossible dates refused; valid dates saved and read back; current term (holidays belong to the term just ended); next term start, including across years; weeks ending Friday (12 in a 13 Jan–2 Apr term) | PASS |
+| Register week (worked by hand) | Mon p,p,a · Tue p,l,p · Wed h,h,h · Thu none · Fri p,a,p → totals 3,2,2; absent 1,0,0,0,1; actual 2,3,0,0,2; possible 3,3,0,0,3; weekly total 7; a subject-lesson register on Thursday ignored | PASS |
+| Report-card attendance | 2 of 3 for the day girl; none without term dates | PASS |
+| Summary | Day boy 3, day girl 2, boarder girl 2; 3 school days; average 2.3 | PASS |
+| Weekly check | Teacher refused; Thursday and future weeks refused; one check per week | PASS |
+| Screens | Teacher's four tabs render for Form 1 A only, no check button; school administrator gets check buttons; School Terms shows saved dates; no PHP notices | PASS |
+
+#### After going live
+| Check | Result |
+|---|---|
+| Plugin 0.4.0 loaded; home, My Account, login 200 | PASS |
+| School Terms: owner and school administrator only; Class Register: all classes for them, Form 1 A for the teacher, none for the bursar | PASS |
+| Student types now Day Scholar, Boarder | PASS |
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is

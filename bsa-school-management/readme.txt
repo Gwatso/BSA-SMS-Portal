@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -27,14 +27,24 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   deleted and invoices deleted are logged in Simple History. "Fee Reports" screen for
   the bursar and administrators: balances by class and payments received (cash-up),
   with CSV export.
+* School Terms (administrators): start and end dates of Terms 1–3 per year.
+* Class Register (class teachers for their own class; head/deputy for all): the BSA
+  paper register on screen from Weblizar's daily attendance — weekly Monday–Friday grid
+  with number absent, actual and possible attendances; pupil details; the head's weekly
+  check; term and year summary (Day/Boarder × Boy/Girl, average daily attendance).
 
-Data: table {prefix}bsa_admission_records and files in uploads/bsa-private/. Neither is
+Data: tables {prefix}bsa_admission_records and {prefix}bsa_register_checks, option
+bsa_terms, and files in uploads/bsa-private/. None of these is
 removed when the plugin is deactivated or deleted.
 
 Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.4.0 =
+* School Terms and Class Register.
+* Shared staff-rights helper (BSA_School).
 
 = 0.3.0 =
 * Fee rules (cash/bank transfer, bank reference, part-payments, unique invoice numbers).

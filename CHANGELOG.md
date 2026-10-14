@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-10-14: School Terms and Class Register (plugin 0.4.0, production)
+
+- **School Terms** screen (owner and school administrator): start and end dates of
+  Terms 1–3 for 2026 and 2027, kept inside the school year; drives the register and,
+  next, report-card attendance and "Next term begins on". **No dates set yet.**
+- **Class Register**, built on Weblizar's daily attendance and laid out like the BSA paper
+  register: weekly Monday–Friday grid (✓ / L / A / H) with each pupil's weekly total and
+  Number absent, Actual attendance, Possible attendances and Weekly total of actual
+  attendances; Pupil details (surname and first names in capitals, date of birth, birth
+  certificate number, religion, boarder/day scholar, parent contacts); Register checks
+  (the head/deputy records each week's check); Attendance summary per term and year
+  (Day/Boarder × Boy/Girl, school days, average daily attendance); A4 landscape print.
+  Class teachers see only their own class; the bursar sees none.
+- Weblizar student types renamed **Day Scholar** and **Boarder** (unused "Other" removed;
+  `scripts/08-student-types.php`).
+- `docs/academics-spec.md` from the report book and register; `tests/integration/register.php` (53/53).
+
 ## 2026-10-13: Finance (plugin 0.3.0, production)
 
 - Fee rules enforced on the server (Weblizar checks none of these):

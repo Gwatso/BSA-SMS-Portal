@@ -32,6 +32,9 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Income and expenses | Manage | — | Manage |
 | Finance statistics | View | — | View |
 | Fee Reports (balances, payments received, CSV) | Yes | — | Yes |
+| School Terms (term dates) | Yes | — | — |
+| Class Register (weekly register, pupil details, summary) | All classes | Own class only | — |
+| Record the weekly register check | Yes (head / deputy / T.I.C.) | — | — |
 | Admissions and learner records | Manage | — | — |
 | Admission documents (birth certificate, Grade 7 results) | View, edit, download | — | — |
 | Staff, roles, settings | Manage | — | — |
