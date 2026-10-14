@@ -41,6 +41,7 @@ revalidates every 2 s, so wait a few seconds before verifying.
 | 2026-10-10 | bsa-portal | 0.2.0 | `4d6cfcacd842abe80321db07e4406f58355e1236811b9c76a4ed5e784a6825e8` | Portal home template, account styles; home and account 200 |
 | 2026-10-10 | bsa-portal | 0.2.1 | files: functions.php, style.css, account.css, home.css (SHA-256 matched repo) | sign-in card and phone overflow fixes; rendered |
 | 2026-10-10 | bsa-portal | 0.2.2 | files: functions.php `d0a9970b…`, style.css `5546f3bb…`, account.css `7520062f…` (matched repo) | signed-in dashboards; rendered at 1366 px and 390 px; design pre-flight ok |
+| 2026-10-14 | bsa-portal | 0.2.3 | files: screenshot.png `d911d7af…`, style.css `16c6a987…` (downloaded by the server from the pushed commit on GitHub, SHA-256 matched) | WordPress reports the cover (1200 × 900, served 200 image/png); home 200 |
 
 ## Third-party plugins installed (2026-10-10, from wordpress.org)
 
