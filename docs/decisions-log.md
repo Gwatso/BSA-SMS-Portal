@@ -43,6 +43,12 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-13 | Payments accepted: **Cash** and **Bank Transfer** (bank reference required). Amount must not exceed the invoice balance; an overpayment is recorded as the balance and the rest handled outside the invoice. | Owner (methods) + Claude (reference, amount rule) | Weblizar's own form offers six methods and checks no amounts. |
 | 2026-10-13 | Bank details for invoices: **to follow from the school administrator**. Weblizar's "Bank Transfer" option for parents (shows the details and lets parents submit proof of payment) stays off until then. | Owner | Pending owner action. |
 | 2026-10-13 | No real term invoices issued by Claude; the system was built and tested with sample data only. Learner BSA001's three invoices (created by Weblizar at admission) were only renumbered and opened to part-payments. | Claude (owner did not ask for invoices to be issued) | Issue term invoices from School Management → Fees → Invoices. |
+| 2026-10-14 | Report book, grade keys (ZJC 1–9 for Forms 1–2, O Level A–U for Forms 3–4) and class register supplied. | Owner | `docs/academics-spec.md`; blank register in `docs/reference/`. |
+| 2026-10-14 | Subject pass = **50 % and above** (ZJC 1–6, O Level A–C). | Owner | |
+| 2026-10-14 | Overall result **Pass = 5 or more subjects passed** (any subjects). | Owner | |
+| 2026-10-14 | **Exam marks** decide position, subjects passed and result; term marks shown for information. | Owner | |
+| 2026-10-14 | USD 250 per term **covers everything**; the register's Levy / G.P.F. / Other columns are not charged separately. | Owner | Fee setup unchanged. |
+| 2026-10-14 | Position = rank by average exam mark over subjects recorded, within class and stream; ties share a position; fractional marks rounded half up before grading; Present and Late count as attended, Holiday and days without a register are not possible attendances. | Claude (defaults) | Change on request. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
@@ -57,8 +63,8 @@ Keeps project context across Claude Code sessions. Newest entries first.
 
 | # | Question | Default if unanswered | Blocks |
 |---|---|---|---|
-| Q3 | Assessment components/weights, grade bands, who approves results | Comes with report template | Grading, results |
-| Q4 | Report-card template | Owner to send | Report cards |
+| Q6 | Games houses: names of the houses | Field left empty until named | Register |
+| Q7 | Who approves results before parents can see them (principal only, or principal and form teacher) | Principal (school administrator) publishes | Report cards |
 | Q5 | Extra lessons design | Deferred | Phase 7 |
 
 ## Completed owner actions
