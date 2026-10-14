@@ -96,9 +96,10 @@
 /* Signed-in: greeting bar. */
 .wlsm-logged-in-info {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
-	gap: 16px;
+	gap: 8px 16px;
 	margin-bottom: 16px;
 	color: #343A48;
 }
@@ -112,7 +113,8 @@
 	color: #1D212B;
 }
 
-.wlsm-logout-link {
+.wlsm-logout-link,
+.wlsm-logged-in-info .bsa-settings-link {
 	color: #1B3674;
 	font-weight: 600;
 }
@@ -250,10 +252,70 @@
 .wlsm-container .button,
 .wlsm-container .btn-primary,
 .wlsm-container button[type="submit"] {
+	min-height: 44px;
+	padding: 10px 18px;
 	background: #1B3674;
 	border-color: #1B3674;
 	border-radius: 6px;
 	color: #FFFFFF;
+	font-weight: 600;
+}
+
+/* Parent pages for one child (Weblizar's and BSA's): same card as the dashboard. */
+.wlsm-container .wlsm-parent-student-entity {
+	padding: 24px;
+	background: #FFFFFF;
+	border: 1px solid #E5E7EB;
+	border-radius: 10px;
+}
+
+.wlsm-container .wlsm-parent-student-entity > hr {
+	display: none;
+}
+
+.wlsm-container .wlsm-parent-student-entity > a:first-of-type {
+	display: inline-block;
+	margin-bottom: 16px;
+	text-decoration: none;
+}
+
+.wlsm-container .wlsm-parent-student-entity .wlsm-parent-student-detail {
+	margin-bottom: 20px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid #E5E7EB;
+}
+
+/* BSA pages (Report Cards, parent Fee Structure). */
+.wlsm-container .bsa-family-page .wlsm-st-main-title {
+	margin-bottom: 16px;
+}
+
+.wlsm-container .bsa-family-table td,
+.wlsm-container .bsa-family-table th {
+	text-align: left;
+}
+
+.wlsm-container .bsa-family-table tfoot th {
+	background: #FFFFFF;
+}
+
+.wlsm-container .bsa-family-open {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.wlsm-container .bsa-family-note,
+.wlsm-container .bsa-family-empty {
+	margin-top: 12px;
+	font-size: 15px;
+	color: #6B7280;
+}
+
+.wlsm-container .bsa-family-empty {
+	padding: 16px;
+	background: #F6F7F9;
+	border-radius: 8px;
+	color: #343A48;
 }
 
 @media (max-width: 767px) {
@@ -309,5 +371,76 @@
 
 	.wlsm-container .wlsm-parent-student-links {
 		margin-top: 12px;
+	}
+}
+
+/*
+ * Phones: tables the BSA plugin has labelled (class bsa-stack, data-label on each cell)
+ * become one card per row, so amounts and statuses are not cut off at the screen edge.
+ */
+@media (max-width: 640px) {
+	.wlsm-container table.bsa-stack thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	.wlsm-container table.bsa-stack,
+	.wlsm-container table.bsa-stack tbody,
+	.wlsm-container table.bsa-stack tfoot,
+	.wlsm-container table.bsa-stack tr {
+		display: block;
+		width: 100%;
+	}
+
+	.wlsm-container table.bsa-stack {
+		border: 0;
+	}
+
+	.wlsm-container table.bsa-stack tr {
+		margin-bottom: 12px;
+		background: #FFFFFF;
+		border: 1px solid #E5E7EB;
+		border-radius: 8px;
+	}
+
+	.wlsm-container table.bsa-stack tfoot tr {
+		background: #F6F7F9;
+	}
+
+	.wlsm-container table.bsa-stack td,
+	.wlsm-container table.bsa-stack tfoot th {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 16px;
+		padding: 10px 12px;
+		border: 0;
+		border-bottom: 1px solid #F0F1F4;
+		background: transparent;
+		text-align: right;
+		overflow-wrap: anywhere;
+	}
+
+	.wlsm-container table.bsa-stack td:last-child,
+	.wlsm-container table.bsa-stack tfoot th:last-child {
+		border-bottom: 0;
+	}
+
+	.wlsm-container table.bsa-stack td[data-label]::before,
+	.wlsm-container table.bsa-stack th[data-label]::before {
+		content: attr(data-label);
+		flex: 0 0 auto;
+		max-width: 50%;
+		font-weight: 600;
+		color: #6B7280;
+		text-align: left;
+	}
+
+	.bsa-account-page .wlsm-container .wlsm-parent-student-entity {
+		padding: 16px;
 	}
 }

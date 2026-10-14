@@ -45,7 +45,6 @@ class BSA_Reports {
 		add_action( 'admin_post_bsa_save_report_comments', array( __CLASS__, 'handle_comments' ) );
 		add_action( 'admin_post_bsa_publish_reports', array( __CLASS__, 'handle_publish' ) );
 		add_action( 'admin_post_bsa_print_reports', array( __CLASS__, 'handle_print' ) );
-		add_filter( 'the_content', array( __CLASS__, 'family_list' ), 30 );
 		add_action( 'template_redirect', array( __CLASS__, 'family_view' ) );
 	}
 
@@ -498,43 +497,6 @@ class BSA_Reports {
 		}
 		self::output_document( $cards, true );
 		exit;
-	}
-
-	/**
-	 * Report cards on the My Account page for signed-in learners and parents: published
-	 * reports of their own learners.
-	 *
-	 * @param string $content Page content.
-	 * @return string
-	 */
-	public static function family_list( $content ) {
-		$user_id = get_current_user_id();
-		if ( ! $user_id || ! in_the_loop() || ! is_main_query() || ! is_singular() || (int) get_queried_object_id() !== (int) get_option( 'bsa_sm_account_page_id' ) ) {
-			return $content;
-		}
-		$owned = class_exists( 'BSA_Access_Guard' ) ? BSA_Access_Guard::owned_student_ids( $user_id ) : array();
-		if ( ! $owned ) {
-			return $content;
-		}
-		global $wpdb;
-		$p     = $wpdb->prefix;
-		$table = BSA_Marks::reports_table();
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
-		$rows = $wpdb->get_results( "SELECT r.student_record_id, r.session_id, r.term, sr.name, se.label AS section_label, c.label AS class_label, s.label AS year FROM {$table} r JOIN {$p}wlsm_student_records sr ON sr.ID = r.student_record_id JOIN {$p}wlsm_sections se ON se.ID = sr.section_id JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id JOIN {$p}wlsm_sessions s ON s.ID = r.session_id WHERE r.published_at IS NOT NULL AND r.student_record_id IN (" . implode( ',', array_map( 'intval', $owned ) ) . ') ORDER BY s.start_date DESC, r.term DESC, sr.name' );
-		// phpcs:enable
-		$html = '<section class="bsa-family-reports"><h2>' . esc_html__( 'Report cards', 'bsa-school-management' ) . '</h2>';
-		if ( ! $rows ) {
-			$html .= '<p>' . esc_html__( 'No report cards have been published yet.', 'bsa-school-management' ) . '</p>';
-		} else {
-			$html .= '<ul>';
-			foreach ( $rows as $r ) {
-				$url = add_query_arg( array( 'bsa_report' => (int) $r->student_record_id, 'session' => (int) $r->session_id, 'term' => (int) $r->term ), get_permalink() );
-				/* translators: 1: learner, 2: term, 3: year, 4: class. */
-				$html .= '<li><a href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html( sprintf( __( '%1$s: Term %2$d %3$s (%4$s)', 'bsa-school-management' ), $r->name, $r->term, $r->year, $r->class_label . ' ' . $r->section_label ) ) . '</a></li>';
-			}
-			$html .= '</ul>';
-		}
-		return $content . $html . '</section>';
 	}
 
 	/**
