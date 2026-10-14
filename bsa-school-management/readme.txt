@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -43,8 +43,15 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   principal's comment (principal's comment by administrators only). Administrators
   publish or withdraw a class's cards. Printable A4 card in the BSA report-book layout
   with the ZJC (Forms 1–2) or O Level (Forms 3–4) grade key, attendance from the
-  register, next term's start date and fee. Parents and learners see published cards
-  on the My Account page.
+  register, next term's start date and fee.
+* Learner and parent account area (BSA_Family, on top of Weblizar's account page):
+  "Report Cards" in the learner menu and in each child's links for parents (published
+  cards with subjects passed, result and position); a parent "Fee Structure" page
+  (Weblizar links to one but has none); the user's name and an "Account settings" link
+  in the greeting; no "Pay Now" while no online or bank-transfer method is enabled; table
+  cells labelled so the theme shows them as cards on phones. Weblizar's fee lock-out of
+  the learner dashboard (fee types marked "Dashboard Disable?") is switched off on the
+  front end; filter `bsa_sm_fee_lockout` restores it.
 
 Data: tables {prefix}bsa_admission_records, {prefix}bsa_register_checks,
 {prefix}bsa_marks and {prefix}bsa_reports, option
@@ -55,6 +62,10 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.6.0 =
+* Learner and parent pages: Report Cards, parent Fee Structure, account settings link,
+  phone-friendly tables; no dashboard fee lock-out; no pay buttons without a payment method.
 
 = 0.5.0 =
 * Marks entry (BSA_Marks) and grading rules (BSA_Grades).
