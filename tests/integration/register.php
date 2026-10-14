@@ -42,6 +42,11 @@ set_error_handler(
 // so create it before the transaction (it is the real table the plugin will use).
 BSA_Register::maybe_migrate();
 
+// Term dates and register checks the owner may already have entered must be left as they
+// were.
+$terms_before  = get_option( BSA_Terms::OPTION, false );
+$checks_before = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . BSA_Register::checks_table() );
+
 $wpdb->query( 'START TRANSACTION' );
 try {
 	$user = function ( $login ) {
@@ -213,9 +218,9 @@ try {
 
 $left = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$p}wlsm_student_records WHERE admission_number = 'TEST-REG'" )
 	+ (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$p}wlsm_student_type WHERE label = 'Boarder (test)'" )
-	+ (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . BSA_Register::checks_table() )
-	+ ( false === get_option( BSA_Terms::OPTION, false ) ? 0 : 1 );
-$check( 'rollback: no synthetic learners, types, checks or term dates left', 0 === $left, (string) $left );
+	+ (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . BSA_Register::checks_table() ) - $checks_before
+	+ ( get_option( BSA_Terms::OPTION, false ) === $terms_before ? 0 : 1 );
+$check( 'rollback: no synthetic learners, types or checks left; term dates and checks as before', 0 === $left, (string) $left );
 $check( 'no PHP notices or warnings', ! $notices, implode( ' | ', array_slice( array_unique( $notices ), 0, 5 ) ) );
 
 $failed = count( preg_grep( '/^FAIL/', $results ) );

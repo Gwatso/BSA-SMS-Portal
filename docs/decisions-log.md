@@ -52,6 +52,10 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-14 | Weblizar student types renamed **Day Scholar** / **Boarder** for the register; learners without a type count as day scholars. | Claude (from the register layout) | `scripts/08-student-types.php`. |
 | 2026-10-14 | The class teacher's Pupil details page shows the birth certificate **number** (as the paper register does); the scans stay restricted to administrators. | Claude | |
 | 2026-10-14 | Weekly register checks can be recorded by the owner and Weblizar "admin" staff (head / deputy / teacher in charge). | Claude | Matches "School Head/Deputy/T.I.C" on the register. |
+| 2026-10-14 | Marks and report cards built as BSA screens (tables `bsa_marks`, `bsa_reports`), not Weblizar's exam module: Weblizar's single `manage_exams` right also creates exams and publishes results, and its result card does not follow the BSA report book. | Claude | Weblizar exams stay unused. |
+| 2026-10-14 | Who enters marks: class teacher for all subjects of their class; subject teacher for subjects assigned in Weblizar, in every stream of that form; administrators everywhere. Marks locked for teachers once published. | Claude (defaults) | Change on request. |
+| 2026-10-14 | Report cards are **published per class by an administrator** (owner or school administrator) and only then visible to parents and learners. | Claude (Q7 default) | Q7 still open. |
+| 2026-10-14 | The report card has no coat-of-arms image (none supplied); the school crest is used. The ministry heading is text. | Claude | Add the image when the owner supplies it. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
@@ -82,6 +86,7 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-13 | Chose Limit Login Attempts Reloaded; removed AIOS |
 | 2026-10-13 | Created the first accounts (administrator, teacher, bursar login, one learner); review findings given to the owner |
 | 2026-10-13 | Approved the account fixes (head no longer WordPress admin, logins linked, sample parent) |
+| 2026-10-14 | Entered 2026 Term 3 dates (8 September – 1 December) and recorded the first weekly register check (Form 1 A) |
 
 ## Pending owner actions
 
@@ -90,6 +95,7 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | Publish the DKIM record for bindurascienceacademy.co.zw at the domain's DNS provider (value: cPanel → Email Deliverability) | DNS provider |
 | Name the bursar (rename the "Bursar" staff record and give them a personal login) | School Management → Staff |
 | Send the bank details (bank, account name, account number, branch) to show on invoices | — |
-| Enter 2026 and 2027 term dates | wp-admin → School Terms |
+| Enter the remaining term dates: 2026 Terms 1–2 (if past cards or registers are wanted) and 2027 Terms 1–3. 2026 Term 3 was entered on 2026-10-14. Term 3 report cards need the 2027 Term 1 date for "Next term begins on" | wp-admin → School Terms |
+| Assign subject teachers to their subjects so they can enter marks | School Management → Staff → Edit → Subjects |
 | Decide whether new admissions should still create all three term invoices at once (Weblizar does this for fee types marked "active on admission") | School Management → Fees |
 | Replace BSA001's sample parents with the real parents and set the parent login's password | School Management → Students; Users → Edit |

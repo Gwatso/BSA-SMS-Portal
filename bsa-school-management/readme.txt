@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -32,8 +32,22 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   paper register on screen from Weblizar's daily attendance — weekly Monday–Friday grid
   with number absent, actual and possible attendances; pupil details; the head's weekly
   check; term and year summary (Day/Boarder × Boy/Girl, average daily attendance).
+* Marks: term mark, exam mark, project mark and remark per learner, subject and term.
+  Administrators enter every subject; a class teacher enters every subject of their own
+  class; a subject teacher enters the subjects assigned to them in Weblizar, in every
+  stream of that form. Marks are 0–100 with one decimal; one bad mark refuses the whole
+  save. Published marks are locked for teachers; administrators can still correct them.
+* Report Cards (administrators for all classes; class teachers for their own class):
+  results per class with subjects passed (50 % and above), Pass with 5 or more, and
+  position by exam average (ties share a place). Form teacher's comment, conduct and
+  principal's comment (principal's comment by administrators only). Administrators
+  publish or withdraw a class's cards. Printable A4 card in the BSA report-book layout
+  with the ZJC (Forms 1–2) or O Level (Forms 3–4) grade key, attendance from the
+  register, next term's start date and fee. Parents and learners see published cards
+  on the My Account page.
 
-Data: tables {prefix}bsa_admission_records and {prefix}bsa_register_checks, option
+Data: tables {prefix}bsa_admission_records, {prefix}bsa_register_checks,
+{prefix}bsa_marks and {prefix}bsa_reports, option
 bsa_terms, and files in uploads/bsa-private/. None of these is
 removed when the plugin is deactivated or deleted.
 
@@ -41,6 +55,10 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.5.0 =
+* Marks entry (BSA_Marks) and grading rules (BSA_Grades).
+* Report Cards: results, positions, comments, publication, print, family view.
 
 = 0.4.0 =
 * School Terms and Class Register.

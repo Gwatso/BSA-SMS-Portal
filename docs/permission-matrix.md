@@ -25,7 +25,12 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Attendance | Manage | Manage (own assigned class) | — |
 | Learner leave requests | Manage | Manage (own assigned class) | — |
 | Study materials, homework, lessons | Manage | Manage (own assigned class) | — |
-| Exams, marks, results | Manage | **Not yet** (waits for grading rules) | — |
+| Weblizar exams and results | Manage | — | — |
+| Marks (BSA: term, exam, project, remark) | Every class and subject | Class teacher: every subject of own class. Subject teacher: subjects assigned in Weblizar, every stream of that form | — |
+| Report Cards: results, comments, print | All classes | Class teacher: own class | — |
+| Principal's comment | Yes | — | — |
+| Publish / withdraw report cards | Yes (owner, school administrator) | — | — |
+| Change marks or comments after publication | Yes | — (locked) | — |
 | Fee types | Manage | — | Manage |
 | Invoices | Create, edit, delete | — | Create and edit; **cannot delete** |
 | Payments | Record, delete | — | Record (through invoices); **cannot delete** |
@@ -48,6 +53,11 @@ Bursar = `manage_fees`, `manage_invoices`, `edit_invoices`, `manage_income`,
 **Payments** (BSA rules, all staff): Cash or Bank Transfer only, bank reference required for
 transfers, amount above zero and at most the invoice balance. **Fee Reports** are open to
 administrators, Weblizar "admin" staff, and staff with `manage_invoices` or `stats_payments`.
+
+**Subject teachers:** assign subjects in School Management → Staff → Edit → Subjects.
+A subject teacher can then enter that subject's marks for every stream of the form
+(Form 3 Sciences and Commercials, for example). "Administrators" in the Marks and Report
+Cards rows means the owner and Weblizar "admin" staff (the school administrator).
 
 **Admission documents** are open to administrators and to any staff member given
 `manage_admissions` or `manage_students` (for example, a future "Office" role). Staff of
@@ -72,6 +82,7 @@ those staff members individually (School Management → Staff → Edit).
 | Homework, study materials | Own class | — |
 | Noticeboard, events, class timetable | Yes | Noticeboard, timetable |
 | Exam results | Own, once published | Each linked child, once published |
+| Report cards (BSA), view and print | Own, once published | Each linked child, once published |
 | Leave request | Own | — |
 | Admission documents | **No** | **No** |
 | Any other learner's data | **No** (BSA access guard) | **No** (BSA access guard) |

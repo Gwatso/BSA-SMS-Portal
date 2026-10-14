@@ -237,6 +237,38 @@ created first, outside the transaction (it is the plugin's real table).
 | School Terms: owner and school administrator only; Class Register: all classes for them, Form 1 A for the teacher, none for the bursar | PASS |
 | Student types now Day Scholar, Boarder | PASS |
 
+### Marks and Report Cards, plugin 0.5.0 (2026-10-14)
+
+#### Integration test: `tests/integration/reports.php` (56/56 PASS)
+Run against the staged copy before going live. Term dates, five synthetic learners (four
+in Form 3 Sciences, one in Commercials), a Physics assignment for the Form 1 A teacher,
+marks, attendance, comments, publication and a parent login, all rolled back (checked:
+nothing left; the owner's real Term 3 dates unchanged). The two new tables were created
+first, outside the transaction.
+
+| Area | Checks | Result |
+|---|---|---|
+| Grade keys | ZJC 75→1, 74→2, 74.5→1 … 39→9; O Level 70 A, 69.5 A, 69.4 B … 39 U; no mark → no grade | PASS |
+| Rules | 50 and 49.5 pass, 49.4 fails; 5 passes Pass, 4 Fail; marks 0–100 with one decimal only; positions 90, 80, 80, 70 → 1, 2, 2, 4 | PASS |
+| Rights | Administrators: every subject and class; class teacher: every Form 1 A subject; subject teacher: Physics in both Form 3 streams only after assignment; bursar and parent: none | PASS |
+| Saving | Bad mark refuses the whole save; another stream's learner refused; unassigned subject refused; unchanged marks not re-saved | PASS |
+| Results (worked by hand) | A 6 passed, Pass, 1st; B 5 passed (49.5 counts), Pass; D ties B for 2nd; C 3 passed, Fail, 4th | PASS |
+| Card | Form 3 Sciences, Term 1, 2026; English term 68 B, exam 80 A, project 72.5, remark, initials; Physics initialled "WH"; attendance 2 of 3; next term 5 May 2026; fee USD 250; learner with no subject list gets all 13 | PASS |
+| Comments | Form 1 A teacher refused on Form 3; administrator saves form teacher, conduct and principal comments | PASS |
+| Publication | Teacher cannot publish; administrator publishes 4 cards; teacher then locked out of the mark, administrator can still correct; withdraw works | PASS |
+| Family | Parent owns only their child | PASS |
+| Print | Book fields, ministry heading, 15 learning-area rows, "Without Alteration/Erasure", grade-key page | PASS |
+| Screens | Teacher asking for Chemistry gets Physics; published marks read-only; administrator sees class list, publish button and comments form; no PHP notices | PASS |
+
+#### After going live
+| Check | Result |
+|---|---|
+| Plugin 0.5.0 loaded; all 14 plugin files match the repo (SHA-256); tables `bsa_marks`, `bsa_reports` exist | PASS |
+| Marks and Report Cards: owner and school administrator all 6 classes; Form 1 A teacher Form 1 A only; bursar and sample parent none | PASS |
+| Home 200; My Account (`/account/`) 200 with the sign-in form; login 200 | PASS |
+| A report-card link opened while signed out goes to sign-in (302) | PASS |
+| Register test re-run against 0.5.0 | PASS (53/53) |
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
@@ -244,3 +276,7 @@ created first, outside the transaction (it is the plugin's real table).
 - Weblizar's payment form in a browser (the hidden payment methods are removed by a
   small script; the server refuses them regardless).
 - Parent bank-transfer submissions (off until the bank details arrive).
+- Printing a report card from a real browser (the HTML is checked; page breaks and the
+  A4 fit need a look on paper).
+- A parent opening a published card in a browser (ownership and publication checks are
+  covered by the test; no real parent account is in use yet).

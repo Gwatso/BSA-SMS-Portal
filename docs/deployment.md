@@ -23,6 +23,7 @@ PHP linted, and only then copied into the theme. The table records the file chec
 | 2026-10-10 | bsa-school-management | 0.2.0 | `2a3a506ff4e5869ff3538ef371da43944d341dbd8a10ccfe89c759c95b7fbb55` | boot check; migration; private store 403; 60/60 + 20/20 integration checks |
 | 2026-10-13 | bsa-school-management | 0.3.0 | `f99e5bc64a8c71b61ab58a6a68f782669f41deb0c0fd1ca05e211c8180c9f106` (files: class-bsa-finance.php `100831c9…`, main `1d1d82eb…`, readme `35a2b1ca…`, all matched) | staged copy tested 49/49 before going live; pages 200; hooks registered |
 | 2026-10-14 | bsa-school-management | 0.4.0 | `52a74e295d5ae23c5dd54b44fa957609119f5bce25679b593f3c6be726af16b1` (files matched: school `8d8e4f21…`, terms `77311146…`, register `cef291ed…`, main `ecd2bc27…`, readme `d0fbc81a…`) | staged copy 53/53; snapshot `2026-10-14-pre-register`; pages 200; menus per role checked |
+| 2026-10-14 | bsa-school-management | 0.5.0 | `42fd18d7edf0de0e19da9bb0c8c52a57c8480ccea4698a100d492445dedc4988` (files matched: grades `e4715ec1…`, marks `449bd88f…`, reports `aa525239…`, main `a211aa7c…`, readme `6653ab97…`; all 14 files checked) | staged copy 56/56 (+ register 53/53); snapshot `2026-10-14-pre-marks`; tables created; pages 200; menus per role checked |
 
 ### Child theme deployment (bsa-portal)
 

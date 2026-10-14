@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-10-14: Marks and Report Cards (plugin 0.5.0, production)
+
+- **Grading rules** (`BSA_Grades`) from the BSA report book: ZJC key 1–9 for Forms 1–2,
+  O Level key A–U for Forms 3–4; marks rounded half up; subject pass 50 % and above;
+  result **Pass** with 5 or more subjects passed; position by average exam mark, ties
+  share a place (1, 2, 2, 4).
+- **Marks** screen: term mark, exam mark, project mark (0–100, one decimal) and remark per
+  learner, subject and term. Administrators enter every subject; the class teacher
+  every subject of their own class; a subject teacher only the subjects assigned to them
+  in Weblizar (Staff → Edit → Subjects), in every stream of that form. One bad mark
+  refuses the whole save and the typed values are kept on screen. Published marks are
+  locked for teachers.
+- **Report Cards** screen (administrators: all classes; class teacher: own class): class
+  results (subjects recorded and passed, average, position, Pass/Fail), form teacher's
+  comment, conduct, principal's comment (administrators only), **publish / withdraw**
+  per class (administrators), and printing in the report-book layout (A4, 15 learning
+  areas, subject teacher's initials, attendance from the Class Register, "Next term
+  begins on" from School Terms, next term's fee, grade-key page).
+- **Parents and learners** see their own published cards on the My Account page and can
+  print them; unpublished or other learners' cards are refused.
+- New tables `bsa_marks` and `bsa_reports`. Snapshot `2026-10-14-pre-marks` first.
+- `tests/integration/reports.php` (56/56). The register test now leaves the owner's real
+  term dates and register checks alone in its rollback check (53/53 again).
+
 ## 2026-10-14: School Terms and Class Register (plugin 0.4.0, production)
 
 - **School Terms** screen (owner and school administrator): start and end dates of
