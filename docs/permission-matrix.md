@@ -81,10 +81,17 @@ those staff members individually (School Management → Staff → Edit).
 | Attendance | Own | Each linked child |
 | Homework, study materials | Own class | — |
 | Noticeboard, events, class timetable | Yes | Noticeboard, timetable |
-| Exam results | Own, once published | Each linked child, once published |
-| Report cards (BSA), view and print | Own, once published | Each linked child, once published |
+| Weblizar exam timetable, admit card, exam results, certificates | Switched off (BSA uses its own report cards) | Exam results switched off |
+| Report cards (BSA), view and print | Own, once published (menu: Report Cards) | Each linked child, once published (child's links: Report Cards) |
+| Fee structure | Own (Weblizar) | Each linked child (BSA page) |
+| Account settings (email, password) | Yes | Yes |
+| Pay online (Pay Now) | Hidden while no payment method is enabled | Same |
 | Leave request | Own | — |
 | Admission documents | **No** | **No** |
 | Any other learner's data | **No** (BSA access guard) | **No** (BSA access guard) |
 
-Switched off for everyone: Live Classes, Books Issued (modules not used).
+Switched off for everyone: Live Classes, Books Issued, Exam Time Table, Admit Card, Exam
+Results, Certificates (modules not used). Guide for families: the Help page (`/help/`).
+
+A parent who changes the `student_id` in a link to another family's learner gets nothing:
+Weblizar stops the page, and the BSA pages check ownership themselves.

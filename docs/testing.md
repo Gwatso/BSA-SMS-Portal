@@ -269,6 +269,42 @@ first, outside the transaction.
 | A report-card link opened while signed out goes to sign-in (302) | PASS |
 | Register test re-run against 0.5.0 | PASS (53/53) |
 
+### Learner and parent portal, plugin 0.6.0 (2026-10-14)
+
+#### Walk-through (before the changes)
+Every learner page (16) and parent page (9) was fetched over HTTP signed in as a
+synthetic learner (Form 3 Sciences, own login) and her parent (two children), with a
+part-paid invoice, attendance, a notice and a published report card. Rows were committed
+for the duration and deleted by ID afterwards (none left). Findings are in CHANGELOG
+(fee lock-out with a wrong "Paid" figure, pay buttons, missing parent Fee Structure,
+cut-off tables on phones, invisible notices, no settings link for parents).
+
+#### Integration test: `tests/integration/family.php` (28/28 PASS)
+Run against the staged copy, inside a rolled-back transaction, on cut-down copies of
+Weblizar's account markup.
+
+| Area | Checks | Result |
+|---|---|---|
+| Fee lock-out | Without BSA, Weblizar's query locks the dashboard and reports Paid 400 for a 100 payment; with BSA no lock-out invoices; Fee Invoices list unchanged; filter restores Weblizar's behaviour; other queries untouched | PASS |
+| Report cards | Only published cards; results 6 of 7, Pass, 2nd; empty message; link to the card | PASS |
+| Fee structure | Three terms and the year total | PASS |
+| Learner page | Name and Account settings in the greeting; Report Cards after Attendance; pay buttons and checkboxes removed; cells labelled despite `</td>` headers and commented cells; report page replaces the content, marks the menu item active, keeps the markup balanced, lists only her card | PASS |
+| Parent page | Report Cards per child; report and fee pages for own children; another family's child (by URL) gets nothing; another parent cannot open the child's page | PASS |
+| Others | Staff output and other shortcodes unchanged; rollback; no PHP notices | PASS |
+
+#### End to end: `tests/integration/family-http.php` (14/14 PASS)
+After deployment, over HTTP with a synthetic family (rows deleted afterwards, checked):
+all 31 pages 200; learner dashboard keeps its menu with a part-paid invoice; menu has
+Report Cards and no exam items; name and settings link; balance 150 after a 100
+payment, labelled cells, no Pay Now; report cards for learner and parent; none for the
+sibling; sibling's Form 1 fee structure; nothing for another family's learner; Help page
+in the menu; cleanup complete.
+
+#### Visual check
+Captured pages rendered at 1366 px and 390 px with the live theme CSS: Report Cards,
+Fee Structure, Fee Invoices, Payment History and Attendance as cards on phones; learner
+dashboard with notices visible; Help page.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
@@ -278,5 +314,5 @@ first, outside the transaction.
 - Parent bank-transfer submissions (off until the bank details arrive).
 - Printing a report card from a real browser (the HTML is checked; page breaks and the
   A4 fit need a look on paper).
-- A parent opening a published card in a browser (ownership and publication checks are
-  covered by the test; no real parent account is in use yet).
+- A real parent or learner signing in from their own phone (the pages are verified over
+  HTTP and rendered in a headless browser; no real family account is in use yet).

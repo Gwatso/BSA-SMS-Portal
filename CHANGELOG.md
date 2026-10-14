@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-10-14: Learner and parent portal (plugin 0.6.0, theme 0.2.4–0.2.5, production)
+
+Walk-through of every learner and parent page with a synthetic family found these
+problems in Weblizar's account area, now fixed without editing vendor files:
+
+- **Learners with any unpaid or part-paid invoice lost their dashboard menu.** Weblizar
+  replaced the dashboard with a "pending fee invoices" screen whenever an invoice matched
+  a fee type marked "Dashboard Disable?" (all BSA term fees are, so that admission creates
+  one invoice per term). That screen also counted each payment once per form (a USD 100
+  payment showed as USD 400 paid, balance −150). The lock-out is now off on the front
+  end; invoices stay on the Fee Invoices page with the correct balance.
+- **"Pay Now" / "Pay Selected" opened an empty payment box** (no online or bank-transfer
+  method is enabled). They are hidden until one is.
+- **Parents' "Fee Structure" link showed the dashboard again** (Weblizar has no parent page
+  for it). BSA now shows the child's term fees and how to pay.
+- **Tables were cut off on phones** (on Fee Invoices the Paid, Due and Status columns were
+  out of sight). Each row is now a card on phones.
+- **Dashboard notices were invisible** (since theme 0.2.x: Weblizar's ticker ran outside
+  the shortened box). They are now a still list.
+- **Parents had no link to their account settings** (change email or password). An
+  "Account settings" link now sits next to Logout for parents and learners, and the
+  greeting shows the user's name instead of the capitalised login.
+
+New:
+
+- **Report Cards** in the learner menu and in each child's links on the parent dashboard:
+  published cards with term, class, subjects passed, result and position, and a link to
+  open and print the card. Replaces the list that was appended below every account page.
+- **Help** page (`/help/`, in the header menu): the guide for parents and learners
+  (signing in, setting a password, what each page shows, fees and paying, report cards,
+  contacts). Printable from the browser.
+- Weblizar items BSA does not use switched off for learners and parents: Exam Time
+  Table, Admit Card, Exam Results, Certificates (`scripts/09-family-portal.php`).
+- Snapshot `2026-10-14-pre-family` first. Tests: `tests/integration/family.php` (28/28)
+  and `tests/integration/family-http.php` (14/14, end to end over HTTP).
+
 ## 2026-10-14: Theme cover image (bsa-portal 0.2.3, production)
 
 - The BSA Portal theme now has a cover in Appearance → Themes (`screenshot.png`,

@@ -4,7 +4,7 @@ By owner decision (2026-10-10) changes go directly to production. Each deploymen
 
 1. **Snapshot**: manual backup to `/home/thwxghpf/bsa-backups/<date>-<label>/` (see `backup-and-recovery.md`).
 2. **Build**: `bin/build.sh` lints every PHP file and writes `dist/bsa-school-management-<version>.zip`.
-3. **Transfer**: this cloud session cannot reach the portal over HTTP, so the zip is sent base64-encoded through Novamira `execute-php` to `/home/thwxghpf/bsa-deploy/` (outside the web root). Its SHA-256 is compared with the local build before going further.
+3. **Transfer**: this cloud session cannot reach the portal over HTTP, so files are either sent base64-encoded through Novamira `execute-php`, or (since 2026-10-14, the repository being public) pushed first and downloaded by the server from `raw.githubusercontent.com` at the exact commit. Either way they land in `/home/thwxghpf/bsa-deploy/` (outside the web root) and their SHA-256 is compared with the local copy before going further.
 4. **Install**: first install with `wp plugin install /home/thwxghpf/bsa-deploy/<zip>` (inactive). Updates are unpacked into a stage folder next to the zip, linted, then copied over the live plugin folder (`cp -a`).
 5. **Lint on server**: `php -l` on every file with the server's PHP 8.1 before anything goes live.
 6. **Activate** (first install only): `wp plugin activate bsa-school-management`. WP-CLI loads the plugin first, so a fatal error aborts activation instead of breaking the site.
@@ -24,6 +24,7 @@ PHP linted, and only then copied into the theme. The table records the file chec
 | 2026-10-13 | bsa-school-management | 0.3.0 | `f99e5bc64a8c71b61ab58a6a68f782669f41deb0c0fd1ca05e211c8180c9f106` (files: class-bsa-finance.php `100831c9…`, main `1d1d82eb…`, readme `35a2b1ca…`, all matched) | staged copy tested 49/49 before going live; pages 200; hooks registered |
 | 2026-10-14 | bsa-school-management | 0.4.0 | `52a74e295d5ae23c5dd54b44fa957609119f5bce25679b593f3c6be726af16b1` (files matched: school `8d8e4f21…`, terms `77311146…`, register `cef291ed…`, main `ecd2bc27…`, readme `d0fbc81a…`) | staged copy 53/53; snapshot `2026-10-14-pre-register`; pages 200; menus per role checked |
 | 2026-10-14 | bsa-school-management | 0.5.0 | `42fd18d7edf0de0e19da9bb0c8c52a57c8480ccea4698a100d492445dedc4988` (files matched: grades `e4715ec1…`, marks `449bd88f…`, reports `aa525239…`, main `a211aa7c…`, readme `6653ab97…`; all 14 files checked) | staged copy 56/56 (+ register 53/53); snapshot `2026-10-14-pre-marks`; tables created; pages 200; menus per role checked |
+| 2026-10-14 | bsa-school-management | 0.6.0 | `2fb4129c16cdac739f1dcb7f8e1f2c12e7eac9f659da7fa0e15f318a7e7fed31` (files downloaded by the server from the pushed commit, SHA-256 matched: family `a1118323…`, reports `cb9ae1a3…`, main `cd7f174b…`, readme `fba2112e…`) | staged copy 28/28; snapshot `2026-10-14-pre-family`; script 09 run; end to end 14/14 |
 
 ### Child theme deployment (bsa-portal)
 
@@ -42,6 +43,8 @@ revalidates every 2 s, so wait a few seconds before verifying.
 | 2026-10-10 | bsa-portal | 0.2.1 | files: functions.php, style.css, account.css, home.css (SHA-256 matched repo) | sign-in card and phone overflow fixes; rendered |
 | 2026-10-10 | bsa-portal | 0.2.2 | files: functions.php `d0a9970b…`, style.css `5546f3bb…`, account.css `7520062f…` (matched repo) | signed-in dashboards; rendered at 1366 px and 390 px; design pre-flight ok |
 | 2026-10-14 | bsa-portal | 0.2.3 | files: screenshot.png `d911d7af…`, style.css `16c6a987…` (downloaded by the server from the pushed commit on GitHub, SHA-256 matched) | WordPress reports the cover (1200 × 900, served 200 image/png); home 200 |
+| 2026-10-14 | bsa-portal | 0.2.4 | files: account.css `1a35c4d4…`, functions.php `faef6ca0…`, style.css `33042f73…` (downloaded from the pushed commit, matched) | phone cards, BSA pages; home, account, help 200 |
+| 2026-10-14 | bsa-portal | 0.2.5 | files: account.css `211600f3…`, functions.php `cec0d956…`, style.css `374db36e…` (matched) | dashboard notices visible again; duplicate settings link hidden; home, account, help 200 |
 
 ## Third-party plugins installed (2026-10-10, from wordpress.org)
 

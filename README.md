@@ -24,6 +24,7 @@ portal `portal.bindurascienceacademy.co.zw` (Weblizar School Management + Blocks
 | 6. Finance | **Core done** (plugin 0.3.0): cash/bank rules, part-payments, unique invoice numbers, audit trail, Fee Reports. Waiting: bank details, term dates |
 | 5. Attendance | **Done** (plugin 0.4.0): School Terms, Class Register mirroring the paper register. Waiting: term dates |
 | 4. Academics & report cards | **Done** (plugin 0.5.0): Marks entry, grading rules, Report Cards (results, positions, comments, publish, print, parent view) ([spec](docs/academics-spec.md)). Waiting: subject-teacher assignments, remaining term dates |
-| 7. Extra lessons | Deferred by owner |
+| 8. Parent and learner portal | **Done** (plugin 0.6.0, theme 0.2.5): Report Cards for learners and parents, parent Fee Structure, account settings link, phone-friendly tables, notices fixed, fee lock-out off, unused Weblizar items hidden, Help page for families |
+| 7. Extra lessons | On hold until the owner confirms |
 
 By owner decision, work happens directly on production. Every change is committed here.

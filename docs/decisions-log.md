@@ -56,6 +56,10 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-14 | Who enters marks: class teacher for all subjects of their class; subject teacher for subjects assigned in Weblizar, in every stream of that form; administrators everywhere. Marks locked for teachers once published. | Claude (defaults) | Change on request. |
 | 2026-10-14 | Report cards are **published per class by an administrator** (owner or school administrator) and only then visible to parents and learners. | Claude (Q7 default) | Q7 still open. |
 | 2026-10-14 | The report card has no coat-of-arms image (none supplied); the school crest is used. The ministry heading is text. | Claude | Add the image when the owner supplies it. |
+| 2026-10-14 | Learners are **not locked out of their dashboard** while fees are unpaid. Weblizar's "Dashboard Disable?" lock-out is off on the front end (it would lock out every learner whose parents pay monthly, and it miscounted payments); the fee types keep the flag so admission still creates one invoice per term. | Claude (default; follows the owner's part-payment decision) | Filter `bsa_sm_fee_lockout` restores it if the school wants a lock-out. |
+| 2026-10-14 | Weblizar's exam timetable, admit card, exam results and certificates are hidden from learners and parents; results come from BSA report cards. | Claude | `scripts/09-family-portal.php`; re-enable in School Management → Settings → Dashboard. |
+| 2026-10-14 | "Pay Now" is hidden while no online or bank-transfer method is enabled; it reappears automatically when the bank-transfer option is switched on with the bank details. | Claude | |
+| 2026-10-14 | A **Help** page (`/help/`) is the parent and learner guide, linked in the header menu; it says to ask the office for bank details until they are published. | Claude (Phase 8) | Update the page when bank details arrive. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
@@ -97,5 +101,6 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | Send the bank details (bank, account name, account number, branch) to show on invoices | — |
 | Enter the remaining term dates: 2026 Terms 1–2 (if past cards or registers are wanted) and 2027 Terms 1–3. 2026 Term 3 was entered on 2026-10-14. Term 3 report cards need the 2027 Term 1 date for "Next term begins on" | wp-admin → School Terms |
 | Assign subject teachers to their subjects so they can enter marks | School Management → Staff → Edit → Subjects |
+| Before handing out family accounts: make sure each parent and learner login has a working email address (needed for "Lost your password?"), and point families to the Help page | School Management → Students |
 | Decide whether new admissions should still create all three term invoices at once (Weblizar does this for fee types marked "active on admission") | School Management → Fees |
 | Replace BSA001's sample parents with the real parents and set the parent login's password | School Management → Students; Users → Edit |
