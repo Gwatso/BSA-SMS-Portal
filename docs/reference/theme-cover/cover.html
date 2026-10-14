@@ -1,0 +1,62 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:"Playfair Display";src:url(playfair-display-latin.woff2) format("woff2");font-weight:400 900}
+@font-face{font-family:"Plus Jakarta Sans";src:url(plus-jakarta-sans-latin.woff2) format("woff2");font-weight:200 800}
+:root{--navy:#1B3674;--navy-deep:#122552;--gold:#CEA378;--red:#A71B32;--light:#376DBE;--ink:#1d2433;--muted:#5b6478}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1200px;height:900px;overflow:hidden;background:#fff;font-family:"Plus Jakarta Sans",sans-serif}
+.top{position:relative;height:640px;overflow:hidden;
+  background:radial-gradient(circle at 82% 18%,rgba(55,109,190,.55),transparent 46%),
+             radial-gradient(circle at 10% 95%,rgba(167,27,50,.28),transparent 40%),
+             linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%)}
+.top:before{content:"";position:absolute;inset:0;opacity:.07;
+  background-image:linear-gradient(rgba(255,255,255,.9) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.9) 1px,transparent 1px);
+  background-size:40px 40px}
+.brand{position:absolute;left:56px;top:44px;display:flex;align-items:center;gap:14px;color:#fff}
+.brand img{height:52px}
+.brand b{font-family:"Playfair Display",serif;font-size:22px;font-weight:700;letter-spacing:.2px}
+.brand span{display:block;font-size:12px;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);margin-top:2px;font-weight:600}
+.copy{position:absolute;left:56px;top:178px;width:420px;color:#fff}
+.copy h1{font-family:"Playfair Display",serif;font-weight:800;font-size:46px;line-height:1.12}
+.rule{width:64px;height:4px;background:var(--gold);border-radius:2px;margin:26px 0 22px}
+.copy p{font-size:17px;line-height:1.6;color:#d9e2f5}
+.btn{display:inline-block;margin-top:30px;background:var(--gold);color:var(--navy-deep);font-weight:700;font-size:15px;padding:12px 24px;border-radius:6px}
+.browser{position:absolute;left:520px;top:96px;width:740px;border-radius:12px;overflow:hidden;background:#fff;
+  box-shadow:0 30px 70px rgba(5,14,40,.55),0 0 0 1px rgba(255,255,255,.12)}
+.bar{height:34px;background:#eef1f7;display:flex;align-items:center;gap:7px;padding:0 14px}
+.bar i{width:11px;height:11px;border-radius:50%;background:#d3d8e3}
+.bar i:nth-child(1){background:#e66a5e}.bar i:nth-child(2){background:#e9b949}.bar i:nth-child(3){background:#5cb85c}
+.bar u{margin-left:18px;flex:0 0 330px;height:20px;border-radius:10px;background:#fff;text-decoration:none;font-size:11px;color:#7a8396;display:flex;align-items:center;padding-left:12px}
+.browser img{display:block;width:740px}
+.phone{position:absolute;left:930px;top:300px;width:214px;padding:9px;border-radius:30px;background:#0b1630;
+  box-shadow:0 26px 60px rgba(5,14,40,.6),0 0 0 1px rgba(255,255,255,.15)}
+.phone .scr{border-radius:22px;overflow:hidden;height:440px;background:#f6f7fb}
+.phone img{display:block;width:196px}
+.bottom{height:260px;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:0 40px;border-top:4px solid var(--gold)}
+.f{text-align:center;padding:0 10px}
+.ic{width:62px;height:62px;border-radius:14px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;background:var(--navy)}
+.f:nth-child(2) .ic{background:var(--red)}.f:nth-child(4) .ic{background:var(--red)}
+.ic svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.f b{display:block;font-size:19px;color:var(--ink);font-weight:700}
+.f span{display:block;margin-top:6px;font-size:14px;color:var(--muted)}
+</style></head>
+<body>
+<section class="top">
+  <div class="brand"><img src="crest.png" alt=""><div><b>Bindura Science Academy</b><span>Passion for Excellence</span></div></div>
+  <div class="copy">
+    <h1>BSA School Portal</h1>
+    <div class="rule"></div>
+    <p>Blocksy child theme for the school management system: learners, parents and staff in one place.</p>
+    <span class="btn">Sign in</span>
+  </div>
+  <div class="browser"><div class="bar"><i></i><i></i><i></i><u>portal.bindurascienceacademy.co.zw</u></div><img src="home-desktop.png" alt=""></div>
+  <div class="phone"><div class="scr"><img src="account-mobile.png" alt=""></div></div>
+</section>
+<section class="bottom">
+  <div class="f"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><b>Fees &amp; Payments</b><span>Invoices and balances</span></div>
+  <div class="f"><div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M8 12l2.5 2.5L16 9"/></svg></div><b>Class Register</b><span>Daily attendance</span></div>
+  <div class="f"><div class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg></div><b>Report Cards</b><span>Marks and results</span></div>
+  <div class="f"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.3c2.5.2 4.3 1.9 5 4.7"/></svg></div><b>Learners &amp; Parents</b><span>Own accounts</span></div>
+</section>
+</body></html>

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-14: Theme cover image (bsa-portal 0.2.3, production)
+
+- The BSA Portal theme now has a cover in Appearance → Themes (`screenshot.png`,
+  1200 × 900): school crest and name, the live home page in a browser frame, the sign-in
+  page on a phone, and the portal's four areas (fees, register, report cards, learner
+  and parent accounts) in brand colours. Source and steps in
+  `docs/reference/theme-cover/`.
+
 ## 2026-10-14: Marks and Report Cards (plugin 0.5.0, production)
 
 - **Grading rules** (`BSA_Grades`) from the BSA report book: ZJC key 1–9 for Forms 1–2,

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Builds dist/bsa-portal-code-<version>.zip: the child theme's text files (PHP, CSS, notes).
+# Builds dist/bsa-portal-code-<version>.zip: the child theme's text files (PHP, CSS, notes)
+# and its cover image (screenshot.png).
 # Font binaries are not in the zip; the server downloads them from the URLs in
 # bsa-portal/assets/fonts/SOURCES.txt and must match the listed SHA-256 values.
 set -euo pipefail
