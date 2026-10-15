@@ -1031,7 +1031,7 @@ class BSA_Intranet {
 
 		// For you today.
 		$tasks = self::tasks( $uid );
-		$out  .= '<section class="bsi-card"><h2>' . esc_html__( 'For you today', 'bsa-school-management' ) . '</h2>';
+		$out  .= '<section class="bsi-card bsi-o1"><h2>' . esc_html__( 'For you today', 'bsa-school-management' ) . '</h2>';
 		if ( ! $tasks ) {
 			$out .= '<p class="bsi-ok"><span aria-hidden="true">✓</span> ' . esc_html__( 'Nothing needs your attention.', 'bsa-school-management' ) . '</p>';
 		} else {
@@ -1047,19 +1047,19 @@ class BSA_Intranet {
 		// Notices.
 		$notices = array_slice( self::notices(), 0, 4 );
 		if ( $notices ) {
-			$out .= '<section class="bsi-card"><div class="bsi-card-head"><h2>' . esc_html__( 'Notices', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'notices' ) ) . '">' . esc_html__( 'All notices', 'bsa-school-management' ) . ' →</a></div>' . self::notice_list( $notices, $uid ) . '</section>';
+			$out .= '<section class="bsi-card bsi-o3"><div class="bsi-card-head"><h2>' . esc_html__( 'Notices', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'notices' ) ) . '">' . esc_html__( 'All notices', 'bsa-school-management' ) . ' →</a></div>' . self::notice_list( $notices, $uid ) . '</section>';
 		}
 
 		// News and announcements.
 		$news = self::posts( array( 'bsa_news', 'bsa_announcement' ), array( 'posts_per_page' => 4 ) );
-		$out .= '<section class="bsi-card"><div class="bsi-card-head"><h2>' . esc_html__( 'Latest news and announcements', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'news' ) ) . '">' . esc_html__( 'All news', 'bsa-school-management' ) . ' →</a></div>';
+		$out .= '<section class="bsi-card bsi-o5"><div class="bsi-card-head"><h2>' . esc_html__( 'Latest news and announcements', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'news' ) ) . '">' . esc_html__( 'All news', 'bsa-school-management' ) . ' →</a></div>';
 		$out .= $news ? self::cards( $news ) : '<p class="bsi-muted">' . esc_html__( 'Nothing posted yet.', 'bsa-school-management' ) . '</p>';
 		$out .= '</section>';
 
 		// Achievements.
 		$ach = self::posts( array( 'bsa_achievement' ), array( 'posts_per_page' => 3 ) );
 		if ( $ach ) {
-			$out .= '<section class="bsi-card"><div class="bsi-card-head"><h2>' . esc_html__( 'Achievements', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'achievements' ) ) . '">' . esc_html__( 'All achievements', 'bsa-school-management' ) . ' →</a></div>' . self::cards( $ach ) . '</section>';
+			$out .= '<section class="bsi-card bsi-o6"><div class="bsi-card-head"><h2>' . esc_html__( 'Achievements', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'achievements' ) ) . '">' . esc_html__( 'All achievements', 'bsa-school-management' ) . ' →</a></div>' . self::cards( $ach ) . '</section>';
 		}
 		$out .= '</div><aside class="bsi-side">';
 
@@ -1069,11 +1069,11 @@ class BSA_Intranet {
 		// Upcoming.
 		$today  = current_time( 'Y-m-d' );
 		$events = array_slice( self::events( $today, gmdate( 'Y-m-d', strtotime( $today . ' +30 days' ) ) ), 0, 6 );
-		$out   .= '<section class="bsi-card"><div class="bsi-card-head"><h2>' . esc_html__( 'Coming up', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'calendar' ) ) . '">' . esc_html__( 'Calendar', 'bsa-school-management' ) . ' →</a></div>' . ( $events ? self::event_list( $events ) : '<p class="bsi-muted">' . esc_html__( 'Nothing in the next 30 days.', 'bsa-school-management' ) . '</p>' ) . '</section>';
+		$out   .= '<section class="bsi-card bsi-o4"><div class="bsi-card-head"><h2>' . esc_html__( 'Coming up', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'calendar' ) ) . '">' . esc_html__( 'Calendar', 'bsa-school-management' ) . ' →</a></div>' . ( $events ? self::event_list( $events ) : '<p class="bsi-muted">' . esc_html__( 'Nothing in the next 30 days.', 'bsa-school-management' ) . '</p>' ) . '</section>';
 
 		// Resources.
 		$res  = self::posts( array( 'bsa_resource' ), array( 'posts_per_page' => 5, 'orderby' => 'modified' ) );
-		$out .= '<section class="bsi-card"><div class="bsi-card-head"><h2>' . esc_html__( 'Recently updated resources', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'resources' ) ) . '">' . esc_html__( 'Library', 'bsa-school-management' ) . ' →</a></div>' . ( $res ? self::resource_list( $res, true ) : '<p class="bsi-muted">' . esc_html__( 'No documents linked yet.', 'bsa-school-management' ) . '</p>' ) . '</section>';
+		$out .= '<section class="bsi-card bsi-o7"><div class="bsi-card-head"><h2>' . esc_html__( 'Recently updated resources', 'bsa-school-management' ) . '</h2><a href="' . esc_url( self::url( 'resources' ) ) . '">' . esc_html__( 'Library', 'bsa-school-management' ) . ' →</a></div>' . ( $res ? self::resource_list( $res, true ) : '<p class="bsi-muted">' . esc_html__( 'No documents linked yet.', 'bsa-school-management' ) . '</p>' ) . '</section>';
 		return $out . '</aside></div>';
 	}
 
@@ -1086,7 +1086,7 @@ class BSA_Intranet {
 	 */
 	public static function render_attendance( array $a, $share ) {
 		$title = $a['today'] ? __( 'Attendance today', 'bsa-school-management' ) : sprintf( /* translators: %s: date. */ __( 'Attendance on %s', 'bsa-school-management' ), mysql2date( 'l j M', $a['date'] ) );
-		$out   = '<section class="bsi-card bsi-attendance"><h2>' . esc_html( $title ) . '</h2>';
+		$out   = '<section class="bsi-card bsi-attendance bsi-o2"><h2>' . esc_html( $title ) . '</h2>';
 		if ( ! $a['classes'] ) {
 			return $out . '<p class="bsi-muted">' . esc_html__( 'No register has been taken yet.', 'bsa-school-management' ) . '</p></section>';
 		}

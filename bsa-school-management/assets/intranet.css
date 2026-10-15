@@ -165,7 +165,11 @@ html:not(.bsi-js) .bsi-hero-controls { display: none; }
 .bsi-receipts li { padding: 4px 0; }
 
 @media (max-width: 1000px) {
-	.bsi-grid { grid-template-columns: minmax(0, 1fr); }
+	/* One column: today's work and attendance first, then notices, events, news. */
+	.bsi-grid { display: flex; flex-direction: column; gap: 20px; }
+	.bsi-main, .bsi-side { display: contents; }
+	.bsi-o1 { order: 1; } .bsi-o2 { order: 2; } .bsi-o3 { order: 3; } .bsi-o4 { order: 4; }
+	.bsi-o5 { order: 5; } .bsi-o6 { order: 6; } .bsi-o7 { order: 7; }
 }
 @media (max-width: 782px) {
 	.bsi-bar { position: static; }
