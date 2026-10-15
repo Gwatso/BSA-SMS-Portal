@@ -440,8 +440,8 @@ class BSA_Staff_Area {
 .wp-core-ui .button-primary{background:#1B3674;border-color:#1B3674;color:#fff}
 .wp-core-ui .button-primary:hover,.wp-core-ui .button-primary:focus{background:#132653;border-color:#132653;color:#fff}
 .wp-core-ui .button-primary:focus{box-shadow:0 0 0 1px #fff,0 0 0 3px #376DBE}
-.wp-core-ui .button,.wp-core-ui .button-secondary{color:#1B3674;border-color:#1B3674}
-.wp-core-ui .button:hover,.wp-core-ui .button-secondary:hover{color:#132653;border-color:#132653;background:#F1F5FB}
+.wp-core-ui .button:not(.button-primary),.wp-core-ui .button-secondary{color:#1B3674;border-color:#1B3674}
+.wp-core-ui .button:not(.button-primary):hover,.wp-core-ui .button-secondary:hover{color:#132653;border-color:#132653;background:#F1F5FB}
 .wp-core-ui .button-primary:disabled,.wp-core-ui .button-primary.disabled{background:#8FA6CF!important;border-color:#8FA6CF!important;color:#fff!important}
 a{color:#1B3674}a:hover,a:active{color:#132653}
 #collapse-button:hover,#collapse-button:focus{color:#fff}
