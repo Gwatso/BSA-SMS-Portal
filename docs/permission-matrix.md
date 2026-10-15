@@ -14,6 +14,13 @@ Who can do what on the portal. Source of truth: Weblizar roles (`wlsm_roles`), s
 | Learner | School office, at admission (login details on the student record) | My Account page | standard user, no staff rights |
 | Parent | School office, at admission (parent login on the student record) | My Account page | standard user, no staff rights |
 
+**One login per person.** A parent never uses the child's login: the parent gets their
+own login (their own email), and brothers and sisters are linked to that same parent
+login ("Existing User" on the admission form). A learner login is optional; when given,
+it uses a school address (e.g. `bsa002@bindurascienceacademy.co.zw`), which keeps the
+parent's email free. The **Family Accounts** screen lists learners where this is not the
+case.
+
 Learners and parents are sent to **My Account** after signing in, do not see the
 WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 
@@ -41,6 +48,7 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Class Register (weekly register, pupil details, summary) | All classes | Own class only | — |
 | Record the weekly register check | Yes (head / deputy / T.I.C.) | — | — |
 | Admissions and learner records | Manage | — | — |
+| Family Accounts check (logins of learners and parents) | Yes (also staff with Manage Admissions or Manage Students) | — | — |
 | Admission documents (birth certificate, Grade 7 results) | View, edit, download | — | — |
 | Staff, roles, settings | Manage | — | — |
 

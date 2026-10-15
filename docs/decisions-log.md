@@ -60,6 +60,8 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-14 | Weblizar's exam timetable, admit card, exam results and certificates are hidden from learners and parents; results come from BSA report cards. | Claude | `scripts/09-family-portal.php`; re-enable in School Management → Settings → Dashboard. |
 | 2026-10-14 | "Pay Now" is hidden while no online or bank-transfer method is enabled; it reappears automatically when the bank-transfer option is switched on with the bank details. | Claude | |
 | 2026-10-14 | A **Help** page (`/help/`) is the parent and learner guide, linked in the header menu; it says to ask the office for bank details until they are published. | Claude (Phase 8) | Update the page when bank details arrive. |
+| 2026-10-15 | **Parents and learners do not share logins.** Each parent has their own login (own email), shared by all their children; learner logins are optional and use a school email address. | Owner asked; Claude recommended | Family Accounts screen (plugin 0.7.0) checks it. |
+| 2026-10-15 | Caution: in Weblizar, deleting a **class section or a school year (session)** deletes every learner record in it (database cascade). Deleting a WordPress user only unlinks it from the learner. | Claude (verified in the database) | Never delete a session or section that has learners; snapshot first. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 

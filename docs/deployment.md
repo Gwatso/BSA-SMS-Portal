@@ -25,6 +25,7 @@ PHP linted, and only then copied into the theme. The table records the file chec
 | 2026-10-14 | bsa-school-management | 0.4.0 | `52a74e295d5ae23c5dd54b44fa957609119f5bce25679b593f3c6be726af16b1` (files matched: school `8d8e4f21…`, terms `77311146…`, register `cef291ed…`, main `ecd2bc27…`, readme `d0fbc81a…`) | staged copy 53/53; snapshot `2026-10-14-pre-register`; pages 200; menus per role checked |
 | 2026-10-14 | bsa-school-management | 0.5.0 | `42fd18d7edf0de0e19da9bb0c8c52a57c8480ccea4698a100d492445dedc4988` (files matched: grades `e4715ec1…`, marks `449bd88f…`, reports `aa525239…`, main `a211aa7c…`, readme `6653ab97…`; all 14 files checked) | staged copy 56/56 (+ register 53/53); snapshot `2026-10-14-pre-marks`; tables created; pages 200; menus per role checked |
 | 2026-10-14 | bsa-school-management | 0.6.0 | `2fb4129c16cdac739f1dcb7f8e1f2c12e7eac9f659da7fa0e15f318a7e7fed31` (files downloaded by the server from the pushed commit, SHA-256 matched: family `a1118323…`, reports `cb9ae1a3…`, main `cd7f174b…`, readme `fba2112e…`) | staged copy 28/28; snapshot `2026-10-14-pre-family`; script 09 run; end to end 14/14 |
+| 2026-10-15 | bsa-school-management | 0.7.0 | `2eaf353af20910cb6c40a27e3129b7952df5ef4d5677552339ee55913a74c35f` (files downloaded from the pushed commit, matched: accounts `f9fb295d…`, main `0d1324b2…`, readme `ba5fff53…`) | staged copy 19/19; snapshot `2026-10-15-pre-accounts`; rights per role; live check run |
 
 ### Child theme deployment (bsa-portal)
 

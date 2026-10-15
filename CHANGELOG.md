@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-10-15: Family Accounts check (plugin 0.7.0, production)
+
+- **Family Accounts** screen in wp-admin (owner, school administrator and any staff with
+  Manage Admissions or Manage Students). For each active learner in a school year it
+  flags logins that will not work as intended:
+  - no parent login (a deleted login shows here too: the database unlinks it);
+  - parent and learner on **one shared login**, or a child's login used as a parent
+    login (a parent signing in with a child's account);
+  - possible **siblings** (same parent phone number) linked to different parent logins;
+  - login emails that are missing, invalid or placeholders ("Lost your password?"
+    cannot reach them);
+  - a site administrator account used as a parent login (staff accounts are noted).
+  Summary counts, "Edit learner" links into School Management, and a short office
+  guide for setting up accounts at admission. Read-only.
+- First run on the live data: 1 learner (BSA001), 1 warning: the sample parent login's
+  placeholder email (already an owner action).
+- Snapshot `2026-10-15-pre-accounts` first. `tests/integration/accounts.php` (19/19).
+
 ## 2026-10-14: Learner and parent portal (plugin 0.6.0, theme 0.2.4–0.2.5, production)
 
 Walk-through of every learner and parent page with a synthetic family found these

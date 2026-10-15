@@ -305,6 +305,33 @@ Captured pages rendered at 1366 px and 390 px with the live theme CSS: Report Ca
 Fee Structure, Fee Invoices, Payment History and Attendance as cards on phones; learner
 dashboard with notices visible; Help page.
 
+### Family Accounts, plugin 0.7.0 (2026-10-15)
+
+#### Integration test: `tests/integration/accounts.php` (19/19 PASS)
+Run against the staged copy inside a rolled-back transaction: 11 synthetic learners and
+7 logins, one per situation.
+
+| Area | Checks | Result |
+|---|---|---|
+| Helpers | Missing, invalid and placeholder emails told from real ones; phone numbers in +263, 0 and bare forms match | PASS |
+| Problems | Two children on one parent login: none; same phone on different parent logins: siblings on both; placeholder parent email; shared login (error); a child's login used as a sibling's parent login (error on both); no parent login (warning); administrator as parent (error); teacher as parent (note only); invalid learner email; no learner login is not a problem | PASS |
+| Summary | 11 learners, 10 with a parent login, 7 families, 4 with own login, 4 to fix, 4 to check | PASS |
+| Rights and screen | Owner and school administrator yes; teacher and bursar no; problems listed with edit links and the guide; clean learners only with "show every learner"; bursar refused | PASS |
+| Rollback, notices | None left; no PHP notices | PASS |
+
+A first run stopped with a 403: the bursar's refusal used WordPress's JSON error handler
+(Novamira runs inside a REST request) and ended the request; the transaction was
+discarded (checked: nothing left) and the test now intercepts every `wp_die` handler.
+The test also showed that a learner cannot be linked to a deleted login (the database
+sets the link to NULL), so the screen has no separate "deleted login" check.
+
+#### After going live
+| Check | Result |
+|---|---|
+| Plugin 0.7.0 loaded; files match the repo; home 200 | PASS |
+| Screen: owner and school administrator only (teacher, bursar, parent, learner: no) | PASS |
+| Live data 2026: 1 learner, 1 warning (sample parent's placeholder email) | As expected |
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
