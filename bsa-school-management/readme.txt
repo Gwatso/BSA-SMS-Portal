@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.6.0
+Stable tag: 0.7.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -52,6 +52,12 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   cells labelled so the theme shows them as cards on phones. Weblizar's fee lock-out of
   the learner dashboard (fee types marked "Dashboard Disable?") is switched off on the
   front end; filter `bsa_sm_fee_lockout` restores it.
+* Family Accounts (administrators and staff with Manage Admissions or Manage Students):
+  learners whose logins will not work as intended — no parent login, parent and learner
+  on one login, a child's login used as a parent login, possible siblings (same parent
+  phone) on different parent logins, missing or placeholder login emails, administrator
+  or staff accounts used as parent logins — with links to fix them, and the office guide
+  for setting up accounts at admission. Read-only.
 
 Data: tables {prefix}bsa_admission_records, {prefix}bsa_register_checks,
 {prefix}bsa_marks and {prefix}bsa_reports, option
@@ -62,6 +68,9 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.7.0 =
+* Family Accounts check and office guide.
 
 = 0.6.0 =
 * Learner and parent pages: Report Cards, parent Fee Structure, account settings link,
