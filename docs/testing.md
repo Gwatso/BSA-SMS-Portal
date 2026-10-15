@@ -459,8 +459,8 @@ entries inside a rolled-back transaction.
 | Screens | Home for teacher (no share, no "WordPress") and school administrator (share, Post); notice page (button with nonce; receipts for the administrator); drafts hidden from staff; news filter; resources filter and badges; calendar; search; tasks | PASS |
 | Rollback, notices | Nothing left; term dates as before; no PHP notices | PASS |
 
-#### Over HTTP after going live: `tests/integration/intranet-http.php` (30/30 PASS)
-Visitor sent to sign-in and back; parent and learner sent to My Account; teacher,
+#### Over HTTP after going live: `tests/integration/intranet-http.php` (32/32 PASS)
+Visitor sent to sign-in and back to /intranet; addresses ending in "/" redirected (301) to the address without it, query kept; parent and learner sent to My Account; teacher,
 bursar, school administrator and owner get the intranet (theme, styles, script, no PHP
 errors, not cached, no "WordPress" for staff); every section opens; unknown item 404;
 the school administrator can add, list and edit posts and sees the overview and
