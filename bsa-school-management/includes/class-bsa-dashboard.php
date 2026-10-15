@@ -336,6 +336,28 @@ class BSA_Dashboard {
 	}
 
 	/**
+	 * Fees per class: collected against invoiced (bar and figures), outstanding, owing.
+	 *
+	 * @param array $fees From fees().
+	 */
+	public static function fees_table( array $fees ) {
+		$pct = static function ( $part, $whole ) {
+			return $whole > 0 ? (int) round( 100 * $part / $whole ) : 0;
+		};
+		if ( ! $fees['rows'] ) {
+			echo '<p>' . esc_html__( 'No learners in the current school year.', 'bsa-school-management' ) . '</p>';
+		} else {
+			echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Collected', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Outstanding', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Owing', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
+			foreach ( $fees['rows'] as $r ) {
+				/* translators: 1: collected, 2: invoiced, 3: percent. */
+				$text = $r['invoiced'] > 0 ? sprintf( __( '%1$s of %2$s (%3$d%%)', 'bsa-school-management' ), self::money( $r['paid'] ), number_format_i18n( $r['invoiced'], 2 ), $pct( $r['paid'], $r['invoiced'] ) ) : __( 'nothing invoiced', 'bsa-school-management' );
+				echo '<tr><th scope="row">' . esc_html( $r['label'] ) . '</th><td class="bsa-meter-cell">' . self::meter( $r['paid'], $r['invoiced'], $text ) . '</td><td class="num">' . esc_html( self::money( $r['balance'] ) ) . '</td><td class="num">' . esc_html( $r['owing'] . ' / ' . $r['learners'] ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- meter() escapes.
+			}
+			echo '</tbody></table></div>';
+		}
+	}
+
+	/**
 	 * The screen.
 	 */
 	public static function render_page() {
@@ -403,17 +425,7 @@ class BSA_Dashboard {
 		echo '<div class="bsa-grid">';
 		// Fees per class.
 		echo '<section class="bsa-card"><h2>' . esc_html__( 'Fees by class this year', 'bsa-school-management' ) . '</h2><p class="bsa-card-sub">' . esc_html__( 'Collected against invoiced; the bar is the share collected.', 'bsa-school-management' ) . '</p>';
-		if ( ! $fees['rows'] ) {
-			echo '<p>' . esc_html__( 'No learners in the current school year.', 'bsa-school-management' ) . '</p>';
-		} else {
-			echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Collected', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Outstanding', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Owing', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
-			foreach ( $fees['rows'] as $r ) {
-				/* translators: 1: collected, 2: invoiced, 3: percent. */
-				$text = $r['invoiced'] > 0 ? sprintf( __( '%1$s of %2$s (%3$d%%)', 'bsa-school-management' ), self::money( $r['paid'] ), number_format_i18n( $r['invoiced'], 2 ), $pct( $r['paid'], $r['invoiced'] ) ) : __( 'nothing invoiced', 'bsa-school-management' );
-				echo '<tr><th scope="row">' . esc_html( $r['label'] ) . '</th><td class="bsa-meter-cell">' . self::meter( $r['paid'], $r['invoiced'], $text ) . '</td><td class="num">' . esc_html( self::money( $r['balance'] ) ) . '</td><td class="num">' . esc_html( $r['owing'] . ' / ' . $r['learners'] ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- meter() escapes.
-			}
-			echo '</tbody></table></div>';
-		}
+		self::fees_table( $fees );
 		echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Finance::PAGE ) ) . '">' . esc_html__( 'Fee Reports', 'bsa-school-management' ) . ' →</a></p></section>';
 
 		// Attendance per class.
