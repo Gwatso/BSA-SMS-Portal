@@ -6,7 +6,8 @@
  * Synthetic posts, acknowledgements, learners and register entries are written inside a
  * transaction and rolled back. Before activation, set $bsa_stage to the staged plugin
  * folder to test that copy. Results are also kept for an hour in the `bsa_test_intranet`
- * transient. Over-HTTP checks after going live: `intranet-http.php`.
+ * transient. Over-HTTP checks after going live: `intranet-http.php`. Set $bsa_capture =
+ * true to keep rendered screens (synthetic data) in `bsa_capture_intranet`.
  *
  * @package BSA_School_Management
  */
@@ -19,8 +20,10 @@ if ( ! class_exists( 'BSA_Intranet' ) && $bsa_stage ) {
 	add_filter( 'user_has_cap', array( 'BSA_Intranet', 'grant_caps' ), 10, 4 );
 }
 
-$p       = $wpdb->prefix;
-$results = array();
+$p           = $wpdb->prefix;
+$bsa_capture = ! empty( $bsa_capture );
+$captured    = array();
+$results     = array();
 $check   = function ( $name, $ok, $detail = '' ) use ( &$results ) {
 	$results[] = ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== (string) $detail ? ' - ' . $detail : '' );
 };
@@ -176,6 +179,9 @@ try {
 	$check( 'home (teacher): greeting, sliding hero with controls, tasks, notices, attendance chart, events, resources', 1 === preg_match( '/<h1>Good (morning|afternoon|evening), \w+<\/h1>/', $home_t ) && false !== strpos( $home_t, 'data-bsi-carousel' ) && false !== strpos( $home_t, 'Pause the slides' ) && false !== strpos( $home_t, 'For you today' ) && false !== strpos( $home_t, 'Attendance today' ) && false !== strpos( $home_t, 'Coming up' ) && false !== strpos( $home_t, 'Intranet Test Lesson Plan Template' ) );
 	$check( 'home (teacher): no share buttons, no "WordPress"', false === strpos( $home_t, 'wa.me' ) && false === stripos( $visible( $home_t ), 'wordpress' ) );
 	$home_h = $render( $head, 'home' );
+	if ( $bsa_capture ) {
+		$captured = array( 'home' => $home_h, 'notice' => $render( $head, 'item', array(), $urgent ), 'resources' => $render( $teacher, 'resources' ), 'calendar' => $render( $teacher, 'calendar' ) );
+	}
 	$check( 'home (school administrator): share chart and WhatsApp text, Post link', false !== strpos( $home_h, 'https://wa.me/?text=' ) && false !== strpos( $home_h, 'bsi-att-data' ) && false !== strpos( $home_h, 'page=bsa-intranet' ) );
 	$item_t = $render( $bursar, 'item', array(), $urgent );
 	$check( 'notice page (bursar): acknowledge button with a nonce, no receipts', false !== strpos( $item_t, 'bsa_intranet_ack' ) && false !== strpos( $item_t, '_wpnonce' ) && false === strpos( $item_t, 'Read receipts' ) );
@@ -206,6 +212,9 @@ try {
 $left = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_title LIKE 'Intranet Test%'" ) + (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$p}wlsm_student_records WHERE admission_number = 'TEST-INTRA'" );
 $left += get_option( BSA_Terms::OPTION, false ) === $terms_before ? 0 : 1;
 $check( 'rollback: no synthetic posts or learners left; term dates as before', 0 === $left, (string) $left );
+if ( $bsa_capture ) {
+	set_transient( 'bsa_capture_intranet', $captured, HOUR_IN_SECONDS );
+}
 $check( 'no PHP notices or warnings', ! $notices, implode( ' | ', array_slice( array_unique( $notices ), 0, 5 ) ) );
 
 $failed = count( preg_grep( '/^FAIL/', $results ) );
