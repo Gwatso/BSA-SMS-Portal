@@ -62,6 +62,8 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-14 | A **Help** page (`/help/`) is the parent and learner guide, linked in the header menu; it says to ask the office for bank details until they are published. | Claude (Phase 8) | Update the page when bank details arrive. |
 | 2026-10-15 | **Parents and learners do not share logins.** Each parent has their own login (own email), shared by all their children; learner logins are optional and use a school email address. | Owner asked; Claude recommended | Family Accounts screen (plugin 0.7.0) checks it. |
 | 2026-10-15 | Caution: in Weblizar, deleting a **class section or a school year (session)** deletes every learner record in it (database cascade). Deleting a WordPress user only unlinks it from the learner. | Claude (verified in the database) | Never delete a session or section that has learners; snapshot first. |
+| 2026-10-15 | Backups follow the UpdraftPlus settings as they stood (daily files and database, 14 kept), now actually scheduled daily at 02:00. | Claude (fix; settings unchanged) | If Google Drive space runs short, set files to weekly in UpdraftPlus (database stays daily). |
+| 2026-10-15 | Author archives disabled (404); usernames are not published anywhere on the site. | Claude (Phase 9 finding) | Plugin 0.7.1. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 

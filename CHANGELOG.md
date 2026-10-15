@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-10-15: Phase 9, QA and hardening (plugin 0.7.1, theme 0.2.6, production)
+
+Full report: `docs/qa-report-phase9.md`.
+
+- All eight test suites pass on the live code (300 checks); new security and health
+  sweep `tests/integration/security.php` (49/49): visitor HTTP checks, each BSA screen
+  as each of six roles over HTTP, configuration, error logs, updates, backups.
+- **Fixed: the administrator's login name was public** (`/?author=1` redirected to
+  `/author/<login>/`). Author archives now answer 404; no users sitemap; no author in
+  oEmbed data.
+- **Fixed: backups were only weekly.** Settings said daily, the schedule was still
+  weekly, and UpdraftPlus skips its database-only run in that case. Rebuilt to daily at
+  02:00 (Africa/Harare); a full backup ran and reached Google Drive.
+- Accessibility (axe-core, WCAG 2.1 A/AA, 9 pages): the only issue, Weblizar's "new"
+  notice badge without alt text, fixed. Phones at 390 and 320 px: no sideways
+  scrolling; the school email on the learner dashboard now wraps.
+- Snapshot `2026-10-15-pre-hardening` first.
+
 ## 2026-10-15: Family Accounts check (plugin 0.7.0, production)
 
 - **Family Accounts** screen in wp-admin (owner, school administrator and any staff with

@@ -332,6 +332,15 @@ sets the link to NULL), so the screen has no separate "deleted login" check.
 | Screen: owner and school administrator only (teacher, bursar, parent, learner: no) | PASS |
 | Live data 2026: 1 learner, 1 warning (sample parent's placeholder email) | As expected |
 
+### Phase 9, QA and hardening (2026-10-15)
+Report: `docs/qa-report-phase9.md`. All suites re-run on the live code: access-guard
+20/20, admission-and-portal 60/60, finance 49/49, register 53/53, reports 56/56,
+family 29/29 (one check added: notice badge alt text), family-http 14/14, accounts
+19/19. Security and health sweep `tests/integration/security.php` 49/49 (one finding,
+author enumeration, fixed in plugin 0.7.1 before the final run). Accessibility (axe-core,
+WCAG 2.1 A/AA) on 9 pages and phone widths 390/320 px. Backup schedule fault found and
+fixed; a backup was run and verified in Google Drive.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is

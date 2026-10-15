@@ -1,18 +1,34 @@
 # Backup and Recovery
 
-## Current arrangement (2026-10-10)
+## Current arrangement (updated 2026-10-15)
 
 | Layer | What | Where | Schedule | Status |
 |---|---|---|---|---|
 | Hosting (cPanel) | Account backups | — | — | **Not available**: the cPanel `backup` feature is disabled on this account |
-| UpdraftPlus 1.26.8 | Database | `wp-content/updraft/` (web access denied), then Google Drive | Daily 01:30 (Africa/Harare), keep 14 | Working: local and Google Drive |
-| UpdraftPlus 1.26.8 | Plugins, themes, uploads, other `wp-content` | same | Weekly, Sunday 02:00, keep 4 | Working: local and Google Drive |
+| UpdraftPlus 1.26.9 | Database | `wp-content/updraft/` (web access denied), then Google Drive | Daily (with the 02:00 run; see note), keep 14 | Working: local and Google Drive |
+| UpdraftPlus 1.26.9 | Plugins, themes, uploads, other `wp-content` | same | Daily 02:00 (Africa/Harare), keep 14 (database included in the same run) | Working: local and Google Drive (verified 2026-10-15) |
 | Manual snapshot | `wp db export` + `tar` of `wp-content`, `wp-config.php`, `.htaccess` | `/home/thwxghpf/bsa-backups/<date>-<label>/` (outside web root, mode 600) | Before risky changes | Taken 2026-10-10 "pre-phase1" |
 
 Google Drive (folder `UpdraftPlus`, account owner "Afriflarenet Pty Ltd") was authorised
 by the owner on 2026-10-10. A verification backup at 17:49 uploaded every archive with no
 errors. "Delete local backup after upload" was then switched **on**; manual snapshots in
 `/home/thwxghpf/bsa-backups/` are kept separately.
+
+**2026-10-15 schedule fix (Phase 9).** The UpdraftPlus settings read "daily" for files
+and database, but the files schedule had stayed weekly (it is rebuilt only when the
+settings are saved in the UpdraftPlus screen), and UpdraftPlus skips its separate
+database run when files and database share a setting. So backups were in fact weekly:
+none between 11 and 15 October. The schedule was rebuilt with UpdraftPlus's own function
+(daily at 02:00 Africa/Harare, first run 16 October) and a full backup was run at once
+(2026-10-15 08:08 UTC, uploaded to Google Drive, no errors). Check after any change to
+the UpdraftPlus settings: *Settings → UpdraftPlus Backups → Existing backups* should show
+a backup from the last day. `tests/integration/security.php` fails if the last backup is
+more than 8 days old. Daily file backups use about 70 MB of Drive space each (14 kept);
+switch files to weekly in UpdraftPlus settings if Drive space becomes short.
+
+Database snapshots before each release are also kept in
+`/home/thwxghpf/bsa-backups/<date>-<label>/portal-db.sql` (latest:
+`2026-10-15-pre-hardening`).
 
 ### Snapshots taken
 | Label | Contents | SHA-256 |
