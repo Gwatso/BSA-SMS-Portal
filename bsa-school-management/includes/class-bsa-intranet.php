@@ -59,14 +59,16 @@ class BSA_Intranet {
 	}
 
 	/**
-	 * Intranet URL.
+	 * Intranet URL, without a trailing slash (owner decision): /intranet, /intranet/news,
+	 * /intranet/item/12.
 	 *
 	 * @param string $path Sub-path, e.g. 'news' or 'item/12'.
 	 * @param array  $args Query arguments.
 	 * @return string
 	 */
 	public static function url( $path = '', array $args = array() ) {
-		$url = home_url( '/intranet/' . ( '' === $path ? '' : trailingslashit( $path ) ) );
+		$path = trim( (string) $path, '/' );
+		$url  = home_url( '/intranet' . ( '' === $path ? '' : '/' . $path ) );
 		return $args ? add_query_arg( $args, $url ) : $url;
 	}
 
@@ -864,6 +866,14 @@ class BSA_Intranet {
 		$view = (string) get_query_var( 'bsa_intranet' );
 		if ( '' === $view ) {
 			return;
+		}
+		// One address per page: /intranet/news/ → /intranet/news (301).
+		$uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- only compared and rebuilt below.
+		$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
+		if ( strlen( $path ) > 1 && '/' === substr( $path, -1 ) ) {
+			$query = (string) wp_parse_url( $uri, PHP_URL_QUERY );
+			wp_safe_redirect( home_url( untrailingslashit( $path ) . ( '' !== $query ? '?' . $query : '' ) ), 301 );
+			exit;
 		}
 		$user_id = get_current_user_id();
 		if ( ! $user_id ) {

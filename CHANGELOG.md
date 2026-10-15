@@ -3,7 +3,9 @@
 ## 2026-10-15: BSA Intranet (plugin 0.11.0, production)
 
 The staff hub planned in the Lovable "BSA Intranet" prototype, rebuilt inside the
-portal at **/intranet** with real sign-in, saved content and the school's own data.
+portal at **https://portal.bindurascienceacademy.co.zw/intranet** (no trailing slash,
+owner decision; addresses ending in "/" are redirected) with real sign-in, saved
+content and the school's own data.
 
 - **Who:** every staff account (teachers, bursar, school administrator, owner).
   Learners and parents are sent to My Account, visitors to sign in. Staff now land on

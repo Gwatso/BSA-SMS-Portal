@@ -67,7 +67,7 @@ foreach ( $prov as $url => $label ) {
 	}
 }
 $check( 'provider: OneDrive, SharePoint, Google Docs/Sheets/Forms/Drive and plain links told apart', ! $bad, implode( ' | ', $bad ) );
-$check( 'url: /intranet/ and sub-pages', home_url( '/intranet/' ) === BSA_Intranet::url() && home_url( '/intranet/item/5/' ) === BSA_Intranet::url( 'item/5' ) );
+$check( 'url: /intranet and sub-pages, no trailing slash', home_url( '/intranet' ) === BSA_Intranet::url() && home_url( '/intranet/item/5' ) === BSA_Intranet::url( 'item/5' ) && home_url( '/intranet/news' ) === BSA_Intranet::url( '/news/' ) );
 
 // Content types and rights.
 $types_ok = true;
