@@ -245,7 +245,7 @@ class BSA_Results {
 		}
 		if ( null !== $row['change'] && -$row['change'] >= $rules['drop'] - 0.0001 ) {
 			/* translators: 1: marks lost, 2: previous average, 3: average. */
-			$out[] = array( 'code' => 'drop', 'text' => sprintf( __( 'Average down %1$s marks (%2$s → %3$s)', 'bsa-school-management' ), number_format_i18n( -$row['change'], 1 ), self::pct( $row['previous'] ), self::pct( $row['average'] ) ) );
+			$out[] = array( 'code' => 'drop', 'text' => sprintf( __( 'Average down %1$s marks (%2$s → %3$s)', 'bsa-school-management' ), self::num( -$row['change'] ), self::pct( $row['previous'] ), self::pct( $row['average'] ) ) );
 		}
 		if ( $row['possible'] >= self::MIN_DAYS && 100 * $row['rate'] < $rules['attendance'] ) {
 			/* translators: 1: percentage, 2: days attended, 3: register days. */
@@ -405,6 +405,17 @@ class BSA_Results {
 	}
 
 	/**
+	 * A number with up to one decimal, e.g. "15" or "4.5".
+	 *
+	 * @param float $value Value.
+	 * @return string
+	 */
+	public static function num( $value ) {
+		$v = round( (float) $value, 1 );
+		return floor( $v ) === $v ? number_format_i18n( $v ) : number_format_i18n( $v, 1 );
+	}
+
+	/**
 	 * A percentage with up to one decimal, e.g. "63.5%".
 	 *
 	 * @param float|null $value Value 0–100.
@@ -414,8 +425,7 @@ class BSA_Results {
 		if ( null === $value ) {
 			return '–';
 		}
-		$v = round( (float) $value, 1 );
-		return ( floor( $v ) === $v ? number_format_i18n( $v ) : number_format_i18n( $v, 1 ) ) . '%';
+		return self::num( $value ) . '%';
 	}
 
 	/**
@@ -428,9 +438,8 @@ class BSA_Results {
 		if ( null === $change ) {
 			return '–';
 		}
-		$v    = round( (float) $change, 1 );
-		$text = floor( abs( $v ) ) === abs( $v ) ? number_format_i18n( abs( $v ) ) : number_format_i18n( abs( $v ), 1 );
-		return ( $v > 0 ? '+' : ( $v < 0 ? '−' : '' ) ) . $text;
+		$v = round( (float) $change, 1 );
+		return ( $v > 0 ? '+' : ( $v < 0 ? '−' : '' ) ) . self::num( abs( $v ) );
 	}
 
 	/**

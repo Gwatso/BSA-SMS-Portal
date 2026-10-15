@@ -107,7 +107,16 @@ try {
 	$e = $mk( 'Res Test Echo', $sci, $s1, 'TEST-RES-E' );    // Two marks in, can still pass 5.
 	$f = $mk( 'Res Test Foxtrot', $sci, $s1, 'TEST-RES-F' ); // Three low marks.
 	$g = $mk( 'Res Test Golf', $sci, $s1, 'TEST-RES-G' );    // Absent 3 of only 5 days.
-	$h = $mk( 'Res Test Hotel', $f4s, $s2, 'TEST-RES-C' );   // Charlie's 2027 record.
+	// Charlie's 2027 record in Form 4 Sciences, with that form's own subjects.
+	$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => 'Res Test Hotel', 'gender' => 'female', 'enrollment_number' => 'TEST-RES-C', 'admission_number' => 'TEST-RES-C', 'session_id' => $s2, 'section_id' => $f4s, 'is_active' => 1 ) );
+	$h     = (int) $wpdb->insert_id;
+	$f4sub = array();
+	foreach ( BSA_Marks::section_subjects( $f4s ) as $row ) {
+		if ( in_array( $row->label, $six, true ) ) {
+			$f4sub[] = (int) $row->ID;
+			$wpdb->insert( "{$p}wlsm_students_subjects", array( 'student_id' => $h, 'subject_id' => (int) $row->ID ) );
+		}
+	}
 	$put( $a, $s1, 2, array( 70, 70, 70, 70, 70, 70 ) );
 	$put( $a, $s1, 3, array( 72, 72, 72, 72, 72, 72 ) );
 	$put( $b, $s1, 2, array( 47, 47, 47, 47, 47, 47 ) );
@@ -118,7 +127,9 @@ try {
 	$put( $e, $s1, 3, array( 30, 80, null, null, null, null ) );
 	$put( $f, $s1, 3, array( 30, 35, 40, null, null, null ) );
 	$put( $g, $s1, 3, array( 60, 60, 60, 60, 60, 60 ) );
-	$put( $h, $s2, 1, array( 50, 50, 50, 50, 50, 50 ) );
+	foreach ( $f4sub as $sid ) {
+		$wpdb->insert( BSA_Marks::table(), array( 'student_record_id' => $h, 'session_id' => $s2, 'term' => 1, 'subject_id' => $sid, 'exam_mark' => 50, 'remark' => '', 'entered_by' => $owner, 'updated_at' => current_time( 'mysql' ) ) );
+	}
 
 	// Twelve school days in Term 3 (from 8 September); Delta absent on four, Golf on 3 of 5.
 	$days = array();
@@ -145,7 +156,7 @@ try {
 	$check( 'rows: seven synthetic learners with averages and changes', 7 === count( $rows ) && 72.0 === round( $rows[ $a ]['average'], 2 ) && 2.0 === round( $rows[ $a ]['change'], 2 ) && 6 === $rows[ $a ]['subjects'], wp_json_encode( array( $rows[ $a ]['average'], $rows[ $a ]['change'] ) ) );
 	$check( 'risk: a learner doing fine is not flagged', array() === $codes( $a ) );
 	$check( 'risk: low average and too few passes (2 of 6)', array( 'average', 'passes' ) === $codes( $b ), wp_json_encode( $rows[ $b ]['reasons'] ) );
-	$check( 'risk: average down 15 on Term 2 (75% → 60%)', array( 'drop' ) === $codes( $c ) && false !== strpos( $rows[ $c ]['reasons'][0]['text'], 'down 15' ), wp_json_encode( $rows[ $c ]['reasons'] ) );
+	$check( 'risk: average down 15 on Term 2 (75% → 60%)', array( 'drop' ) === $codes( $c ) && false !== strpos( $rows[ $c ]['reasons'][0]['text'], 'Average down 15 marks (75% → 60%)' ), wp_json_encode( $rows[ $c ]['reasons'] ) );
 	$check( 'risk: attendance 8 of 12 days (66.7%)', array( 'attendance' ) === $codes( $d ) && false !== strpos( $rows[ $d ]['reasons'][0]['text'], '8 of 12 days' ), wp_json_encode( $rows[ $d ]['reasons'] ) );
 	$check( 'risk: two marks in (30, 80), five passes still possible: not flagged', array() === $codes( $e ) );
 	$check( 'risk: three low marks: low average and five passes no longer possible', array( 'average', 'passes' ) === $codes( $f ) );
@@ -174,7 +185,7 @@ try {
 	$rec = BSA_Results::record_in( $h, $s1 );
 	$check( 'next year: the 2027 record is matched to the 2026 one by admission number', $rec && (int) $rec->ID === $c );
 	$h_rows = BSA_Results::learner_rows( $f4s, $s2, 1 );
-	$check( 'next year: Term 1 2027 compared with Term 3 2026 (60% → 50%, down 10: flagged)', -10.0 === round( $h_rows[ $h ]['change'], 2 ) && in_array( 'drop', wp_list_pluck( $h_rows[ $h ]['reasons'], 'code' ), true ) );
+	$check( 'next year: Term 1 2027 compared with Term 3 2026 (60% → 50%, down 10: flagged)', 6 === count( $f4sub ) && null !== $h_rows[ $h ]['change'] && -10.0 === round( $h_rows[ $h ]['change'], 2 ) && in_array( 'drop', wp_list_pluck( $h_rows[ $h ]['reasons'], 'code' ), true ) );
 
 	$year = BSA_Results::learner_year( $c, $sci, $s1 );
 	$check( 'learner year: Charlie\'s English 75 in Term 2, 60 in Term 3, none in Term 1', null === $year['subjects'][ $subs['English Language'] ]['marks'][1] && 75.0 === $year['subjects'][ $subs['English Language'] ]['marks'][2] && 60.0 === $year['subjects'][ $subs['English Language'] ]['marks'][3] && 6 === count( $year['subjects'] ) );
