@@ -199,11 +199,11 @@ try {
 	$row  = function ( array $cells ) {
 		return '<w:tr>' . implode( '', $cells ) . '</w:tr>';
 	};
-	$head = $row( array( $cell( 'No.' ), $cell( 'Name' ), $cell( 'Sex' ), $cell( 'Parent phone' ) ) );
+	$dhead = $row( array( $cell( 'No.' ), $cell( 'Name' ), $cell( 'Sex' ), $cell( 'Parent phone' ) ) );
 	$body = '<w:p><w:r><w:t>FORM 2 A CLASS LIST</w:t></w:r></w:p>'
-		. '<w:tbl>' . $head . $row( array( $cell( '1' ), $cell( array( 'CHIPO', 'MUSIYIWA' ) ), $cell( 'F' ), $cell( '0771 234 567' ) ) ) . $row( array( $cell( '2' ), $cell( 'Absent all term', 3 ) ) ) . '</w:tbl>'
+		. '<w:tbl>' . $dhead . $row( array( $cell( '1' ), $cell( array( 'CHIPO', 'MUSIYIWA' ) ), $cell( 'F' ), $cell( '0771 234 567' ) ) ) . $row( array( $cell( '2' ), $cell( 'Absent all term', 3 ) ) ) . '</w:tbl>'
 		. '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
-		. '<w:tbl>' . $head . $row( array( $cell( '3' ), $cell( 'Kuda Ncube' ), $cell( 'M' ), $cell( '' ) ) ) . '</w:tbl>'
+		. '<w:tbl>' . $dhead . $row( array( $cell( '3' ), $cell( 'Kuda Ncube' ), $cell( 'M' ), $cell( '' ) ) ) . '</w:tbl>'
 		. '<w:tbl>' . $row( array( $cell( 'Signed' ), $cell( 'Class teacher' ) ) ) . '</w:tbl>';
 	$docx = $dir . '/list.docx';
 	$zip  = new ZipArchive();
