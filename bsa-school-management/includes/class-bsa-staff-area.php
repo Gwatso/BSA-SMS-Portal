@@ -59,6 +59,7 @@ class BSA_Staff_Area {
 		'sm-staff-accounting',
 		'sm-staff-examination',
 		'bsa-admission-documents',
+		'bsa-import',
 		'bsa-family-accounts',
 		'bsa-school-terms',
 		'sm-staff-dashboard',
