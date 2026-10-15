@@ -29,6 +29,7 @@ get_header();
 	<section class="bsa-home__hero">
 		<div class="bsa-container bsa-home__hero-inner">
 			<div class="bsa-home__intro">
+				<p class="bsa-home__motto"><?php esc_html_e( 'Passion for Excellence', 'bsa-portal' ); ?></p>
 				<h1 class="bsa-home__title"><?php esc_html_e( 'Bindura Science Academy School Portal', 'bsa-portal' ); ?></h1>
 				<p class="bsa-home__lead"><?php esc_html_e( 'Fee invoices and payments, attendance, homework, results and school notices for BSA learners and parents.', 'bsa-portal' ); ?></p>
 				<p class="bsa-home__actions">

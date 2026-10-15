@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BSA_PORTAL_VERSION', '0.2.6' );
+define( 'BSA_PORTAL_VERSION', '0.3.0' );
 
 /**
  * URL of a file inside this child theme.

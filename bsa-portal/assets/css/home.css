@@ -1,6 +1,7 @@
 /*
  * Portal home (templates/page-portal-home.php). Tokens: docs/DESIGN.md.
  * Composed and symmetric (variance 0.15): text left, crest right; one shared container.
+ * Hero: blurred school photo under a navy overlay (assets/img, from the school banner).
  */
 
 .bsa-container {
@@ -9,8 +10,17 @@
 }
 
 .bsa-home__hero {
-	background: #FFFFFF;
-	border-bottom: 1px solid #E5E7EB;
+	position: relative;
+	/* Learners in the computer room, blurred so no one is recognisable, under the
+	   brand navy. Where the text sits the overlay is at least 0.78 opaque: white text
+	   stays above 4.5:1 even over the brightest part of the photo. */
+	background-color: #1B3674;
+	background-image:
+		linear-gradient(100deg, rgba(19, 38, 83, 0.9) 0%, rgba(27, 54, 116, 0.78) 50%, rgba(27, 54, 116, 0.4) 100%),
+		url("../img/hero-1600.webp");
+	background-size: cover;
+	background-position: center 30%;
+	color: #FFFFFF;
 }
 
 .bsa-home__hero-inner {
@@ -18,23 +28,32 @@
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: center;
 	gap: 40px;
-	padding-block: 56px;
+	padding-block: 72px;
+}
+
+.bsa-home__motto {
+	margin: 0 0 12px;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: #DCE6F5;
 }
 
 .bsa-home__title {
 	margin: 0 0 16px;
 	font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
-	font-size: clamp(30px, 4vw, 44px);
+	font-size: clamp(30px, 4vw, 46px);
 	line-height: 1.15;
-	color: #1D212B;
+	color: #FFFFFF;
 	max-width: 18ch;
 }
 
 .bsa-home__lead {
-	margin: 0 0 24px;
+	margin: 0 0 28px;
 	font-size: 18px;
 	line-height: 1.6;
-	color: #343A48;
+	color: #EEF2F9;
 	max-width: 52ch;
 }
 
@@ -60,10 +79,40 @@
 	color: #FFFFFF;
 }
 
+/* On the photo the main button is white. */
+.bsa-home__hero .bsa-button {
+	background: #FFFFFF;
+	color: #1B3674;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.bsa-home__hero .bsa-button:hover,
+.bsa-home__hero .bsa-button:focus {
+	background: #DCE6F5;
+	color: #132653;
+}
+
+.bsa-home__hero .bsa-button:focus-visible {
+	outline: 3px solid #FFFFFF;
+	outline-offset: 3px;
+}
+
+.bsa-home__crest {
+	display: grid;
+	place-items: center;
+	width: 224px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: #FFFFFF;
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
 .bsa-home__crest img {
 	display: block;
 	width: auto;
-	height: 220px;
+	height: auto;
+	max-width: 170px;
+	max-height: 170px;
 }
 
 .bsa-home__details {
@@ -160,10 +209,20 @@
 }
 
 @media (max-width: 767px) {
+	.bsa-home__hero {
+		background-image:
+			linear-gradient(180deg, rgba(19, 38, 83, 0.86) 0%, rgba(27, 54, 116, 0.74) 100%),
+			url("../img/hero-800.webp");
+	}
+
 	.bsa-home__hero-inner {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 24px;
-		padding-block: 32px;
+		padding-block: 44px;
+	}
+
+	.bsa-home__motto {
+		font-size: 12px;
 	}
 
 	/* The header already shows the crest on small screens. */
