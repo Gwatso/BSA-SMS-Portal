@@ -257,7 +257,7 @@ try {
 	$html = ob_get_clean();
 	$secs = microtime( true ) - $start;
 	$check( 'screen: title, needs attention, six tiles and three cards', false !== strpos( $html, '<h1>School Dashboard</h1>' ) && false !== strpos( $html, 'Needs attention' ) && 6 === substr_count( $html, 'class="bsa-tile"' ) && false !== strpos( $html, 'Fees by class this year' ) && false !== strpos( $html, 'Marks entry, Term 3' ) );
-	$fee_text  = BSA_Dashboard::money( $x_fee1['paid'] ) . ' of ' . BSA_Dashboard::money( $x_fee1['invoiced'] );
+	$fee_text  = BSA_Dashboard::money( $x_fee1['paid'] ) . ' of ' . number_format_i18n( $x_fee1['invoiced'], 2 );
 	$mark_text = $marks1[ $x ]['entered'] . ' of ' . $marks1[ $x ]['expected'] . ' (';
 	$check( 'screen: synthetic class shown with its fees and marks written out', false !== strpos( $html, '<th scope="row">Form 3 Sciences</th>' ) && false !== strpos( $html, '>' . $fee_text . ' (' ) && false !== strpos( $html, '>' . $mark_text ), $fee_text . ' / ' . $mark_text );
 	$check( 'screen: links to Fee Reports, Class Register and Report Cards', false !== strpos( $html, 'page=' . BSA_Finance::PAGE ) && false !== strpos( $html, 'page=' . BSA_Register::PAGE ) && false !== strpos( $html, 'page=' . BSA_Reports::PAGE ) );

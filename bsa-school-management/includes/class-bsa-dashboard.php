@@ -387,10 +387,10 @@ class BSA_Dashboard {
 		$marks_exp    = array_sum( wp_list_pluck( $s['marks'], 'expected' ) );
 		$marks_ent    = array_sum( wp_list_pluck( $s['marks'], 'entered' ) );
 		$tiles        = array(
-			array( __( 'Active learners', 'bsa-school-management' ), number_format_i18n( $learners ), sprintf( /* translators: %d: families. */ __( '%d parent logins', 'bsa-school-management' ), $s['accounts']['families'] ) ),
+			array( __( 'Active learners', 'bsa-school-management' ), number_format_i18n( $learners ), sprintf( /* translators: %d: families. */ _n( '%d parent login', '%d parent logins', $s['accounts']['families'], 'bsa-school-management' ), $s['accounts']['families'] ) ),
 			array( __( 'Fees collected this year', 'bsa-school-management' ), self::money( $fees['paid'] ), sprintf( /* translators: 1: percent, 2: amount invoiced. */ __( '%1$d%% of %2$s invoiced', 'bsa-school-management' ), $pct( $fees['paid'], $fees['invoiced'] ), self::money( $fees['invoiced'] ) ) ),
 			array( __( 'Outstanding', 'bsa-school-management' ), self::money( $fees['balance'] ), sprintf( /* translators: %d: learners. */ _n( '%d learner owing', '%d learners owing', $fees['learners_owing'], 'bsa-school-management' ), $fees['learners_owing'] ) ),
-			array( __( 'Received in the last 7 days', 'bsa-school-management' ), self::money( $s['received_week']['amount'] ), sprintf( /* translators: 1: payments, 2: amount this term. */ __( '%1$d payments · this term %2$s', 'bsa-school-management' ), $s['received_week']['count'], self::money( $s['received_term']['amount'] ) ) ),
+			array( __( 'Received in the last 7 days', 'bsa-school-management' ), self::money( $s['received_week']['amount'] ), sprintf( /* translators: 1: payments, 2: amount this term. */ _n( '%1$d payment · this term %2$s', '%1$d payments · this term %2$s', $s['received_week']['count'], 'bsa-school-management' ), $s['received_week']['count'], self::money( $s['received_term']['amount'] ) ) ),
 			array( $s['register_day'] === $s['today'] ? __( 'Attendance today', 'bsa-school-management' ) : __( 'Attendance, last register day', 'bsa-school-management' ), $att_possible ? $pct( $att_total['present'] + $att_total['late'], $att_possible ) . '%' : '–', $att_possible ? sprintf( /* translators: 1: absent, 2: late. */ __( '%1$d absent · %2$d late', 'bsa-school-management' ), $att_total['absent'], $att_total['late'] ) : __( 'register not taken', 'bsa-school-management' ) ),
 			array( __( 'Exam marks entered this term', 'bsa-school-management' ), $s['term'] ? $pct( $marks_ent, $marks_exp ) . '%' : '–', $s['term'] ? sprintf( /* translators: 1: entered, 2: expected. */ __( '%1$s of %2$s', 'bsa-school-management' ), number_format_i18n( $marks_ent ), number_format_i18n( $marks_exp ) ) : __( 'no current term', 'bsa-school-management' ) ),
 		);
@@ -406,20 +406,20 @@ class BSA_Dashboard {
 		if ( ! $fees['rows'] ) {
 			echo '<p>' . esc_html__( 'No learners in the current school year.', 'bsa-school-management' ) . '</p>';
 		} else {
-			echo '<table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Collected', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Outstanding', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Owing', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
+			echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Collected', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Outstanding', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Owing', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
 			foreach ( $fees['rows'] as $r ) {
 				/* translators: 1: collected, 2: invoiced, 3: percent. */
-				$text = $r['invoiced'] > 0 ? sprintf( __( '%1$s of %2$s (%3$d%%)', 'bsa-school-management' ), self::money( $r['paid'] ), self::money( $r['invoiced'] ), $pct( $r['paid'], $r['invoiced'] ) ) : __( 'nothing invoiced', 'bsa-school-management' );
+				$text = $r['invoiced'] > 0 ? sprintf( __( '%1$s of %2$s (%3$d%%)', 'bsa-school-management' ), self::money( $r['paid'] ), number_format_i18n( $r['invoiced'], 2 ), $pct( $r['paid'], $r['invoiced'] ) ) : __( 'nothing invoiced', 'bsa-school-management' );
 				echo '<tr><th scope="row">' . esc_html( $r['label'] ) . '</th><td class="bsa-meter-cell">' . self::meter( $r['paid'], $r['invoiced'], $text ) . '</td><td class="num">' . esc_html( self::money( $r['balance'] ) ) . '</td><td class="num">' . esc_html( $r['owing'] . ' / ' . $r['learners'] ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- meter() escapes.
 			}
-			echo '</tbody></table>';
+			echo '</tbody></table></div>';
 		}
 		echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Finance::PAGE ) ) . '">' . esc_html__( 'Fee Reports', 'bsa-school-management' ) . ' →</a></p></section>';
 
 		// Attendance per class.
 		$day_label = $s['register_day'] === $s['today'] ? __( 'Register today', 'bsa-school-management' ) : sprintf( /* translators: %s: date. */ __( 'Register on %s (last day taken)', 'bsa-school-management' ), mysql2date( 'l j F', $s['register_day'] ) );
 		echo '<section class="bsa-card"><h2>' . esc_html( $day_label ) . '</h2><p class="bsa-card-sub">' . esc_html__( 'Present and late count as attended.', 'bsa-school-management' ) . '</p>';
-		echo '<table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Attended', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Absent', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Late', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
+		echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Attended', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Absent', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Late', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
 		foreach ( $s['attendance'] as $section => $c ) {
 			$name = $s['sections'][ $section ] ?? (string) $section;
 			if ( ! $c['marked'] ) {
@@ -439,20 +439,20 @@ class BSA_Dashboard {
 		if ( ! $s['attendance'] ) {
 			echo '<tr><td colspan="4">' . esc_html__( 'No learners in the current school year.', 'bsa-school-management' ) . '</td></tr>';
 		}
-		echo '</tbody></table><p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Register::PAGE ) ) . '">' . esc_html__( 'Class Register', 'bsa-school-management' ) . ' →</a></p></section>';
+		echo '</tbody></table></div><p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Register::PAGE ) ) . '">' . esc_html__( 'Class Register', 'bsa-school-management' ) . ' →</a></p></section>';
 
 		// Marks entry.
 		echo '<section class="bsa-card"><h2>' . esc_html( $s['term'] ? sprintf( /* translators: %d: term. */ __( 'Marks entry, Term %d', 'bsa-school-management' ), $s['term']['term'] ) : __( 'Marks entry', 'bsa-school-management' ) ) . '</h2>';
 		if ( ! $s['term'] ) {
 			echo '<p>' . esc_html__( 'Enter the term dates to follow marks entry.', 'bsa-school-management' ) . '</p>';
 		} else {
-			echo '<p class="bsa-card-sub">' . esc_html__( 'Exam marks entered for the subjects each learner takes.', 'bsa-school-management' ) . '</p><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Exam marks entered', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Report cards published', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
+			echo '<p class="bsa-card-sub">' . esc_html__( 'Exam marks entered for the subjects each learner takes.', 'bsa-school-management' ) . '</p><div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Class', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Exam marks entered', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Report cards published', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
 			foreach ( $s['marks'] as $section => $m ) {
 				/* translators: 1: entered, 2: expected, 3: percent. */
 				$text = $m['expected'] ? sprintf( __( '%1$d of %2$d (%3$d%%)', 'bsa-school-management' ), $m['entered'], $m['expected'], $pct( $m['entered'], $m['expected'] ) ) : __( 'no subjects', 'bsa-school-management' );
 				echo '<tr><th scope="row">' . esc_html( $s['sections'][ $section ] ?? (string) $section ) . '</th><td class="bsa-meter-cell">' . self::meter( $m['entered'], $m['expected'], $text ) . '</td><td class="num">' . esc_html( $m['published'] . ' / ' . $m['learners'] ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- meter() escapes.
 			}
-			echo '</tbody></table>';
+			echo '</tbody></table></div>';
 		}
 		echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Reports::PAGE ) ) . '">' . esc_html__( 'Report Cards', 'bsa-school-management' ) . ' →</a></p></section>';
 		echo '</div></div>';
@@ -469,22 +469,22 @@ class BSA_Dashboard {
 .bsa-dash .bsa-card{background:#fff;border:1px solid #dcdcde;border-radius:8px;padding:16px 20px;margin:0 0 16px}
 .bsa-dash .bsa-card h2{margin:0 0 4px;font-size:16px}
 .bsa-dash .bsa-card-sub{margin:0 0 12px;color:#50575e}
-.bsa-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 16px}
+.bsa-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 16px}
 .bsa-tile{background:#fff;border:1px solid #dcdcde;border-radius:8px;padding:14px 16px}
 .bsa-tile-label{color:#50575e;font-size:13px}
-.bsa-tile-value{font-size:26px;font-weight:600;line-height:1.3;color:#1d2327;margin:4px 0}
+.bsa-tile-value{font-size:24px;font-weight:600;line-height:1.3;color:#1d2327;margin:4px 0}
 .bsa-tile-note{color:#50575e;font-size:12px}
 .bsa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px;align-items:start}
-.bsa-grid .bsa-card{margin:0}
+.bsa-grid .bsa-card{margin:0;min-width:0}
+.bsa-scroll{overflow-x:auto}
 .bsa-table{width:100%;border-collapse:collapse}
 .bsa-table th,.bsa-table td{text-align:left;padding:8px 6px;border-bottom:1px solid #f0f0f1;vertical-align:middle;font-weight:400}
 .bsa-table thead th{color:#50575e;font-size:12px;font-weight:600}
 .bsa-table tbody th{font-weight:600;white-space:nowrap}
 .bsa-table .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.bsa-meter-cell{min-width:200px}
-.bsa-meter{display:inline-block;vertical-align:middle;width:120px;height:8px;border-radius:4px;background:#DCE6F5;overflow:hidden;margin-right:8px}
+.bsa-meter{display:block;width:100%;max-width:180px;height:8px;border-radius:4px;background:#DCE6F5;overflow:hidden;margin:2px 0 4px}
 .bsa-meter-fill{display:block;height:100%;background:#376DBE;border-radius:4px}
-.bsa-meter-text{font-variant-numeric:tabular-nums;color:#1d2327}
+.bsa-meter-text{font-variant-numeric:tabular-nums;color:#1d2327;white-space:nowrap}
 .bsa-attention{margin:0}
 .bsa-attention li{margin:0 0 6px;padding-left:2px}
 .bsa-attention .dashicons,.bsa-status .dashicons,.bsa-ok .dashicons{vertical-align:text-bottom}
@@ -492,7 +492,9 @@ class BSA_Dashboard {
 .bsa-attention li.info .dashicons{color:#376DBE}
 .bsa-ok .dashicons{color:#0a7d0a}
 .bsa-status{white-space:nowrap;color:#1d2327}
-@media (max-width:782px){.bsa-grid{grid-template-columns:1fr}.bsa-meter{width:80px}.bsa-meter-cell{min-width:0}}
+@media (min-width:1600px){.bsa-tiles{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (max-width:782px){.bsa-grid{grid-template-columns:minmax(0,1fr)}.bsa-tiles{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){.bsa-dash .bsa-card{padding:12px}.bsa-table th,.bsa-table td{padding:8px 4px}.bsa-table tbody th,.bsa-meter-text,.bsa-status{white-space:normal}.bsa-table tbody th{min-width:70px}.bsa-meter{min-width:72px}}
 </style>';
 	}
 }
