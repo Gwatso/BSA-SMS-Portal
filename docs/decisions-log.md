@@ -75,6 +75,9 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-15 | Documents stay in **OneDrive and Google Drive**; the intranet links to them (https only). Browsing Drive/OneDrive inside the intranet needs app registrations with Google and Microsoft (owner action) and is a later step. | Owner (providers) + Claude | |
 | 2026-10-15 | **Attendance to WhatsApp: one tap by a person**, not automatic. WhatsApp's official Groups API covers only small groups the business itself creates (verified business, per-message charges); posting into the existing BSA Staff group is only possible with unofficial tools that risk a ban. | Claude (owner asked for automatic posting) | Share button for school administrators: picture on phones, or text. |
 | 2026-10-15 | Teams- and SharePoint-style **department spaces and discussions** come after the intranet core. | Claude | Next phase. |
+| 2026-10-15 | **Data to bring in:** existing records are mixed (Excel files, class lists in Word, marks on paper). History to capture: **last year (2025) and this year (2026)** only. | Owner | Import comes before the board insights. |
+| 2026-10-15 | **Parent emails collected later**, once the system has proved itself. Learners and parents are imported without parent logins for now (parent names and phones recorded). | Owner | Parent logins created later from the emails; no messages sent at import. |
+| 2026-10-15 | Owner will send the files; some attached in the chat for Claude to format and load. | Owner | Each file goes through the import checks and a preview of problems before anything is saved. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 
