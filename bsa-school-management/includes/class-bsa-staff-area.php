@@ -260,7 +260,7 @@ class BSA_Staff_Area {
 			if ( $howdy ) {
 				$account->title = str_replace( $howdy, '', $account->title );
 				if ( isset( $account->meta['menu_title'] ) ) {
-					$account->meta['menu_title'] = str_replace( wp_strip_all_tags( $howdy ), '', $account->meta['menu_title'] );
+					$account->meta['menu_title'] = trim( str_replace( $howdy, '', $account->meta['menu_title'] ) );
 				}
 				$bar->add_node( (array) $account );
 			}
