@@ -51,6 +51,7 @@ class BSA_Staff_Area {
 		'bsa-class-register',
 		'bsa-marks',
 		'bsa-report-cards',
+		'bsa-results',
 		'bsa-fee-reports',
 		'sm-staff-student',
 		'sm-staff-academic',
@@ -535,6 +536,7 @@ body.profile-php .user-rich-editing-wrap,body.profile-php .user-syntax-highlight
 				'register'  => $att[ (int) $section->ID ] ?? null,
 				'progress'  => $progress,
 				'published' => $published,
+				'at_risk'   => $term ? count( BSA_Results::at_risk( array( (int) $section->ID ), $session, (int) $term['term'] ) ) : 0,
 			);
 		}
 		$assigned = BSA_Marks::assigned_subjects( $user_id );
@@ -668,6 +670,10 @@ body.profile-php .user-rich-editing-wrap,body.profile-php .user-syntax-highlight
 					echo '<tr><th scope="row">' . esc_html( $p['label'] ) . '</th><td class="bsa-meter-cell">' . BSA_Dashboard::meter( $p['entered'], $p['expected'], $text ) . '</td><td class="num"><a href="' . esc_url( $mark_url . '&subject=' . $sid ) . '">' . esc_html__( 'Enter marks', 'bsa-school-management' ) . '</a></td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- meter() escapes.
 				}
 				echo '</tbody></table></div>';
+			}
+			if ( $c['at_risk'] ) {
+				/* translators: %d: learners. */
+				echo '<p class="bsa-status warning"><span class="dashicons dashicons-warning" aria-hidden="true"></span> <strong>' . esc_html__( 'Action', 'bsa-school-management' ) . ':</strong> ' . esc_html( sprintf( _n( '%d learner in your class is at risk this term.', '%d learners in your class are at risk this term.', $c['at_risk'], 'bsa-school-management' ), $c['at_risk'] ) ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Results::PAGE . '&tab=risk' ) ) . '">' . esc_html__( 'See why', 'bsa-school-management' ) . '</a></p>';
 			}
 			echo '<p class="bsa-actions"><a class="button button-primary" href="' . esc_url( $reg_url ) . '">' . esc_html__( 'Class Register', 'bsa-school-management' ) . '</a><a class="button" href="' . esc_url( $mark_url ) . '">' . esc_html__( 'Marks', 'bsa-school-management' ) . '</a><a class="button" href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Reports::PAGE ) ) . '">' . esc_html__( 'Report Cards', 'bsa-school-management' ) . '</a></p></section>';
 		}

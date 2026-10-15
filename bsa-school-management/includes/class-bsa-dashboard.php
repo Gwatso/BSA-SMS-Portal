@@ -260,6 +260,10 @@ class BSA_Dashboard {
 			/* translators: 1: number of subjects, 2: forms with counts. */
 			$add( 'info', sprintf( __( '%1$d subjects have no subject teacher assigned: %2$s. Until they are assigned, only class teachers and administrators can enter those marks.', 'bsa-school-management' ), $unassigned, implode( ', ', $parts ) ), admin_url( 'admin.php?page=sm-staff-subjects' ) );
 		}
+		if ( ! empty( $state['at_risk'] ) && $state['term'] ) {
+			/* translators: 1: learners, 2: term. */
+			$add( 'warning', sprintf( _n( '%1$d learner is at risk in Term %2$d.', '%1$d learners are at risk in Term %2$d.', $state['at_risk'], 'bsa-school-management' ), $state['at_risk'], $state['term']['term'] ), admin_url( 'admin.php?page=' . BSA_Results::PAGE . '&tab=risk&session=' . $state['term']['session'] . '&term=' . $state['term']['term'] ) );
+		}
 		if ( $state['accounts']['errors'] || $state['accounts']['warnings'] ) {
 			/* translators: 1: learners to fix, 2: learners to check. */
 			$add( $state['accounts']['errors'] ? 'warning' : 'info', sprintf( __( 'Family accounts: %1$d to fix, %2$d to check.', 'bsa-school-management' ), $state['accounts']['errors'], $state['accounts']['warnings'] ), admin_url( 'admin.php?page=' . BSA_Accounts::PAGE ) );
@@ -309,6 +313,7 @@ class BSA_Dashboard {
 			'marks'         => $term ? self::marks( $session, (int) $term['term'] ) : array(),
 			'unassigned'    => self::unassigned_subjects(),
 			'accounts'      => $accounts,
+			'at_risk'       => $term ? count( BSA_Results::at_risk( array_map( 'intval', wp_list_pluck( BSA_School::sections(), 'ID' ) ), $session, (int) $term['term'] ) ) : 0,
 		);
 	}
 

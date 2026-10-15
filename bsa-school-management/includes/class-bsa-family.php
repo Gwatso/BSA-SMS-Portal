@@ -325,7 +325,8 @@ class BSA_Family {
 		}
 		$out .= '</tbody></table></div>';
 		$note = $for_parent ? __( 'Position is within the class. A subject is passed at 50% or more; the result is Pass with five or more subjects passed.', 'bsa-school-management' ) : __( 'Position is within your class. A subject is passed at 50% or more; the result is Pass with five or more subjects passed.', 'bsa-school-management' );
-		return $out . '<p class="bsa-family-note">' . esc_html( $note ) . '</p>';
+		$progress = class_exists( 'BSA_Results' ) ? BSA_Results::family_progress( $student_ids ) : '';
+		return $out . '<p class="bsa-family-note">' . esc_html( $note ) . '</p>' . $progress;
 	}
 
 	/**
