@@ -6,7 +6,8 @@
  * Synthetic learners, marks, register entries, term dates, rules and published report
  * cards are written inside a transaction and rolled back. Before activation, set
  * $bsa_stage to the staged plugin folder to test that copy. Results are also kept for an
- * hour in the `bsa_test_results` transient.
+ * hour in the `bsa_test_results` transient. Set $bsa_capture = true to keep the rendered
+ * screens (synthetic data) in the `bsa_capture_results` transient for a visual check.
  *
  * @package BSA_School_Management
  */
@@ -18,8 +19,10 @@ if ( ! class_exists( 'BSA_Results' ) && $bsa_stage ) {
 }
 require_once ABSPATH . 'wp-admin/includes/template.php';
 
-$p       = $wpdb->prefix;
-$results = array();
+$p           = $wpdb->prefix;
+$bsa_capture = ! empty( $bsa_capture );
+$captured    = array();
+$results     = array();
 $check   = function ( $name, $ok, $detail = '' ) use ( &$results ) {
 	$results[] = ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== (string) $detail ? ' - ' . $detail : '' );
 };
@@ -207,6 +210,12 @@ try {
 		}
 	};
 	$base = array( 'session' => $s1, 'term' => 3, 'section' => $sci );
+	if ( $bsa_capture ) {
+		foreach ( array( 'overview', 'risk', 'progress' ) as $tab ) {
+			$captured[ $tab ] = $render( $head, array_merge( $base, array( 'tab' => $tab ) ) );
+		}
+		$captured['learner'] = $render( $head, array_merge( $base, array( 'tab' => 'learner', 'student' => $c ) ) );
+	}
 	$html = $render( $head, $base );
 	$check( 'screen overview: figures, classes and subjects of Form 3 Sciences', false !== strpos( $html, 'Classes, Term 3' ) && false !== strpos( $html, 'Subjects, Form 3 Sciences, Term 3' ) && false !== strpos( $html, '4 of 5 (80%)' ) && false !== strpos( $html, '>Physics</th>' ) && false !== strpos( $html, 'B: 3' ) );
 	$html = $render( $head, array_merge( $base, array( 'tab' => 'risk' ) ) );
@@ -229,6 +238,9 @@ try {
 	}
 	BSA_Reports::flush();
 	$fam = BSA_Results::family_progress( array( $c ) );
+	if ( $bsa_capture ) {
+		$captured['family'] = BSA_Family::reports_table( array( $c ), true );
+	}
 	$check( 'family: progress from published terms with change, passes and marks by subject', false !== strpos( $fam, 'Term 2, 2026' ) && false !== strpos( $fam, 'Term 3, 2026' ) && false !== strpos( $fam, '>75%<' ) && false !== strpos( $fam, '>60%<' ) && false !== strpos( $fam, '>−15<' ) && false !== strpos( $fam, '6 of 6' ) && false !== strpos( $fam, '60 (B)' ) && false !== strpos( $fam, '<svg class="bsa-spark"' ) );
 	$check( 'family: no position and no at-risk wording', false === stripos( $fam, 'position' ) && false === stripos( $fam, 'risk' ) );
 	$check( 'family: report cards page shows the progress section', false !== strpos( BSA_Family::reports_table( array( $c ), true ), 'Progress' ) );
@@ -272,6 +284,9 @@ $left = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$p}wlsm_student_records WHE
 	+ ( get_option( BSA_Terms::OPTION, false ) === $terms_before ? 0 : 1 )
 	+ ( get_option( BSA_Results::OPTION, false ) === $rules_before ? 0 : 1 );
 $check( 'rollback: no synthetic data left; terms and rules as before', 0 === $left, (string) $left );
+if ( $bsa_capture ) {
+	set_transient( 'bsa_capture_results', $captured, HOUR_IN_SECONDS );
+}
 $check( 'no PHP notices or warnings', ! $notices, implode( ' | ', array_slice( array_unique( $notices ), 0, 5 ) ) );
 
 $failed = count( preg_grep( '/^FAIL/', $results ) );
