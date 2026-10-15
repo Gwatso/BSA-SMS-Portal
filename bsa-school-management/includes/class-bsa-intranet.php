@@ -203,6 +203,19 @@ class BSA_Intranet {
 		if ( self::can_edit( $user_id ) ) {
 			add_menu_page( __( 'Intranet', 'bsa-school-management' ), __( 'Intranet', 'bsa-school-management' ), 'edit_bsa_intranet_items', self::MENU, array( __CLASS__, 'render_admin' ), 'dashicons-groups', 3 );
 			add_submenu_page( self::MENU, __( 'Overview', 'bsa-school-management' ), __( 'Overview', 'bsa-school-management' ), 'edit_bsa_intranet_items', self::MENU, array( __CLASS__, 'render_admin' ), 0 );
+			// "Add new" screens must be registered under this menu, or WordPress matches
+			// them to the Posts menu, which school administrators cannot use. Hidden in
+			// the menu; the overview and list screens link to them.
+			foreach ( self::TYPES as $type => $t ) {
+				/* translators: %s: content type. */
+				add_submenu_page( self::MENU, sprintf( __( 'Add %s', 'bsa-school-management' ), strtolower( $t[1] ) ), sprintf( __( 'Add %s', 'bsa-school-management' ), strtolower( $t[1] ) ), 'edit_bsa_intranet_items', 'post-new.php?post_type=' . $type );
+			}
+			add_action(
+				'admin_head',
+				static function () {
+					echo '<style>#adminmenu a[href^="post-new.php?post_type=bsa_"]{display:none}</style>';
+				}
+			);
 		} elseif ( self::is_staff( $user_id ) ) {
 			add_menu_page( __( 'Intranet', 'bsa-school-management' ), __( 'Intranet', 'bsa-school-management' ), 'read', self::url(), '', 'dashicons-groups', 3 );
 		}

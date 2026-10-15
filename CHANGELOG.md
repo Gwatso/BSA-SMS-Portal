@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-10-15: BSA Intranet (plugin 0.11.0, production)
+
+The staff hub planned in the Lovable "BSA Intranet" prototype, rebuilt inside the
+portal at **/intranet** with real sign-in, saved content and the school's own data.
+
+- **Who:** every staff account (teachers, bursar, school administrator, owner).
+  Learners and parents are sent to My Account, visitors to sign in. Staff now land on
+  the intranet after signing in; "My work" leads to their screens. Only the owner and
+  the school administrator post (owner decision).
+- **Top stories slider:** everything published in the last 7 days, items marked
+  "feature" (30 days), urgent notices and events in the next 7 days. Slides every
+  7 seconds with arrows, dots, swipe and a pause button; no automatic sliding for
+  readers who prefer reduced motion.
+- **Content** (posted in wp-admin → Intranet): News, Announcements, Notices (urgency,
+  "show until", optional acknowledgement), Achievements, Events (date, end, time, place,
+  type), Resources (link, category, department).
+- **Notices with read receipts:** staff press "I have read this notice"; the school
+  administrator sees "Acknowledged by N of M staff" and who has not; unread notices
+  appear in each person's "For you today".
+- **Resources library:** links to OneDrive, SharePoint, Google Drive/Docs/Sheets/Forms
+  (recognised from the link, https only) by category; files stay where they are.
+- **Calendar:** events plus term start and end dates.
+- **For you today:** the School Dashboard's "Needs attention" for school
+  administrators; for teachers today's register, marks still to enter, learners at
+  risk; for the bursar learners owing.
+- **Attendance today:** whole-school figure, each class as a bar with figures (and
+  "Not marked"), trend over the last register days. The school administrator can
+  share it to the BSA Staff WhatsApp group in one tap: a picture on phones, or the
+  text. Automatic posting into an existing WhatsApp group is not offered by WhatsApp's
+  official channels (its Groups API only covers small groups the business creates,
+  with a verified business account and a charge per message); unofficial tools risk
+  the number being banned.
+- Snapshot `2026-10-15-pre-intranet` first. Tests: `intranet.php` 36/36 (staged),
+  `intranet-http.php` after going live.
+
 ## 2026-10-15: Results dashboards (plugin 0.10.0, production)
 
 New **Results** screen in the staff area (school administrators: every class; class

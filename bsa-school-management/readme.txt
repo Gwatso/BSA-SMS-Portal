@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.10.0
+Stable tag: 0.11.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -79,6 +79,14 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
 * Families: a Progress section under Report Cards with the average, change, subjects
   passed and attendance for each published term and marks by subject (no position, no
   at-risk flag).
+* BSA Intranet (/intranet, all staff; the owner and school administrators post): a
+  sliding "top stories this week" hero; news, announcements, notices (urgency, "show
+  until", optional acknowledgement with read receipts), achievements and events; a
+  resources library linking to OneDrive, SharePoint and Google Drive/Docs/Sheets/Forms;
+  calendar with term dates; search; "For you today" tasks from the school data; today's
+  attendance by class with a trend line and one-tap sharing to WhatsApp (picture on
+  phones, or text) for school administrators. Content is not public: no front-end URLs,
+  REST or search outside the intranet.
 
 Data: tables {prefix}bsa_admission_records, {prefix}bsa_register_checks,
 {prefix}bsa_marks and {prefix}bsa_reports, option
@@ -89,6 +97,12 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.11.0 =
+* BSA Intranet at /intranet for staff: top stories slider, news, announcements,
+  notices with acknowledgement and read receipts, achievements, events, resources
+  library (OneDrive / Google Drive links), calendar, search, tasks from the school data,
+  attendance chart with WhatsApp sharing. Staff sign in to the intranet.
 
 = 0.10.0 =
 * Results screen: classes and subjects (average, pass rate, grades), learners at risk

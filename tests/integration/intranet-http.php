@@ -66,6 +66,10 @@ $check( 'teacher: unknown item is a 404 page inside the intranet', 404 === $r['c
 // wp-admin and REST.
 $r = $req( 'head', admin_url( 'post-new.php?post_type=bsa_notice' ) );
 $check( 'school administrator: can open "Add notice"', 200 === $r['code'] && false !== strpos( $r['body'], 'Intranet details' ) && false !== strpos( $r['body'], 'Staff must acknowledge this notice' ), (string) $r['code'] );
+$r = $req( 'head', admin_url( 'edit.php?post_type=bsa_resource' ) );
+$check( 'school administrator: can open the Resources list', 200 === $r['code'] && false !== strpos( $r['body'], 'post-new.php?post_type=bsa_resource' ), (string) $r['code'] );
+$r = $req( 'head', admin_url( 'admin.php?page=bsa-intranet' ) );
+$check( 'school administrator: intranet overview with counts and receipts', 200 === $r['code'] && false !== strpos( $r['body'], 'Notices to acknowledge' ) && false !== strpos( $r['body'], 'Open the intranet' ), (string) $r['code'] );
 $r = $req( 'teacher', admin_url( 'post-new.php?post_type=bsa_notice' ) );
 $check( 'teacher: cannot add notices', 200 !== $r['code'] || false === strpos( $r['body'], 'Intranet details' ), (string) $r['code'] );
 $r = $req( 'teacher', admin_url( 'admin.php?page=bsa-home' ) );
@@ -87,6 +91,10 @@ try {
 	$check( 'acknowledge: a forged request is refused', 403 === $r['code'] && '' === (string) get_post_meta( $notice, '_bsa_ack_' . $users['bursar'], true ), (string) $r['code'] );
 	$r = $req( 'head', home_url( '/intranet/item/' . $notice . '/' ) );
 	$check( 'receipts: the school administrator sees who acknowledged', false !== strpos( $r['body'], 'Read receipts' ) && false !== strpos( $r['body'], 'Acknowledged by 1 of' ) );
+	$r = $req( 'head', admin_url( 'post.php?action=edit&post=' . $notice ) );
+	$check( 'school administrator: can edit the notice, with read receipts in the editor', 200 === $r['code'] && false !== strpos( $r['body'], 'Intranet details' ) && false !== strpos( $r['body'], 'Acknowledged by 1 of' ), (string) $r['code'] );
+	$r = $req( 'teacher', admin_url( 'post.php?action=edit&post=' . $notice ) );
+	$check( 'teacher: cannot edit the notice', 200 !== $r['code'] || false === strpos( $r['body'], 'Intranet details' ), (string) $r['code'] );
 } finally {
 	wp_delete_post( $notice, true );
 }
