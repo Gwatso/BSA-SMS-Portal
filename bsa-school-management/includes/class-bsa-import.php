@@ -1216,7 +1216,9 @@ class BSA_Import {
 					$msgs .= '<li><strong>' . esc_html( $label ) . ':</strong> ' . esc_html( $m ) . '</li>';
 				}
 			}
-			$parents = implode( '; ', array_filter( array( trim( $rec['father_name'] . ' ' . $rec['father_phone'] ), trim( $rec['mother_name'] . ' ' . $rec['mother_phone'] ), $rec['note'] ) ) );
+			// The guardian's phone stands in as the contact phone: shown once, with the guardian.
+			$father  = '' === $rec['father_name'] && '' !== $rec['father_phone'] && false !== strpos( $rec['note'], $rec['father_phone'] ) ? '' : trim( $rec['father_name'] . ' ' . $rec['father_phone'] );
+			$parents = implode( '; ', array_filter( array( $father, trim( $rec['mother_name'] . ' ' . $rec['mother_phone'] ), $rec['note'] ) ) );
 			echo '<tr class="' . esc_attr( $class ) . '"><td>' . esc_html( (string) $r['line'] ) . '</td><th scope="row">' . esc_html( $rec['name'] ) . ( $rec['admission_number'] ? '<br><span class="bsa-card-sub">' . esc_html( $rec['admission_number'] ) . '</span>' : '' ) . '</th><td>' . esc_html( $titles[ $rec['section_id'] ] ?? '–' ) . '</td><td>' . esc_html( trim( ucfirst( (string) $rec['gender'] ) . ' · ' . ( $rec['dob'] ? mysql2date( 'j M Y', $rec['dob'] ) : '–' ), ' ·' ) ) . '</td><td>' . esc_html( $parents ) . '</td><td>' . ( $msgs ? '<ul class="bsa-msgs">' . $msgs . '</ul>' : '<span class="dashicons dashicons-yes" aria-hidden="true"></span> ' . esc_html__( 'Ready', 'bsa-school-management' ) ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped parts.
 		}
 		echo '</tbody></table></div>';

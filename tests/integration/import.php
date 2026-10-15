@@ -66,8 +66,9 @@ $teacher = $user( 'hlabati.w' );
 $bursar  = $user( 'bursar' );
 $parent  = $user( 'bsa001.parent' );
 $sessions = array_keys( BSA_School::sessions() );
-$s1       = $sessions[0];
-$s2       = $sessions[1];
+// The last two school years (2026 and 2027): the second has no real learners yet.
+$s1       = $sessions[ count( $sessions ) - 2 ];
+$s2       = $sessions[ count( $sessions ) - 1 ];
 
 // ---------------------------------------------------------------------------------
 // Reading (no database).
@@ -339,6 +340,7 @@ try {
 	if ( $bsa_capture ) {
 		$captured['check'] = $html;
 	}
+	$check( 'screen: a guardian\'s phone is shown once, with the guardian', false !== strpos( $html, '<td>Guardian: Aunt Testimport 0773000111</td>' ) );
 	$xss = BSA_Import::check( array( 2 => array( '<script>alert(1)</script> Testimport', 'Form 1' ) ), array( 'name' => 0, 'class' => 1 ), $s2 );
 	$check( 'names: markup removed', false === strpos( $xss[0]['record']['name'], '<' ) );
 

@@ -52,7 +52,7 @@ $check( 'format: 63.5%, 70%, +4.5, −12, –', '63.5%' === BSA_Results::pct( 63
 $sp = BSA_Results::sparkline( array( 'T1' => 60, 'T2' => null, 'T3' => 72.4 ), 'Maths' );
 $check( 'sparkline: two points with values written and an accessible name; nothing for one point', 2 === substr_count( $sp, '<circle' ) && false !== strpos( $sp, 'aria-label="Maths: T1 60%, T3 72.4%"' ) && false !== strpos( $sp, '>72<' ) && '' === BSA_Results::sparkline( array( 'T1' => 60, 'T2' => null ), 'x' ) );
 $sessions = array_keys( BSA_School::sessions() );
-$check( 'previous term: Term 2 → Term 1; first term of the first year → none; Term 1 2027 → Term 3 2026', array( 1, 1 ) === BSA_Results::previous_term( 1, 2 ) && null === BSA_Results::previous_term( $sessions[0], 1 ) && array( $sessions[0], 3 ) === BSA_Results::previous_term( $sessions[1], 1 ) );
+$check( 'previous term: Term 2 → Term 1; first term of the first year → none; Term 1 2027 → Term 3 2026', array( 1, 1 ) === BSA_Results::previous_term( 1, 2 ) && null === BSA_Results::previous_term( $sessions[0], 1 ) && array( $sessions[ count( $sessions ) - 2 ], 3 ) === BSA_Results::previous_term( end( $sessions ), 1 ) );
 
 BSA_Marks::maybe_migrate();
 BSA_Register::maybe_migrate();
@@ -75,8 +75,9 @@ try {
 
 	$sci = 6; // Form 3 Sciences.
 	$f4s = 7; // Form 4 Sciences.
-	$s1  = $sessions[0];
-	$s2  = $sessions[1];
+	// The last two school years (2026 and 2027; earlier years hold imported records).
+	$s1  = $sessions[ count( $sessions ) - 2 ];
+	$s2  = $sessions[ count( $sessions ) - 1 ];
 	$check( 'fixture: no real learners in Form 3 Sciences 2026 or Form 4 Sciences 2027', ! BSA_School::learners( $sci, $s1 ) && ! BSA_School::learners( $f4s, $s2 ) );
 	BSA_Terms::save( $s1, array( 1 => array( 'start' => '2026-01-13', 'end' => '2026-04-02' ), 2 => array( 'start' => '2026-05-05', 'end' => '2026-08-06' ), 3 => array( 'start' => '2026-09-08', 'end' => '2026-12-01' ) ) );
 	BSA_Terms::save( $s2, array( 1 => array( 'start' => '2027-01-12', 'end' => '2027-04-01' ) ) );
