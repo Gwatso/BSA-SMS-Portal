@@ -50,8 +50,8 @@ class BSA_Portal {
 	}
 
 	/**
-	 * Staff go to their home screen (the owner to wp-admin); learners and parents go to
-	 * their account page.
+	 * Staff go to the intranet (the owner to wp-admin); learners and parents go to their
+	 * account page.
 	 *
 	 * @param string           $redirect_to Requested redirect.
 	 * @param string           $requested   Requested redirect (raw).
@@ -66,7 +66,7 @@ class BSA_Portal {
 			return self::account_url();
 		}
 		if ( BSA_Access_Guard::is_staff( $user->ID ) && ( '' === $requested || admin_url() === $redirect_to ) ) {
-			return BSA_Staff_Area::home_url( $user->ID );
+			return BSA_Staff_Area::applies( $user->ID ) && class_exists( 'BSA_Intranet' ) ? BSA_Intranet::url() : admin_url();
 		}
 		return $redirect_to;
 	}

@@ -47,6 +47,7 @@ class BSA_Staff_Area {
 	 */
 	const MENU_ORDER = array(
 		'bsa-home',
+		'bsa-intranet',
 		'bsa-dashboard',
 		'bsa-class-register',
 		'bsa-marks',
@@ -195,8 +196,9 @@ class BSA_Staff_Area {
 		usort(
 			$out,
 			static function ( $a, $b ) use ( $rank, $pos ) {
-				$ra = 'profile.php' === $a ? 1000 : ( $rank[ $a ] ?? 500 );
-				$rb = 'profile.php' === $b ? 1000 : ( $rank[ $b ] ?? 500 );
+				// The intranet link of staff who do not post is a full URL.
+				$ra = 'profile.php' === $a ? 1000 : ( false !== strpos( $a, '/intranet' ) ? 1 : ( $rank[ $a ] ?? 500 ) );
+				$rb = 'profile.php' === $b ? 1000 : ( false !== strpos( $b, '/intranet' ) ? 1 : ( $rank[ $b ] ?? 500 ) );
 				return array( $ra, $pos[ $a ] ) <=> array( $rb, $pos[ $b ] );
 			}
 		);
@@ -233,6 +235,16 @@ class BSA_Staff_Area {
 				'meta'  => array( 'title' => __( 'Bindura Science Academy: home', 'bsa-school-management' ) ),
 			)
 		);
+		if ( class_exists( 'BSA_Intranet' ) ) {
+			$bar->add_node(
+				array(
+					'parent' => 'bsa-brand',
+					'id'     => 'bsa-brand-intranet',
+					'title'  => esc_html__( 'Intranet', 'bsa-school-management' ),
+					'href'   => BSA_Intranet::url(),
+				)
+			);
+		}
 		$bar->add_node(
 			array(
 				'parent' => 'bsa-brand',
