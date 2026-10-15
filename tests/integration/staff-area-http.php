@@ -60,7 +60,7 @@ $php_error = function ( $html ) {
 	return (bool) preg_match( '/<b>(Warning|Notice|Fatal error|Deprecated)<\/b>|critical error/', $html );
 };
 
-$start = array(
+$homes = array(
 	'head'    => admin_url( 'admin.php?page=bsa-dashboard' ),
 	'teacher' => admin_url( 'admin.php?page=bsa-home' ),
 	'bursar'  => admin_url( 'admin.php?page=bsa-home' ),
@@ -70,7 +70,7 @@ $pages = array(
 	'teacher' => array( 'admin.php?page=bsa-home', 'admin.php?page=bsa-class-register', 'admin.php?page=sm-staff-attendance', 'profile.php' ),
 	'bursar'  => array( 'admin.php?page=bsa-home', 'admin.php?page=sm-staff-invoices', 'admin.php?page=bsa-fee-reports', 'profile.php' ),
 );
-foreach ( $start as $role => $home ) {
+foreach ( $homes as $role => $home ) {
 	$r = $as( $role, admin_url() );
 	$check( "$role: the WordPress Dashboard sends them to their home screen", 302 === $r['code'] && $home === $r['location'], $r['code'] . ' ' . $r['location'] );
 	foreach ( $pages[ $role ] as $path ) {
@@ -79,10 +79,16 @@ foreach ( $start as $role => $home ) {
 		$check( "$role: $path opens with no WordPress anywhere on screen", 200 === $r['code'] && ! $found && ! $php_error( $r['body'] ), $r['code'] . ' ' . implode( ' | ', $found ) );
 		if ( 0 === strpos( $path, 'admin.php?page=bsa-' ) && 'admin.php?page=bsa-marks' !== $path ) {
 			$body = $r['body'];
-			$check(
-				"$role: $path has the BSA toolbar, menu and footer",
-				false !== strpos( $body, 'wp-admin-bar-bsa-brand' ) && false === strpos( $body, 'wp-admin-bar-wp-logo' ) && false === strpos( $body, 'Howdy' ) && false !== strpos( $body, 'Passion for Excellence' ) && false !== strpos( $body, 'id="bsa-staff-area"' ) && ! preg_match( '/<div class="wp-menu-name">SM /', $body ) && false === strpos( $body, 'menu-dashboard' )
+			$parts = array(
+				'crest'      => false !== strpos( $body, 'wp-admin-bar-bsa-brand' ),
+				'no logo'    => false === strpos( $body, 'wp-admin-bar-wp-logo' ),
+				'no Howdy'   => false === strpos( $body, 'Howdy' ),
+				'footer'     => false !== strpos( $body, 'Passion for Excellence' ),
+				'colours'    => false !== strpos( $body, 'id="bsa-staff-area"' ),
+				'no SM menu' => ! preg_match( '/<div class="wp-menu-name">SM /', $body ),
+				'no WP home' => false === strpos( $body, 'menu-dashboard' ),
 			);
+			$check( "$role: $path has the BSA toolbar, menu and footer", ! in_array( false, $parts, true ), implode( ', ', array_keys( array_filter( $parts, static function ( $v ) { return ! $v; } ) ) ) );
 		}
 	}
 }

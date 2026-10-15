@@ -66,6 +66,7 @@ $check( 'title: no "WordPress" for staff; owner unchanged', 'Marks &lsaquo; ' . 
 $check( 'sign-in page title: no "WordPress"', 'Log In &lsaquo; ' . $name === BSA_Staff_Area::login_title( 'Log In &lsaquo; ' . $name . ' &#8212; WordPress', 'Log In' ) );
 $check( 'footer: the school instead of WordPress, no version, for staff only', false !== strpos( $t_footer, 'Passion for Excellence' ) && false === stripos( $t_footer, 'wordpress' ) && '' === $t_ver && 'WP footer' === $o_footer && 'Version 7.1.3' === $o_ver );
 $check( 'application passwords: off for staff, unchanged for the owner', false === BSA_Staff_Area::application_passwords( true, get_userdata( $teacher ) ) && true === BSA_Staff_Area::application_passwords( true, get_userdata( $owner ) ) );
+$check( 'profile: no social-media fields for staff; owner unchanged', array() === BSA_Staff_Area::contact_methods( array( 'wordpress' => 'WordPress' ), get_userdata( $teacher ) ) && array( 'wordpress' => 'WordPress' ) === BSA_Staff_Area::contact_methods( array( 'wordpress' => 'WordPress' ), get_userdata( $owner ) ) );
 $check( 'colour scheme: staff on the default (BSA colours on top)', 'fresh' === $t_color && 'midnight' === BSA_Staff_Area::admin_color( 'midnight', 'admin_color', get_userdata( $owner ) ) );
 
 // Menu: WordPress Dashboard, separators and unused modules gone; Weblizar renamed; order.
@@ -121,7 +122,8 @@ $bar_for = function ( $uid ) {
 	$bar->add_node( array( 'id' => 'wp-logo', 'title' => 'W', 'href' => 'https://wordpress.org/' ) );
 	$bar->add_node( array( 'id' => 'site-name', 'title' => 'Site' ) );
 	$bar->add_node( array( 'id' => 'command-palette', 'title' => 'Ctrl+K' ) );
-	$bar->add_node( array( 'id' => 'my-account', 'title' => sprintf( __( 'Howdy, %s' ), '<span class="display-name">Test Person</span>' ), 'parent' => 'top-secondary' ) ); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+	$howdy = sprintf( __( 'Howdy, %s' ), '<span class="display-name">Test Person</span>' ); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+	$bar->add_node( array( 'id' => 'my-account', 'title' => $howdy, 'parent' => 'top-secondary', 'meta' => array( 'menu_title' => wp_strip_all_tags( $howdy ) ) ) );
 	BSA_Staff_Area::brand_node( $bar );
 	BSA_Staff_Area::tidy_admin_bar( $bar );
 	return $bar;
@@ -130,7 +132,7 @@ $bar = $bar_for( $teacher );
 $acc = $bar->get_node( 'my-account' );
 $brand = $bar->get_node( 'bsa-brand' );
 $check( 'toolbar: no WordPress logo, site menu or command palette for staff', ! $bar->get_node( 'wp-logo' ) && ! $bar->get_node( 'site-name' ) && ! $bar->get_node( 'command-palette' ) );
-$check( 'toolbar: crest and "BSA Portal" linking to the home screen; no "Howdy"', $brand && false !== strpos( $brand->title, 'BSA Portal' ) && admin_url( 'admin.php?page=bsa-home' ) === $brand->href && $acc && false === strpos( $acc->title, 'Howdy' ) && false !== strpos( $acc->title, 'Test Person' ) );
+$check( 'toolbar: crest and "BSA Portal" linking to the home screen; no "Howdy", also not in the menu label', $brand && false !== strpos( $brand->title, 'BSA Portal' ) && admin_url( 'admin.php?page=bsa-home' ) === $brand->href && $acc && false === strpos( $acc->title, 'Howdy' ) && false !== strpos( $acc->title, 'Test Person' ) && 'Test Person' === $acc->meta['menu_title'] );
 $bar = $bar_for( $owner );
 $check( 'toolbar: owner keeps the WordPress toolbar', $bar->get_node( 'wp-logo' ) && ! $bar->get_node( 'bsa-brand' ) && false !== strpos( $bar->get_node( 'my-account' )->title, 'Howdy' ) );
 

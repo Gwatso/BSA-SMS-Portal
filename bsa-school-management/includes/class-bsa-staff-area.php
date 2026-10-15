@@ -85,6 +85,7 @@ class BSA_Staff_Area {
 		add_filter( 'wp_is_application_passwords_available_for_user', array( __CLASS__, 'application_passwords' ), 10, 2 );
 		add_filter( 'get_user_option_admin_color', array( __CLASS__, 'admin_color' ), 10, 3 );
 		add_action( 'admin_init', array( __CLASS__, 'no_colour_picker' ) );
+		add_filter( 'user_contactmethods', array( __CLASS__, 'contact_methods' ), 99, 2 );
 	}
 
 	/**
@@ -258,6 +259,9 @@ class BSA_Staff_Area {
 			$howdy = strstr( __( 'Howdy, %s' ), '%s', true ); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- WordPress's own string.
 			if ( $howdy ) {
 				$account->title = str_replace( $howdy, '', $account->title );
+				if ( isset( $account->meta['menu_title'] ) ) {
+					$account->meta['menu_title'] = str_replace( wp_strip_all_tags( $howdy ), '', $account->meta['menu_title'] );
+				}
 				$bar->add_node( (array) $account );
 			}
 		}
@@ -354,6 +358,18 @@ class BSA_Staff_Area {
 	public static function admin_color( $value, $option = '', $user = null ) {
 		$id = is_object( $user ) && isset( $user->ID ) ? (int) $user->ID : get_current_user_id();
 		return self::applies( $id ) ? 'fresh' : $value;
+	}
+
+	/**
+	 * No social-media fields (one is labelled "WordPress") on staff profiles.
+	 *
+	 * @param array        $methods Contact methods.
+	 * @param WP_User|null $user    User being edited.
+	 * @return array
+	 */
+	public static function contact_methods( $methods, $user = null ) {
+		$id = $user instanceof WP_User ? $user->ID : get_current_user_id();
+		return self::applies( $id ) ? array() : $methods;
 	}
 
 	/**
