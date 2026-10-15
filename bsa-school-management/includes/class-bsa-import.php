@@ -1071,12 +1071,26 @@ class BSA_Import {
 			echo '<div class="notice notice-error"><p>' . esc_html( $error ) . '</p></div>';
 		}
 		if ( isset( $_GET['done'] ) ) {
-			/* translators: 1: imported, 2: skipped. */
-			echo '<div class="notice notice-success"><p>' . esc_html( sprintf( __( '%1$d learners imported; %2$d rows with errors were skipped. You can undo this import below.', 'bsa-school-management' ), absint( $_GET['n'] ?? 0 ), absint( $_GET['skipped'] ?? 0 ) ) ) . '</p></div>';
+			$n       = absint( $_GET['n'] ?? 0 );
+			$skipped = absint( $_GET['skipped'] ?? 0 );
+			/* translators: %d: learners imported. */
+			$msg = sprintf( _n( '%d learner imported.', '%d learners imported.', $n, 'bsa-school-management' ), $n );
+			if ( $skipped ) {
+				/* translators: %d: rows skipped. */
+				$msg .= ' ' . sprintf( _n( '%d row with errors was skipped.', '%d rows with errors were skipped.', $skipped, 'bsa-school-management' ), $skipped );
+			}
+			echo '<div class="notice notice-success"><p>' . esc_html( $msg . ' ' . __( 'You can undo this import below.', 'bsa-school-management' ) ) . '</p></div>';
 		}
 		if ( isset( $_GET['undone'] ) ) {
-			/* translators: 1: removed, 2: kept. */
-			echo '<div class="notice notice-success"><p>' . esc_html( sprintf( __( 'Import undone: %1$d learners removed; %2$d kept because something has already been recorded for them.', 'bsa-school-management' ), absint( $_GET['undone'] ), absint( $_GET['kept'] ?? 0 ) ) ) . '</p></div>';
+			$removed = absint( $_GET['undone'] );
+			$kept    = absint( $_GET['kept'] ?? 0 );
+			/* translators: %d: learners removed. */
+			$msg = sprintf( _n( 'Import undone: %d learner removed.', 'Import undone: %d learners removed.', $removed, 'bsa-school-management' ), $removed );
+			if ( $kept ) {
+				/* translators: %d: learners kept. */
+				$msg .= ' ' . sprintf( __( 'Kept: %d, because fees, marks or registers have already been recorded for them.', 'bsa-school-management' ), $kept );
+			}
+			echo '<div class="notice notice-success"><p>' . esc_html( $msg ) . '</p></div>';
 		}
 		// phpcs:enable
 		$steps = array( '' => __( '1. Choose the list', 'bsa-school-management' ), 'map' => __( '2. Match the columns', 'bsa-school-management' ), 'check' => __( '3. Check and import', 'bsa-school-management' ) );

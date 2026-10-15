@@ -371,7 +371,7 @@ try {
 	$again = BSA_Import::check( $parts['data'], $mapping, $s2 );
 	$check( 'the same list again: admission numbers already used this year are errors', in_array( 'Admission number already used this year (Tendai Testimport).', $again[0]['errors'], true ), wp_json_encode( $again[0]['errors'] ) );
 	$html = $render( array( 'page' => 'bsa-import', 'done' => $batch, 'n' => '5', 'skipped' => '4' ) );
-	$check( 'screen: success message and the import listed with an Undo button', false !== strpos( $html, '5 learners imported; 4 rows with errors were skipped' ) && false !== strpos( $html, 'value="' . $batch . '"' ) && false !== strpos( $html, '>Undo</button>' ) );
+	$check( 'screen: success message and the import listed with an Undo button', false !== strpos( $html, '5 learners imported. 4 rows with errors were skipped. You can undo' ) && false !== strpos( $html, 'value="' . $batch . '"' ) && false !== strpos( $html, '>Undo</button>' ) );
 	if ( $bsa_capture ) {
 		$captured['done'] = $html;
 	}
