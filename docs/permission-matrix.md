@@ -48,6 +48,7 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Class Register (weekly register, pupil details, summary) | All classes | Own class only | — |
 | Record the weekly register check | Yes (head / deputy / T.I.C.) | — | — |
 | Admissions and learner records | Manage | — | — |
+| School Dashboard (fees, register, marks, needs attention) | Yes (owner, school administrator) | — | — |
 | Family Accounts check (logins of learners and parents) | Yes (also staff with Manage Admissions or Manage Students) | — | — |
 | Admission documents (birth certificate, Grade 7 results) | View, edit, download | — | — |
 | Staff, roles, settings | Manage | — | — |

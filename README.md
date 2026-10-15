@@ -26,6 +26,7 @@ portal `portal.bindurascienceacademy.co.zw` (Weblizar School Management + Blocks
 | 4. Academics & report cards | **Done** (plugin 0.5.0): Marks entry, grading rules, Report Cards (results, positions, comments, publish, print, parent view) ([spec](docs/academics-spec.md)). Waiting: subject-teacher assignments, remaining term dates |
 | 8. Parent and learner portal | **Done** (plugin 0.6.0, theme 0.2.5): Report Cards for learners and parents, parent Fee Structure, account settings link, phone-friendly tables, notices fixed, fee lock-out off, unused Weblizar items hidden, Help page for families |
 | 9. QA and hardening | **Done** (plugin 0.7.1, theme 0.2.6): all suites green, security sweep 49/49, accessibility and phone checks, login-name leak and backup schedule fixed ([report](docs/qa-report-phase9.md)) |
+| — School Dashboard | **Done** (plugin 0.8.0): one wp-admin screen for the owner and school administrator: needs attention, fees per class, today's register, marks entry |
 | — Family Accounts check | **Done** (plugin 0.7.0): flags shared, crossed or missing family logins and bad emails; office guide |
 | 7. Extra lessons | On hold until the owner confirms |
 

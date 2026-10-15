@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-10-15: School Dashboard (plugin 0.8.0, production)
+
+- **School Dashboard** at the top of wp-admin for the owner and the school administrator
+  (teachers, bursar, parents and learners do not see it). Read-only, one screen:
+  - **Needs attention**: no term covering today or the next term's start missing;
+    registers not marked on a school day (by class); report cards not published once
+    the term has ended; subjects with no subject teacher (per form); family account
+    problems. Each with a link to the screen that fixes it, and an icon plus the word
+    "Action" or "Note" (never colour alone).
+  - Six figures: active learners and parent logins; fees collected this year against
+    invoiced; outstanding and learners owing; received in the last 7 days and this
+    term; attendance today (or on the last day the register was taken); exam marks
+    entered this term.
+  - Per class: fees collected against invoiced, the day's register (attended, absent,
+    late; "Not marked" shown), exam marks entered against the subjects each learner
+    takes and report cards published. Bars always have the figures written beside them.
+- Same arithmetic as Fee Reports, the Class Register (present and late count as
+  attended; subject registers ignored) and Report Cards.
+- Snapshot `2026-10-15-pre-dashboard` first. Test `tests/integration/dashboard.php`
+  37/37 on the staged copy and live; security sweep 49/49 after going live.
+
 ## 2026-10-15: Phase 9, QA and hardening (plugin 0.7.1, theme 0.2.6, production)
 
 Full report: `docs/qa-report-phase9.md`.

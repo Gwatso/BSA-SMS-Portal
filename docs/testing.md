@@ -341,6 +341,39 @@ author enumeration, fixed in plugin 0.7.1 before the final run). Accessibility (
 WCAG 2.1 A/AA) on 9 pages and phone widths 390/320 px. Backup schedule fault found and
 fixed; a backup was run and verified in Google Drive.
 
+### School Dashboard, plugin 0.8.0 (2026-10-15)
+
+#### Integration test: `tests/integration/dashboard.php` (37/37 PASS)
+Run against the staged copy, then live, inside a rolled-back transaction. Real data may
+already exist, so figures are checked as the change the synthetic data makes: four
+learners in Form 3 (plus one who has left), invoices and payments, a Monday register,
+Term 3 marks and a published report card, a subject-teacher assignment.
+
+| Area | Checks | Result |
+|---|---|---|
+| Helpers | Money as USD with two decimals; meter width, cap at 100%, text escaped and written out, labelled for screen readers | PASS |
+| Fees | Form 3 Sciences +3 learners, +850 invoiced (one discount), +400 paid, +450 outstanding, +2 owing; a learner who left not counted; school totals match; last 7 days counts today's payment, not one 10 days old | PASS |
+| Register | 1 present, 1 late, 1 absent → 2 of 3 attended; subject registers ignored; unmarked class has no rate; last day taken found | PASS |
+| Marks | Expected = each learner's own subjects (2 + 2 × 13); a mark of 0 counts, a term mark alone does not, a subject the learner does not take does not; one published; other terms untouched | PASS |
+| Subject teachers | Assigning a subject removes it from its form's list; one entry per form | PASS |
+| Needs attention | Nothing when all is in order; no term; next term start missing; unmarked register named by class (not on weekends or holidays); unpublished report cards after the term ends; subjects without a teacher per form; family account errors (action) and warnings (note) | PASS |
+| Rights and screen | Owner and school administrator only (teacher, bursar, parent, learner, visitor: no); menu for the administrator, not the bursar; title, six figures, three tables, links; synthetic figures written out; under 3 s; bursar refused | PASS |
+| Rollback, notices | Nothing left; terms and subject teachers as before; no PHP notices | PASS |
+
+#### After going live
+| Check | Result |
+|---|---|
+| Plugin 0.8.0 loaded; files match the repo | PASS |
+| Over HTTP: owner and school administrator 200 with the screen; bursar and teacher 403 | PASS |
+| Live data: 1 learner (Form 2 A); attention shows next term start missing, Form 2 A register not marked, 46 subjects without a teacher, 1 family account to check | As expected |
+| Security sweep (`security.php`) | 49/49 |
+
+#### Visual check
+A sample with six classes rendered at 1280, 1700, 390 and 320 px: figures in rows of
+three (six across on wide screens), bars above their figures, no sideways scrolling on
+phones (tables scroll inside their card if needed). Bar colour #376DBE on #DCE6F5
+(contrast 4.07:1 against the track, 5.13:1 against white).
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is

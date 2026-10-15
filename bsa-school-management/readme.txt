@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.7.1
+Stable tag: 0.8.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -59,6 +59,10 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   phone) on different parent logins, missing or placeholder login emails, administrator
   or staff accounts used as parent logins — with links to fix them, and the office guide
   for setting up accounts at admission. Read-only.
+* School Dashboard (owner and school administrator): one read-only screen with what
+  needs attention (term dates, registers not marked, report cards not published,
+  subjects without a teacher, family account problems), fees per class, today's
+  register per class and marks entry for the current term.
 
 Data: tables {prefix}bsa_admission_records, {prefix}bsa_register_checks,
 {prefix}bsa_marks and {prefix}bsa_reports, option
@@ -69,6 +73,11 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.8.0 =
+* School Dashboard for the owner and school administrator: needs-attention list, fees
+  collected against invoiced per class, the day's register per class, marks entry and
+  report cards published for the current term.
 
 = 0.7.1 =
 * No author archives, users sitemap or oEmbed author names (login names were visible
