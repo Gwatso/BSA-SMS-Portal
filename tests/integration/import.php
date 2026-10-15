@@ -90,6 +90,9 @@ $check( 'headings: a title above the table is skipped; blank rows dropped; line 
 $map = BSA_Import::guess_mapping( array( 'No.', 'NAME', 'SURNAME', 'SEX', 'D.O.B', 'CLASS', "Father's Name", 'Contact Number', 'Grade 7 Units', 'Date of admission (dd/mm/yyyy)' ) );
 $check( 'column matching from typical school headings', array( 'name' => 1, 'surname' => 2, 'class' => 5, 'gender' => 3, 'dob' => 4, 'father_name' => 6, 'guardian_phone' => 7, 'admission_date' => 9, 'grade7_units' => 8 ) == $map, wp_json_encode( $map ) ); // phpcs:ignore Universal.Operators.StrictComparisons -- order does not matter.
 
+$map = BSA_Import::guess_mapping( BSA_Import::TEMPLATE );
+$check( 'template: every heading of the learner template is matched to its own field', 20 === count( $map ) && count( $map ) === count( array_unique( $map ) ) && ! isset( $map['name'] ), wp_json_encode( $map ) );
+
 // Values.
 $classes = array(
 	'Form 3 Sciences'    => 6,

@@ -82,7 +82,7 @@ try {
 	preg_match( '/href="([^"]*action=bsa_import_template[^"]*)"/', $first['body'], $m );
 	$tpl = html_entity_decode( $m[1] ?? '' );
 	$r   = $req( 'head', $tpl );
-	$check( 'template: a CSV that opens in Excel, with the headings', 200 === $r['code'] && false !== stripos( $r['type'], 'text/csv' ) && 0 === strpos( $r['body'], "\xEF\xBB\xBFAdmission number,First names,Surname,Sex" ), $r['code'] . ' ' . $r['type'] );
+	$check( 'template: a CSV that opens in Excel, with the headings', 200 === $r['code'] && false !== stripos( $r['type'], 'text/csv' ) && 0 === strpos( $r['body'], "\xEF\xBB\xBF\"Admission number\",\"First names\",Surname,Sex," ) && false !== strpos( $r['body'], ',Example,Learner,F,24/05/2012,"Form 3 Sciences",' ), $r['code'] . ' ' . $r['type'] );
 	$r = $req( 'teacher', $tpl );
 	$check( 'template: refused for a teacher (nonce is per user)', 403 === $r['code'], (string) $r['code'] );
 

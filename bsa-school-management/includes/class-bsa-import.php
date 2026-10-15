@@ -58,6 +58,11 @@ class BSA_Import {
 	);
 
 	/**
+	 * Headings of the learner template (each matches a field above).
+	 */
+	const TEMPLATE = array( 'Admission number', 'First names', 'Surname', 'Sex', 'Date of birth', 'Class', 'Boarder or day', 'Religion', 'Home address', 'Father name', 'Father phone', 'Mother name', 'Mother phone', 'Guardian name', 'Guardian phone', 'Admission date', 'Grade 7 units', 'Primary school', 'Grade 7 year', 'Birth certificate number' );
+
+	/**
 	 * Registers hooks.
 	 */
 	public static function init() {
@@ -1046,7 +1051,7 @@ class BSA_Import {
 		header( 'Content-Disposition: attachment; filename="bsa-learners-template.csv"' );
 		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		fputcsv( $out, array( 'Admission number', 'First names', 'Surname', 'Sex', 'Date of birth', 'Class', 'Boarder or day', 'Religion', 'Home address', 'Father name', 'Father phone', 'Mother name', 'Mother phone', 'Guardian name', 'Guardian phone', 'Admission date', 'Grade 7 units', 'Primary school', 'Grade 7 year', 'Birth certificate number' ), ',', '"', '' );
+		fputcsv( $out, self::TEMPLATE, ',', '"', '' );
 		fputcsv( $out, array( '', 'Example', 'Learner', 'F', '24/05/2012', 'Form 3 Sciences', 'Day', 'Christian', '12 Example Road, Bindura', 'Example Father', '0771234567', 'Example Mother', '0712345678', '', '', '13/01/2025', '8', 'Example Primary School', '2024', '' ), ',', '"', '' );
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
