@@ -62,6 +62,8 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Admissions and learner records | Manage | — | — |
 | School Dashboard (fees, register, marks, needs attention) | Yes (owner, school administrator) | — | — |
 | Results: classes, subjects, learners at risk, progression, one learner's year | All classes; can change the at-risk rules | Class teacher: own class. Subject teacher: their subjects (no learner list) | — |
+| Intranet (/intranet): read, acknowledge notices | Yes | Yes | Yes |
+| Intranet: post news, announcements, notices, achievements, events, resources; read receipts; share attendance to WhatsApp | Yes (owner, school administrator) | — | — |
 | Home screen | School Dashboard is their home | My class (class teacher), My subjects (subject teacher) | Fees |
 | Family Accounts check (logins of learners and parents) | Yes (also staff with Manage Admissions or Manage Students) | — | — |
 | Admission documents (birth certificate, Grade 7 results) | View, edit, download | — | — |

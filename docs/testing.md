@@ -441,6 +441,43 @@ class and subject tables with pass-rate bars, reasons with icon and words, trend
 with values at each point. Fixed during the check: one figure alone on a second row;
 the rules form's input width clipping its button.
 
+### BSA Intranet, plugin 0.11.0 (2026-10-15)
+
+#### Integration test: `tests/integration/intranet.php` (36/36 PASS)
+Staged copy, then live; synthetic posts, acknowledgements, learners and register
+entries inside a rolled-back transaction.
+
+| Area | Checks | Result |
+|---|---|---|
+| Helpers | OneDrive, SharePoint, Google Docs/Sheets/Forms/Drive and plain links recognised; URLs | PASS |
+| Types and rights | Six content types not public, not in REST or search; owner and school administrator post (and upload images); teacher, bursar, families cannot; staff read, families and visitors do not | PASS |
+| Fields | Event date, end, time, place, type; impossible date, bad time, unknown type refused; only https links; unknown category falls back | PASS |
+| Slider | This week's news, urgent notice, event in 3 days, featured achievement; not older posts, expired notice, event in 20 days or drafts; featured and urgent first; event slide shows when and where | PASS |
+| Notices and events | Urgent before normal, expired hidden; events and term end in date order; multi-day exam shown while on | PASS |
+| Acknowledgement | Pending notice in "For you today"; teacher can acknowledge, learner cannot, notice without the option cannot; recorded once; receipts "1 of N staff" with names | PASS |
+| Attendance | Today's figures per class (late counts as attended); WhatsApp text; trend | PASS |
+| Screens | Home for teacher (no share, no "WordPress") and school administrator (share, Post); notice page (button with nonce; receipts for the administrator); drafts hidden from staff; news filter; resources filter and badges; calendar; search; tasks | PASS |
+| Rollback, notices | Nothing left; term dates as before; no PHP notices | PASS |
+
+#### Over HTTP after going live: `tests/integration/intranet-http.php` (30/30 PASS)
+Visitor sent to sign-in and back; parent and learner sent to My Account; teacher,
+bursar, school administrator and owner get the intranet (theme, styles, script, no PHP
+errors, not cached, no "WordPress" for staff); every section opens; unknown item 404;
+the school administrator can add, list and edit posts and sees the overview and
+receipts in the editor; the teacher cannot add or edit; "Intranet" in the teacher's
+menu; content not in the REST API; acknowledgement through the real form recorded, a
+forged request refused, receipts shown; the test notice deleted.
+
+The first run (25/26) found that the school administrator could not open "Add notice":
+WordPress matched the screen to the Posts menu. Fixed by registering the Add screens
+under the Intranet menu.
+
+#### Visual check
+Screens rendered from the captured synthetic data at 1366 and 390 px: no sideways
+scrolling; the slider moves and updates its screen-reader state and dots; the shared
+attendance picture checked. Changed during the check: on phones, today's tasks and
+attendance now come before notices and news.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
