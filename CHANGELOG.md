@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-10-15: Branded staff area and role home screens (plugin 0.9.0, production)
+
+Owner decision: staff use a branded wp-admin; only the owner sees WordPress.
+
+- **No WordPress for staff** (everyone except the owner's account): no WordPress logo
+  menu, command palette, "Howdy", "Thank you for creating with WordPress", version
+  number, help tabs, update notices, application passwords, colour-scheme picker or
+  social-media profile fields; browser tabs read "<screen> ‹ BSA School Management
+  System" (also on the sign-in page, for everyone). The WordPress Dashboard sends staff
+  to their home screen.
+- **Menus**: BSA screens first, then Weblizar's groups with plain names (Learners,
+  Academics, Accounts, Exams, School, Staff; "SM" prefix dropped), "My profile" last.
+  Library, Transport and Live Classes are hidden from the menu (not used; access rules
+  unchanged; list adjustable with the `bsa_sm_hidden_staff_menus` filter).
+- **Look**: BSA navy menu and toolbar, crest and "BSA Portal" at the top left (links to
+  the home screen), brand font. Same toolbar on the portal pages for staff.
+- **Home screens**: school administrators start on the School Dashboard; everyone else
+  on **Home**:
+  - class teacher: "My class" (learners, today's register, exam marks entered this term
+    per subject with a link to enter them, report cards published);
+  - subject teacher: "My subjects" (marks entered per subject and class);
+  - bursar: fees (collected, outstanding, last 7 days and this term, by class, largest
+    balances, recent payments; links to Fee invoices and Fee Reports).
+- Staff sign-in lands on the home screen (a requested page is still honoured).
+- The owner's wp-admin is unchanged.
+- Snapshot `2026-10-15-pre-staff-area` first. Tests: `staff-area.php` 31/31 (staged and
+  live), `staff-area-http.php` 29/29 (no "WordPress" visible on 12 staff screens).
+
 ## 2026-10-15: Home page hero (theme 0.3.0, production)
 
 - The home page hero now has the school photo of learners in the computer room (from

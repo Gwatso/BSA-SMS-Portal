@@ -149,6 +149,13 @@ try {
 	$f1a   = (int) $staff->section_id;
 	$sci   = 6; // Form 3 Sciences.
 	$check( 'fixture: the teacher is class teacher of Form 1 A', 'Form 1 A' === BSA_School::section( $f1a )->title && in_array( 'assigned_class', $staff->permissions, true ) );
+	if ( ! BSA_School::learners( $f1a, $session ) ) {
+		wp_set_current_user( $teacher );
+		ob_start();
+		BSA_Staff_Area::render_home();
+		$html = ob_get_clean();
+		$check( 'teacher screen: an empty class says so, without a subject list', false !== strpos( $html, 'There are no learners in Form 1 A yet.' ) && false === strpos( $html, 'nobody takes it' ) && false === strpos( $html, 'Not marked' ) );
+	}
 	$mk = function ( $name, $section ) use ( $wpdb, $p, $session ) {
 		$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => $name, 'gender' => 'female', 'enrollment_number' => 'TEST-STAFF', 'admission_number' => 'TEST-STAFF', 'session_id' => $session, 'section_id' => $section, 'is_active' => 1 ) );
 		return (int) $wpdb->insert_id;

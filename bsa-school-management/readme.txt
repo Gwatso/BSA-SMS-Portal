@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.8.0
+Stable tag: 0.9.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -63,6 +63,13 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   needs attention (term dates, registers not marked, report cards not published,
   subjects without a teacher, family account problems), fees per class, today's
   register per class and marks entry for the current term.
+* Staff area (everyone except the owner): wp-admin without WordPress branding, menus in
+  BSA order with plain names (Learners, Academics, Accounts, Exams, School, Staff),
+  unused modules (Library, Transport, Live Classes) hidden from the menu, BSA navy menu
+  and toolbar with the crest. Home screen per role: class teachers see their class
+  (learners, today's register, exam marks entered per subject, report cards
+  published); subject teachers their subjects in each class; the bursar fees
+  (collected, outstanding, recent payments, largest balances).
 
 Data: tables {prefix}bsa_admission_records, {prefix}bsa_register_checks,
 {prefix}bsa_marks and {prefix}bsa_reports, option
@@ -73,6 +80,12 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.9.0 =
+* Branded staff area: no WordPress branding, menus or Dashboard for anyone but the owner;
+  Weblizar menus renamed; unused modules hidden from the menu; BSA colours and crest.
+* Home screens: My class, My subjects and Fees for teachers and the bursar; school
+  administrators start on the School Dashboard. Staff sign-in lands there.
 
 = 0.8.0 =
 * School Dashboard for the owner and school administrator: needs-attention list, fees

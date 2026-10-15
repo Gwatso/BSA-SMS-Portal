@@ -437,6 +437,13 @@ class BSA_Staff_Area {
 #adminmenu li.wp-has-current-submenu div.wp-menu-image:before,#adminmenu .current div.wp-menu-image:before,#adminmenu a.current:hover div.wp-menu-image:before{color:#fff}
 #adminmenu li a:focus div.wp-menu-image:before{color:#fff}
 #collapse-button{color:#DCE6F5}
+.wp-core-ui .button-primary{background:#1B3674;border-color:#1B3674;color:#fff}
+.wp-core-ui .button-primary:hover,.wp-core-ui .button-primary:focus{background:#132653;border-color:#132653;color:#fff}
+.wp-core-ui .button-primary:focus{box-shadow:0 0 0 1px #fff,0 0 0 3px #376DBE}
+.wp-core-ui .button,.wp-core-ui .button-secondary{color:#1B3674;border-color:#1B3674}
+.wp-core-ui .button:hover,.wp-core-ui .button-secondary:hover{color:#132653;border-color:#132653;background:#F1F5FB}
+.wp-core-ui .button-primary:disabled,.wp-core-ui .button-primary.disabled{background:#8FA6CF!important;border-color:#8FA6CF!important;color:#fff!important}
+a{color:#1B3674}a:hover,a:active{color:#132653}
 #collapse-button:hover,#collapse-button:focus{color:#fff}
 .bsa-footer{color:#50575e}
 body.profile-php .user-rich-editing-wrap,body.profile-php .user-syntax-highlighting-wrap,body.profile-php .user-comment-shortcuts-wrap,body.profile-php .user-admin-bar-front-wrap,body.profile-php .user-language-wrap,body.profile-php .user-url-wrap,body.profile-php .user-description-wrap,body.profile-php .user-profile-picture,body.profile-php .user-admin-color-wrap{display:none}
@@ -628,7 +635,10 @@ body.profile-php .user-rich-editing-wrap,body.profile-php .user-syntax-highlight
 			$ent      = array_sum( wp_list_pluck( $c['progress'], 'entered' ) );
 			$reg_url  = admin_url( 'admin.php?page=' . BSA_Register::PAGE . '&section=' . $c['section'] );
 			$mark_url = admin_url( 'admin.php?page=' . BSA_Marks::PAGE . '&section=' . $c['section'] );
-			if ( ! $s['school'] ) {
+			if ( ! $c['learners'] ) {
+				$reg_value = '–';
+				$reg_note  = __( 'no learners yet', 'bsa-school-management' );
+			} elseif ( ! $s['school'] ) {
 				$reg_value = '–';
 				$reg_note  = __( 'no school today', 'bsa-school-management' );
 			} elseif ( ! $reg || ! $reg['marked'] ) {
@@ -645,9 +655,12 @@ body.profile-php .user-rich-editing-wrap,body.profile-php .user-syntax-highlight
 			echo '<div class="bsa-tiles">';
 			echo '<div class="bsa-tile"><div class="bsa-tile-label">' . esc_html__( 'Learners', 'bsa-school-management' ) . '</div><div class="bsa-tile-value">' . esc_html( number_format_i18n( $c['learners'] ) ) . '</div><div class="bsa-tile-note">' . esc_html__( 'active this year', 'bsa-school-management' ) . '</div></div>';
 			echo '<div class="bsa-tile"><div class="bsa-tile-label">' . esc_html__( 'Register today', 'bsa-school-management' ) . '</div><div class="bsa-tile-value">' . esc_html( $reg_value ) . '</div><div class="bsa-tile-note">' . esc_html( $reg_note ) . '</div></div>';
-			echo '<div class="bsa-tile"><div class="bsa-tile-label">' . esc_html__( 'Exam marks entered this term', 'bsa-school-management' ) . '</div><div class="bsa-tile-value">' . esc_html( $s['term'] ? $pct( $ent, $exp ) . '%' : '–' ) . '</div><div class="bsa-tile-note">' . esc_html( $s['term'] ? sprintf( /* translators: 1: entered, 2: expected, 3: published, 4: learners. */ __( '%1$d of %2$d · %3$d of %4$d report cards published', 'bsa-school-management' ), $ent, $exp, $c['published'], $c['learners'] ) : __( 'no current term', 'bsa-school-management' ) ) . '</div></div>';
+			echo '<div class="bsa-tile"><div class="bsa-tile-label">' . esc_html__( 'Exam marks entered this term', 'bsa-school-management' ) . '</div><div class="bsa-tile-value">' . esc_html( $s['term'] && $exp ? $pct( $ent, $exp ) . '%' : '–' ) . '</div><div class="bsa-tile-note">' . esc_html( $s['term'] ? sprintf( /* translators: 1: entered, 2: expected, 3: published, 4: learners. */ __( '%1$d of %2$d · %3$d of %4$d report cards published', 'bsa-school-management' ), $ent, $exp, $c['published'], $c['learners'] ) : __( 'no current term', 'bsa-school-management' ) ) . '</div></div>';
 			echo '</div>';
-			if ( $c['progress'] ) {
+			if ( ! $c['learners'] ) {
+				/* translators: %s: class. */
+				echo '<p>' . esc_html( sprintf( __( 'There are no learners in %s yet. They appear here once the school office admits them.', 'bsa-school-management' ), $c['title'] ) ) . '</p>';
+			} elseif ( $c['progress'] ) {
 				echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Subject', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Exam marks entered', 'bsa-school-management' ) . '</th><th scope="col" class="num"><span class="screen-reader-text">' . esc_html__( 'Link', 'bsa-school-management' ) . '</span></th></tr></thead><tbody>';
 				foreach ( $c['progress'] as $sid => $p ) {
 					/* translators: 1: entered, 2: expected. */
