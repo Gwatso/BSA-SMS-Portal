@@ -64,6 +64,10 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-15 | Caution: in Weblizar, deleting a **class section or a school year (session)** deletes every learner record in it (database cascade). Deleting a WordPress user only unlinks it from the learner. | Claude (verified in the database) | Never delete a session or section that has learners; snapshot first. |
 | 2026-10-15 | Backups follow the UpdraftPlus settings as they stood (daily files and database, 14 kept), now actually scheduled daily at 02:00. | Claude (fix; settings unchanged) | If Google Drive space runs short, set files to weekly in UpdraftPlus (database stays daily). |
 | 2026-10-15 | Author archives disabled (404); usernames are not published anywhere on the site. | Claude (Phase 9 finding) | Plugin 0.7.1. |
+| 2026-10-15 | Home page hero uses the learners photo from the school banner, **blurred so faces are not recognisable**, under a navy overlay; motto and title as real text. | Owner (softened photo) | Theme 0.3.0. A sharp photo needs parental media consent first. |
+| 2026-10-15 | Staff area: **branded wp-admin** (all WordPress signs removed for everyone but the owner; a home screen per role), not a separate staff portal. | Owner | Next build. Owner keeps full WordPress. |
+| 2026-10-15 | Results dashboards built **into the portal**; learner data stays on the school's server (no AI service). | Owner | AI-written insights only after a school privacy decision. |
+| 2026-10-15 | **Learners at risk** = any of: term average below 50 %; fewer than 5 subjects passed; average down 10+ marks on last term; attendance below 85 %. Reasons shown with each flag. **Staff only**: parents and learners see results, trends, attendance and fees, but no at-risk flag or class position. | Owner (signs, audience) + Claude (default numbers, adjustable) | Built after the staff-area branding. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 

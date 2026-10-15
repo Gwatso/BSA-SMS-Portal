@@ -49,6 +49,7 @@ revalidates every 2 s, so wait a few seconds before verifying.
 | 2026-10-14 | bsa-portal | 0.2.4 | files: account.css `1a35c4d4…`, functions.php `faef6ca0…`, style.css `33042f73…` (downloaded from the pushed commit, matched) | phone cards, BSA pages; home, account, help 200 |
 | 2026-10-14 | bsa-portal | 0.2.5 | files: account.css `211600f3…`, functions.php `cec0d956…`, style.css `374db36e…` (matched) | dashboard notices visible again; duplicate settings link hidden; home, account, help 200 |
 | 2026-10-15 | bsa-portal | 0.2.6 | files: account.css `87a31f81…`, functions.php `94c0d938…`, style.css `df939470…` (matched) | email wraps on the learner dashboard at 320 px; pages 200 |
+| 2026-10-15 | bsa-portal | 0.3.0 | `cc9c3334cbafe6e3a04b65c412c0628eccf661ca52302d690876b336bd0bca59` (files from the pushed commit, matched: home.css `bc621cc7…`, page-portal-home.php `fb065f08…`, functions.php `4c619040…`, style.css `e62d54cb…`, hero-1600.webp `47ee302e…`, hero-800.webp `887dbb29…`; previous files kept in `bsa-backups/2026-10-15-pre-hero/theme/`) | home 200 with motto and hero; both images 200 `image/webp` (15 KB and 7 KB); rendered at 1366 and 390 px |
 
 ## Third-party plugins installed (2026-10-10, from wordpress.org)
 

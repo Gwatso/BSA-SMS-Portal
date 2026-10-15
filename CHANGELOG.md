@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-15: Home page hero (theme 0.3.0, production)
+
+- The home page hero now has the school photo of learners in the computer room (from
+  the school banner) as its background. **Blurred so no one can be recognised** (owner
+  decision: learners are minors), under a navy overlay that keeps white text readable
+  (overlay at least 0.78 opaque behind the text).
+- "Passion for Excellence" above the title as real text; white sign-in button on the
+  photo; the crest in a round white badge.
+- Two image sizes (15 KB for desktop, 7 KB for phones), WebP.
+
 ## 2026-10-15: School Dashboard (plugin 0.8.0, production)
 
 - **School Dashboard** at the top of wp-admin for the owner and the school administrator
