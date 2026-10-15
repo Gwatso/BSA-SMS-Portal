@@ -335,7 +335,7 @@ try {
 	$pending = get_transient( 'bsa_import_' . $head );
 	$check( 'screen: confirming the columns keeps them and moves on to checking', false !== strpos( $html, 'location.replace' ) && ! empty( $pending['mapping_confirmed'] ) && $mapping == $pending['mapping'] && 0 === $pending['default_section'] ); // phpcs:ignore Universal.Operators.StrictComparisons
 	$html = $render( array( 'page' => 'bsa-import', 'step' => 'check' ) );
-	$check( 'screen: check shows 5 ready, 2 to look at, 4 errors, every row and "Import 5 learners"', 1 === preg_match( '/Ready to import<\/div><div class="bsa-tile-value">5</', $html ) && 1 === preg_match( '/With something to check<\/div><div class="bsa-tile-value">2</', $html ) && 1 === preg_match( '/With errors<\/div><div class="bsa-tile-value">4</', $html ) && 9 === substr_count( $html, '<th scope="row">' ) && false !== strpos( $html, 'Import 5 learners' ) && 4 === substr_count( $html, 'bsa-row-error' ), '' );
+	$check( 'screen: check shows 5 ready, 2 to look at, 4 errors, every row and "Import 5 learners"', 1 === preg_match( '/Ready to import<\/div><div class="bsa-tile-value">5</', $html ) && 1 === preg_match( '/With something to check<\/div><div class="bsa-tile-value">2</', $html ) && 1 === preg_match( '/With errors<\/div><div class="bsa-tile-value">4</', $html ) && 9 === substr_count( $html, '<th scope="row">' ) && false !== strpos( $html, 'Import 5 learners' ) && 4 === substr_count( $html, 'class="bsa-row-error"' ), '' );
 	if ( $bsa_capture ) {
 		$captured['check'] = $html;
 	}
