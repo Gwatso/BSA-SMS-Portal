@@ -28,6 +28,7 @@ PHP linted, and only then copied into the theme. The table records the file chec
 | 2026-10-15 | bsa-school-management | 0.7.0 | `2eaf353af20910cb6c40a27e3129b7952df5ef4d5677552339ee55913a74c35f` (files downloaded from the pushed commit, matched: accounts `f9fb295d…`, main `0d1324b2…`, readme `ba5fff53…`) | staged copy 19/19; snapshot `2026-10-15-pre-accounts`; rights per role; live check run |
 | 2026-10-15 | bsa-school-management | 0.7.1 | `2f861d38432505772b4299bb082bed6cfcc3670d65c43718610b835b3d629d3c` (files from the pushed commit, matched: hardening `6cd11724…`, family `6f5a39fb…`, main `a6b97a81…`, readme `e686062e…`) | snapshot `2026-10-15-pre-hardening`; security 49/49; family 29/29; family-http 14/14 |
 | 2026-10-15 | bsa-school-management | 0.8.0 | `f275df0fd5291b11cd98c3578fffa83c408196f51f54736ad953289d0c3b4f4d` (files from the pushed commit, matched: dashboard `c384fd8a…`, main `738e4e17…`, readme `e2c2a22d…`) | snapshot `2026-10-15-pre-dashboard`; staged copy and live 37/37; HTTP per role; security 49/49 |
+| 2026-10-15 | bsa-school-management | 0.9.0 | `bc449948a0b758b6d3f9ed0544f536e2806563726b7b8d5becb3bc230143bc41` (files from the pushed commits, matched: staff-area `95d8155d…`, dashboard `d7aa5612…`, portal `c249fab6…`, main `ccce90fd…`, readme `37c75976…`) | snapshot `2026-10-15-pre-staff-area`; staff-area 32/32 (staged and live); staff-area-http 29/29; admission-and-portal 60/60; dashboard 37/37; security 49/49; family-http 14/14 |
 
 ### Child theme deployment (bsa-portal)
 

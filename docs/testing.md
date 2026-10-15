@@ -374,6 +374,39 @@ three (six across on wide screens), bars above their figures, no sideways scroll
 phones (tables scroll inside their card if needed). Bar colour #376DBE on #DCE6F5
 (contrast 4.07:1 against the track, 5.13:1 against white).
 
+### Branded staff area, plugin 0.9.0 (2026-10-15)
+
+#### Integration test: `tests/integration/staff-area.php` (32/32 PASS)
+Run against the staged copy, then live; home screens checked with synthetic learners,
+marks, register entries, a subject assignment, an invoice and a payment inside a
+rolled-back transaction.
+
+| Area | Checks | Result |
+|---|---|---|
+| Who and where | Everyone but the owner gets the staff area; school administrator starts on the School Dashboard, teacher and bursar on Home, owner on wp-admin | PASS |
+| No WordPress | Browser tab and sign-in tab without "WordPress"; school footer, no version; no application passwords; default colour scheme; no social-media profile fields; owner unchanged | PASS |
+| Menu | No WordPress Dashboard, separators, Library, Live Classes; Weblizar renamed (Academics, Lessons, School, My profile); BSA order; owner's menu untouched; Home only for non-administrators | PASS |
+| Toolbar | No WordPress logo, site menu or command palette; crest and "BSA Portal" to the home screen; no "Howdy" (also not in the screen-reader label); owner keeps the WordPress toolbar | PASS |
+| Home screens | Marks entered per subject (learner's own subjects); empty class message; class teacher: Form 1 A with today's register; subject teacher: Physics in Form 3 Sciences, classes without learners skipped; bursar: synthetic payment and balance listed; screens render with greeting, roles, links and no "WordPress" | PASS |
+| Rollback, notices | Nothing left; no PHP notices | PASS |
+
+#### Over HTTP after going live: `tests/integration/staff-area-http.php` (29/29 PASS)
+Signed in as the school administrator, the Form 1 A teacher and the bursar: the WordPress
+Dashboard sends each to their home screen; 12 staff screens (BSA and Weblizar ones,
+profile) open with **no "WordPress" anywhere visible** and no PHP errors; BSA toolbar,
+menu colours and footer present; menus per role as expected; owner keeps the standard
+Dashboard; staff toolbar on the portal home page has the crest; sign-in page without
+"WordPress".
+
+Also re-run after going live: admission-and-portal 60/60 (staff sign-in now lands on
+the home screen), dashboard 37/37, security 49/49, family-http 14/14.
+
+#### Visual check
+Teacher and bursar home screens rendered at 1366 and 390 px from the live pages: navy
+menu and toolbar, no sideways scrolling on phones. Found and fixed during the check:
+"nobody takes it" on every subject of an empty class (now one message), and secondary
+button styling hiding the primary button's text.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is

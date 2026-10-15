@@ -21,6 +21,12 @@ it uses a school address (e.g. `bsa002@bindurascienceacademy.co.zw`), which keep
 parent's email free. The **Family Accounts** screen lists learners where this is not the
 case.
 
+**Staff area.** Everyone except the owner sees a branded wp-admin with no WordPress
+branding or WordPress menus; menus are named Learners, Academics, Accounts, Exams,
+School and Staff; Library, Transport and Live Classes are hidden from the menu. Hiding a
+menu does not change access: each screen still checks Weblizar and BSA rights. Staff
+land on their home screen after signing in. Only the owner sees standard WordPress.
+
 Learners and parents are sent to **My Account** after signing in, do not see the
 WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 
@@ -49,6 +55,7 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Record the weekly register check | Yes (head / deputy / T.I.C.) | — | — |
 | Admissions and learner records | Manage | — | — |
 | School Dashboard (fees, register, marks, needs attention) | Yes (owner, school administrator) | — | — |
+| Home screen | School Dashboard is their home | My class (class teacher), My subjects (subject teacher) | Fees |
 | Family Accounts check (logins of learners and parents) | Yes (also staff with Manage Admissions or Manage Students) | — | — |
 | Admission documents (birth certificate, Grade 7 results) | View, edit, download | — | — |
 | Staff, roles, settings | Manage | — | — |
