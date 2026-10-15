@@ -407,6 +407,40 @@ menu and toolbar, no sideways scrolling on phones. Found and fixed during the ch
 "nobody takes it" on every subject of an empty class (now one message), and secondary
 button styling hiding the primary button's text.
 
+### Results dashboards, plugin 0.10.0 (2026-10-15)
+
+#### Integration test: `tests/integration/results.php` (40/40 PASS)
+Run on the live code inside a rolled-back transaction: eight synthetic learners in Form 3
+Sciences (2026) and one in Form 4 Sciences (2027, same admission number), six subjects
+each, Term 2 and Term 3 marks, twelve register days, term dates, rules and published
+report cards.
+
+| Area | Checks | Result |
+|---|---|---|
+| Helpers | Default rules 50/5/10/85; out-of-range rules refused; 63.5% / 70% / +4.5 / −12; trend line with values written and an accessible name (none for one point); previous term (Term 1 2027 → Term 3 2026) | PASS |
+| At risk | Fine learner not flagged; low average + 2 of 6 passed; average down 15 (75% → 60%); attendance 8 of 12 days; two marks in (30, 80) not flagged as 5 passes are still possible; three low marks flagged twice; 5 register days do not count yet; stored rules used | PASS |
+| Figures | Class summary (7 learners, 5 complete, 4 passing = 80%, 4 at risk); Physics 6 entries, 4 passed, 56.5%, grades A 1 / B 3 / E 2; class averages by term; at-risk list order; 2027 record matched by admission number and compared with Term 3 2026 (down 10: flagged); one learner's marks by term | PASS |
+| Rights and screens | Owner and school administrator all classes; class teacher own class; bursar, parent, visitor none. Overview, at risk (with rules form for administrators only), progression (trend lines, most improved, biggest drops), learner (marks with grades, position for staff); class teacher cannot open another class's learner; bursar refused | PASS |
+| Families | Nothing before publication; Progress from published terms (average, change −15, passes, attendance, marks by subject, trend line); no position or at-risk wording; shown under Report Cards | PASS |
+| Dashboard and Home | At-risk count on the School Dashboard ("4 learners are at risk in Term 3.") and on the class teacher's Home | PASS |
+| Rollback, notices | Nothing left; terms and rules as before; no PHP notices | PASS |
+
+The first run (38/40) found a fault in the test, not the plugin: the 2027 learner had
+been given Form 3 subject IDs, which Form 4 does not have.
+
+#### After going live
+| Check | Result |
+|---|---|
+| Results screen over HTTP: owner, school administrator, class teacher 200; bursar, parent, learner refused (403) | PASS |
+| Rules form over HTTP: school administrator saves; value out of range refused; forged request 403; bursar 403; rules restored afterwards | PASS |
+| Re-run: dashboard 37/37, staff-area 32/32 and HTTP 29/29, reports 56/56, family 29/29 and HTTP 14/14, security 49/49 | PASS |
+
+#### Visual check
+The screens rendered from the synthetic data at 1280 and 390 px: four figures per row,
+class and subject tables with pass-rate bars, reasons with icon and words, trend lines
+with values at each point. Fixed during the check: one figure alone on a second row;
+the rules form's input width clipping its button.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
