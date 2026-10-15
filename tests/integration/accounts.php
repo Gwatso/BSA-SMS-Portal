@@ -35,7 +35,11 @@ $die = function () {
 		throw new RuntimeException( 'wp_die: ' . ( is_string( $m ) ? wp_strip_all_tags( $m ) : '' ) );
 	};
 };
-add_filter( 'wp_die_handler', $die, 999 );
+// Novamira runs inside a REST request, where wp_die() uses the JSON handler.
+$die_hooks = array( 'wp_die_handler', 'wp_die_ajax_handler', 'wp_die_json_handler', 'wp_die_jsonp_handler', 'wp_die_xmlrpc_handler', 'wp_die_xml_handler' );
+foreach ( $die_hooks as $hook ) {
+	add_filter( $hook, $die, 999 );
+}
 
 // Helpers (no database).
 $check( 'email: missing, invalid, placeholder and real addresses told apart', '' !== BSA_Accounts::email_problem( '' ) && '' !== BSA_Accounts::email_problem( 'nope' ) && '' !== BSA_Accounts::email_problem( 'a@example.invalid' ) && '' !== BSA_Accounts::email_problem( 'a@example.com' ) && '' === BSA_Accounts::email_problem( 'parent@gmail.com' ) && '' === BSA_Accounts::email_problem( 'bsa002@bindurascienceacademy.co.zw' ) );
@@ -143,7 +147,9 @@ try {
 	wp_set_current_user( $original );
 	wp_cache_flush();
 	BSA_School::flush();
-	remove_filter( 'wp_die_handler', $die, 999 );
+	foreach ( $die_hooks as $hook ) {
+		remove_filter( $hook, $die, 999 );
+	}
 	restore_error_handler();
 }
 
