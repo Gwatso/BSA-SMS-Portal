@@ -51,6 +51,12 @@ $check( 'xml-rpc: no wp.* methods offered', false === strpos( $x['body'], 'wp.ge
 $check( 'rest: users list hidden from visitors', 404 === $get( rest_url( 'wp/v2/users' ) )['code'] || 401 === $get( rest_url( 'wp/v2/users' ) )['code'] );
 $a = $get( add_query_arg( 'author', 1, $home ) );
 $check( 'enumeration: ?author=1 does not reveal a login name', false === strpos( $a['location'], '/author/' ) && false === stripos( $a['body'], 'author-' ), $a['code'] . ' ' . $a['location'] );
+$an = $get( add_query_arg( 'author_name', 'bsa', $home ) );
+$check( 'enumeration: ?author_name= answers 404', 404 === $an['code'], (string) $an['code'] );
+$sm = $get( home_url( '/wp-sitemap.xml' ) );
+$check( 'enumeration: no users sitemap', false === strpos( $sm['body'], 'sitemap-users' ) && 200 !== $get( home_url( '/wp-sitemap-users-1.xml' ) )['code'], (string) $sm['code'] );
+$oe = $get( add_query_arg( 'url', rawurlencode( home_url( '/help/' ) ), rest_url( 'oembed/1.0/embed' ) ) );
+$check( 'enumeration: oEmbed data carries no author name', false === strpos( $oe['body'], 'author_name' ), (string) $oe['code'] );
 $u = $get( rest_url( 'wp/v2/users/1' ) );
 $check( 'enumeration: REST user 1 hidden', in_array( $u['code'], array( 401, 403, 404 ), true ), (string) $u['code'] );
 $up = wp_upload_dir();

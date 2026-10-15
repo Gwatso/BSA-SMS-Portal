@@ -1,6 +1,7 @@
 <?php
 /**
- * Site-wide hardening: XML-RPC, security headers, file editor, user enumeration.
+ * Site-wide hardening: XML-RPC, security headers, file editor, user enumeration (REST,
+ * author archives, users sitemap, oEmbed).
  *
  * @package BSA_School_Management
  */
@@ -31,6 +32,45 @@ class BSA_Hardening {
 
 		// Stop anonymous enumeration of user accounts via the REST API.
 		add_filter( 'rest_endpoints', array( __CLASS__, 'restrict_user_endpoints' ) );
+
+		// ... and via author archives (?author=1 redirected to /author/<login>/), the users
+		// sitemap and oEmbed data. The portal has no author pages.
+		add_action( 'template_redirect', array( __CLASS__, 'no_author_archives' ), 1 );
+		add_filter(
+			'wp_sitemaps_add_provider',
+			static function ( $provider, $name ) {
+				return 'users' === $name ? false : $provider;
+			},
+			10,
+			2
+		);
+		add_filter( 'oembed_response_data', array( __CLASS__, 'strip_oembed_author' ) );
+	}
+
+	/**
+	 * Author archives and ?author= requests answer 404 instead of revealing login names.
+	 */
+	public static function no_author_archives() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only check.
+		if ( ! is_author() && ! isset( $_GET['author'] ) && ! isset( $_GET['author_name'] ) ) {
+			return;
+		}
+		global $wp_query;
+		$wp_query->set_404();
+		status_header( 404 );
+		nocache_headers();
+		remove_action( 'template_redirect', 'redirect_canonical' );
+	}
+
+	/**
+	 * oEmbed data without the author's name and archive link.
+	 *
+	 * @param array $data oEmbed response data.
+	 * @return array
+	 */
+	public static function strip_oembed_author( $data ) {
+		unset( $data['author_name'], $data['author_url'] );
+		return $data;
 	}
 
 	/**

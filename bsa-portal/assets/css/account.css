@@ -161,6 +161,7 @@
 	display: inline-block;
 	margin: 0 16px 4px 0;
 	padding-left: 0;
+	overflow-wrap: anywhere;
 }
 
 .wlsm-container .wlsm-student-dashboard .wlsm-st-details {

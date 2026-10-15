@@ -97,6 +97,8 @@ class BSA_Family {
 		if ( ! self::online_payment_enabled() ) {
 			$output = self::remove_pay_buttons( $output );
 		}
+		// Weblizar's "new" badge beside recent notices has no text alternative.
+		$output = preg_replace( '#<img(?![^>]*\balt=)([^>]*class="wlsm-st-notice-new")#', '<img alt="' . esc_attr__( 'New', 'bsa-school-management' ) . '"$1', $output );
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only navigation.
 		$action  = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : '';
 		$student = isset( $_GET['student_id'] ) ? absint( $_GET['student_id'] ) : 0;
