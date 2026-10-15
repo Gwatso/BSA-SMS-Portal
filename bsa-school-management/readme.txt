@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.9.0
+Stable tag: 0.10.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -70,6 +70,15 @@ BSA-specific security hardening and extensions for the Weblizar School Managemen
   (learners, today's register, exam marks entered per subject, report cards
   published); subject teachers their subjects in each class; the bursar fees
   (collected, outstanding, recent payments, largest balances).
+* Results (school administrators: all classes; class teachers: their class; subject
+  teachers: their subjects): average, pass rate and grades by class and subject; learners
+  at risk with the reasons (average below 50 %, fewer than 5 subjects passed, average
+  down 10 marks or more on the previous term, attendance below 85 %; school
+  administrators can change the numbers); class averages by term with trend lines and
+  the biggest changes; one learner's marks across the year. Staff only.
+* Families: a Progress section under Report Cards with the average, change, subjects
+  passed and attendance for each published term and marks by subject (no position, no
+  at-risk flag).
 
 Data: tables {prefix}bsa_admission_records, {prefix}bsa_register_checks,
 {prefix}bsa_marks and {prefix}bsa_reports, option
@@ -80,6 +89,12 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.10.0 =
+* Results screen: classes and subjects (average, pass rate, grades), learners at risk
+  with reasons and adjustable rules, progression by term, one learner's year.
+* Families: Progress section on Report Cards (published terms only).
+* At-risk counts on the School Dashboard and the class teacher's Home.
 
 = 0.9.0 =
 * Branded staff area: no WordPress branding, menus or Dashboard for anyone but the owner;

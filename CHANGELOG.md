@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-10-15: Results dashboards (plugin 0.10.0, production)
+
+New **Results** screen in the staff area (school administrators: every class; class
+teachers: their own class; subject teachers: their subjects in each class). Exam marks,
+same rules as Report Cards.
+
+- **Overview**: learners with marks, average, pass rate (learners with all their exam
+  marks in), learners at risk; each class with average, pass rate and at-risk count;
+  the selected class's subjects with average, share passed and grades (ZJC 1–9 or
+  O Level A–U).
+- **Learners at risk** (staff only), with the reasons written out:
+  average below 50 % (once 3 exam marks are in); fewer than 5 subjects passed, counting
+  subjects still to be marked as passes; average down 10 marks or more on the previous
+  term (Term 1 compares with the previous year's Term 3, matched on admission number);
+  attendance below 85 % (once 10 register days are recorded). School administrators can
+  change the four numbers on the screen.
+- **Progression**: each class's average in Terms 1–3 with a small trend line (values
+  written at each point), and the five most improved and five biggest drops in the
+  selected class.
+- **Learner**: one learner's exam mark and grade per subject in each term with a trend
+  line, average, subjects passed, position and attendance per term, and the reasons if
+  at risk.
+- **Families**: a **Progress** section under Report Cards on My Account: average, change,
+  subjects passed and attendance for each published term, a trend line, and marks by
+  subject for the latest year. Published report cards only; no position, no at-risk
+  flag (owner decision).
+- At risk on the **School Dashboard** ("Needs attention") and on the class teacher's
+  **Home**.
+- Snapshot `2026-10-15-pre-results` first. Test `tests/integration/results.php` 40/40
+  on the live code.
+
 ## 2026-10-15: Branded staff area and role home screens (plugin 0.9.0, production)
 
 Owner decision: staff use a branded wp-admin; only the owner sees WordPress.
