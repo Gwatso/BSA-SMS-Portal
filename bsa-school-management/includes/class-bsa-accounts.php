@@ -4,7 +4,7 @@
  * as intended, so the office can fix them before accounts are handed out.
  *
  * Checks, per active learner in a school year:
- * - no parent login, or a parent/learner login that no longer exists;
+ * - no parent login (deleting a login unlinks it, so deleted logins show here too);
  * - parent and learner using the same login, or one login used as a learner and as a
  *   parent (a parent signing in with a child's account);
  * - possible siblings (same parent phone number) linked to different parent logins;
@@ -129,14 +129,9 @@ class BSA_Accounts {
 		$admin_key = class_exists( 'WLSM_M_Role' ) ? WLSM_M_Role::get_admin_key() : 'admin';
 		foreach ( $rows as $r ) {
 			$id = (int) $r->ID;
-			// Parent login.
+			// Parent login (a deleted login is unlinked by the database, so it shows here too).
 			if ( ! $r->parent_user_id ) {
 				$add( $id, 'warning', 'no_parent_login', __( 'No parent login: the parent cannot see fees, attendance or report cards.', 'bsa-school-management' ) );
-			} elseif ( ! $r->p_id ) {
-				$add( $id, 'error', 'parent_login_missing', __( 'The parent login linked to this learner no longer exists.', 'bsa-school-management' ) );
-			}
-			if ( $r->user_id && ! $r->l_id ) {
-				$add( $id, 'error', 'learner_login_missing', __( 'The learner login linked to this learner no longer exists.', 'bsa-school-management' ) );
 			}
 			// Shared and crossed logins.
 			if ( $r->user_id && (int) $r->user_id === (int) $r->parent_user_id ) {

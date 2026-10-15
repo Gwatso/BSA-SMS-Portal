@@ -78,7 +78,6 @@ try {
 	$cross1 = $rec( 'Acc Cross Child', $l2, $p3 );
 	$cross2 = $rec( 'Acc Cross Sibling', 0, $l2 );
 	$none   = $rec( 'Acc No Parent', 0, 0 );
-	$gone   = $rec( 'Acc Gone Parent', 0, 999999999 );
 	$admin  = $rec( 'Acc Admin Parent', 0, $owner );
 	$staff  = $rec( 'Acc Staff Parent', 0, $teacher );
 	$bademl = $rec( 'Acc Bad Email', $l3, $p1 );
@@ -89,13 +88,13 @@ try {
 	$codes  = function ( $id ) use ( $issues ) {
 		return wp_list_pluck( $issues[ $id ] ?? array(), 'code' );
 	};
-	$check( 'listed: all 12 synthetic learners in 2026', 12 === count( array_intersect( array( $ok_a, $ok_b, $split1, $split2, $shared, $cross1, $cross2, $none, $gone, $admin, $staff, $bademl ), array_map( 'intval', wp_list_pluck( $rows, 'ID' ) ) ) ) );
+	$check( 'listed: all 11 synthetic learners in 2026', 11 === count( array_intersect( array( $ok_a, $ok_b, $split1, $split2, $shared, $cross1, $cross2, $none, $admin, $staff, $bademl ), array_map( 'intval', wp_list_pluck( $rows, 'ID' ) ) ) ) );
 	$check( 'ok: two children on one parent login with the same phone have no problems', array() === $codes( $ok_a ) && array() === $codes( $ok_b ), wp_json_encode( array( $codes( $ok_a ), $codes( $ok_b ) ) ) );
 	$check( 'siblings: same phone, different parent logins flagged on both', in_array( 'siblings_split', $codes( $split1 ), true ) && in_array( 'siblings_split', $codes( $split2 ), true ) );
 	$check( 'email: placeholder parent email flagged (p2)', in_array( 'parent_email', $codes( $split1 ), true ) && ! in_array( 'parent_email', $codes( $split2 ), true ) );
 	$check( 'shared: parent and learner on one login is an error', in_array( 'shared_login', $codes( $shared ), true ) && 'error' === $issues[ $shared ][ array_search( 'shared_login', $codes( $shared ), true ) ]['severity'] );
 	$check( 'crossed: a child\'s login used as a sibling\'s parent login flagged on both', in_array( 'learner_is_parent_login', $codes( $cross1 ), true ) && in_array( 'parent_is_learner_login', $codes( $cross2 ), true ) );
-	$check( 'missing: no parent login is a warning; a deleted parent login an error', in_array( 'no_parent_login', $codes( $none ), true ) && in_array( 'parent_login_missing', $codes( $gone ), true ) );
+	$check( 'missing: no parent login is a warning', in_array( 'no_parent_login', $codes( $none ), true ) && 'warning' === $issues[ $none ][0]['severity'] );
 	$check( 'admin as parent is an error; teacher as parent only a note', in_array( 'parent_is_admin', $codes( $admin ), true ) && in_array( 'parent_is_staff', $codes( $staff ), true ) && 'info' === $issues[ $staff ][0]['severity'] );
 	$check( 'email: invalid learner login email flagged', in_array( 'learner_email', $codes( $bademl ), true ) );
 	$check( 'learner without own login is not a problem', ! in_array( 'no_learner_login', $codes( $ok_b ), true ) && array() === $codes( $ok_b ) );
@@ -109,11 +108,11 @@ try {
 		)
 	);
 	$summary = BSA_Accounts::summary( $mine, $issues );
-	// With an existing parent login: all but "no parent" and "deleted parent" (10). Families:
-	// p1, p2, p3, shared, l2, owner, teacher (7). Own login: A, shared, cross child, bad email (4).
-	// To fix (errors): shared, both crossed, deleted parent, admin parent (5). To check: both
-	// split siblings, no parent, bad learner email (4).
-	$check( 'summary: 12 learners, 10 with a parent login, 7 families, 4 with own login, 5 to fix, 4 to check', array( 12, 10, 7, 4, 5, 4 ) === array( $summary['learners'], $summary['with_parent'], $summary['families'], $summary['with_login'], $summary['errors'], $summary['warnings'] ), wp_json_encode( $summary ) );
+	// With a parent login: all but "no parent" (10). Families: p1, p2, p3, shared, l2, owner,
+	// teacher (7). Own login: A, shared, cross child, bad email (4). To fix (errors): shared,
+	// both crossed, admin parent (4). To check: both split siblings, no parent, bad learner
+	// email (4). (A deleted login cannot be linked: the database sets the link to NULL.)
+	$check( 'summary: 11 learners, 10 with a parent login, 7 families, 4 with own login, 4 to fix, 4 to check', array( 11, 10, 7, 4, 4, 4 ) === array( $summary['learners'], $summary['with_parent'], $summary['families'], $summary['with_login'], $summary['errors'], $summary['warnings'] ), wp_json_encode( $summary ) );
 
 	// Rights and screen.
 	$check( 'rights: owner and school administrator see the screen; teacher and bursar do not', BSA_Accounts::user_can_view( $owner ) && BSA_Accounts::user_can_view( $head ) && ! BSA_Accounts::user_can_view( $teacher ) && ! BSA_Accounts::user_can_view( $bursar ) );
