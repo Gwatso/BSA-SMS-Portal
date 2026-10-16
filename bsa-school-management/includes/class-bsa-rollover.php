@@ -250,11 +250,13 @@ class BSA_Rollover {
 					'created_at'        => $now,
 				)
 			);
-			$ok = $old && false !== $wpdb->insert( "{$p}wlsm_student_records", $new );
+			// A login belongs to one record only (unique in Weblizar): free it first, as
+			// Weblizar's promotion does, then give it to the new record.
+			$ok = $old && false !== $wpdb->update( "{$p}wlsm_student_records", array( 'user_id' => null, 'parent_user_id' => null, 'updated_at' => $now ), array( 'ID' => (int) $old_id ) )
+				&& false !== $wpdb->insert( "{$p}wlsm_student_records", $new );
 			if ( $ok ) {
 				$new_id = (int) $wpdb->insert_id;
-				$ok     = false !== $wpdb->update( "{$p}wlsm_student_records", array( 'user_id' => null, 'parent_user_id' => null, 'updated_at' => $now ), array( 'ID' => (int) $old_id ) )
-					&& false !== $wpdb->insert( "{$p}wlsm_promotions", array( 'from_student_record' => (int) $old_id, 'to_student_record' => $new_id, 'note' => 'BSA rollover ' . $batch, 'created_at' => $now ) );
+				$ok     = false !== $wpdb->insert( "{$p}wlsm_promotions", array( 'from_student_record' => (int) $old_id, 'to_student_record' => $new_id, 'note' => 'BSA rollover ' . $batch, 'created_at' => $now ) );
 			}
 			if ( ! $ok ) {
 				if ( $tx ) {
@@ -320,11 +322,12 @@ class BSA_Rollover {
 				$kept[] = $row->name;
 				continue;
 			}
-			$wpdb->update( "{$p}wlsm_student_records", array( 'user_id' => $row->user_id, 'parent_user_id' => $row->parent_user_id ), array( 'ID' => (int) $old_id ) );
 			$wpdb->update( BSA_Admission_Records::table(), array( 'student_record_id' => (int) $old_id ), array( 'student_record_id' => $new_id ) );
 			$wpdb->delete( "{$p}wlsm_promotions", array( 'to_student_record' => $new_id ) );
 			$wpdb->delete( "{$p}wlsm_students_subjects", array( 'student_id' => $new_id ) );
 			$wpdb->delete( "{$p}wlsm_student_records", array( 'ID' => $new_id ) );
+			// The logins go back once the new record (which held them) is gone.
+			$wpdb->update( "{$p}wlsm_student_records", array( 'user_id' => $row->user_id, 'parent_user_id' => $row->parent_user_id ), array( 'ID' => (int) $old_id ) );
 			++$removed;
 		}
 		$batches[ $batch ]['undone'] = current_time( 'mysql' );
