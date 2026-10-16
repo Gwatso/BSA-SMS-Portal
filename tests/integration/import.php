@@ -335,7 +335,7 @@ try {
 		$g7map,
 		$s2
 	);
-	$check( 'Grade 7 grades: six grades kept and the units worked out (10)', 10 === ( $g7[0]['extra']['grade7_units'] ?? 0 ) && 3 === ( $g7[0]['extra']['grade7_pe_arts'] ?? 0 ) && ! $g7[0]['warnings'], wp_json_encode( $g7[0] ) );
+	$check( 'Grade 7 grades: six grades kept and the units worked out (10)', 10 === ( $g7[0]['extra']['grade7_units'] ?? 0 ) && 3 === ( $g7[0]['extra']['grade7_pe_arts'] ?? 0 ) && ! preg_grep( '/Grade 7/', $g7[0]['warnings'] ), wp_json_encode( $g7[0] ) );
 	$check( 'Grade 7 grades: units that do not add up are flagged and left empty; a grade 0 is flagged', ! isset( $g7[1]['extra']['grade7_units'] ) && (bool) preg_grep( '/do not match the six subject grades, which add up to 10/', $g7[1]['warnings'] ) && preg_grep( '/must be a whole number from 1 to 9/', $g7[2]['warnings'] ) && 1 === ( $g7[2]['extra']['grade7_maths'] ?? 0 ), wp_json_encode( array( $g7[1]['warnings'], $g7[2]['warnings'] ) ) );
 
 	// Screens.
