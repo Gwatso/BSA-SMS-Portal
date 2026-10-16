@@ -621,6 +621,35 @@ The tab and the learner page were rendered from the captured synthetic data at 1
 `admission-and-portal` 61/61 (redirect checks updated). intranet-http 32/32,
 staff-area-http 29/29, family-http 14/14 and security 49/49 re-run.
 
+### Clean addresses, plugin 0.15.0 (2026-10-16)
+
+`tests/integration/clean-urls-http.php` (25/25 PASS):
+- Address helpers: /wp-admin → /staff, BSA screens shortest, other sites untouched;
+  admin_url(), sign-in, sign-out and lost-password links use the new addresses.
+- The .htaccess block goes before WordPress's rules, is added once, and removing it
+  gives back the file exactly; the block on the site is present once.
+- Over HTTP: /sign-in and /staff for visitors; the school administrator's and a teacher's
+  screens at /staff/…; old /wp-admin and /wp-login.php addresses 301 to the new ones;
+  the sample parent at a staff address goes to My Account; /intranet sends visitors to
+  /sign-in.
+- A real sign-in through /sign-in as the placeholder bursar (throwaway password, then
+  restored), a staff screen opened with the cookies received, and sign-out through the
+  toolbar's link clearing the /staff cookie.
+
+Found and fixed during the run:
+- On the school's LiteSpeed server the relative rule for /staff/<screen> gave a 404;
+  rules now use full paths, and script 12 retries while the server picks up the change.
+- Parents opening a staff screen they may not use got WordPress's 403 instead of My
+  Account (also true with the old addresses); now redirected.
+- Link checks in dashboard, staff-area, intranet and import-http accept /staff
+  addresses.
+
+Whole suite after switching on: security 49/49, access-guard (no failures),
+accounts 19/19, admission-and-portal 61/61, landing-http 13/13, staff-area 32/32 + HTTP
+29/29, dashboard 38/38, register 53/53, reports 56/56, results 40/40, entry 23/23,
+finance 49/49, family 29/29 + HTTP 14/14, import 68/68 + HTTP 28/28, intranet 36/36 +
+HTTP 32/32, rollover 46/46 + HTTP 15/15.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
