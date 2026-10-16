@@ -78,6 +78,9 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-15 | **Data to bring in:** existing records are mixed (Excel files, class lists in Word, marks on paper). History to capture: **last year (2025) and this year (2026)** only. | Owner | Import comes before the board insights. |
 | 2026-10-15 | **Parent emails collected later**, once the system has proved itself. Learners and parents are imported without parent logins for now (parent names and phones recorded). | Owner | Parent logins created later from the emails; no messages sent at import. |
 | 2026-10-15 | Owner will send the files; some attached in the chat for Claude to format and load. | Owner | Each file goes through the import checks and a preview of problems before anything is saved. |
+| 2026-10-15 | **Import data screen** (plugin 0.12.0): Excel, Word, CSV or pasted tables; rows with errors are skipped, warnings imported; all rows or none; undo. Marks import later, when the marks files arrive. | Owner ("go ahead and build") + Claude (design) | Owner and school administrator only. |
+| 2026-10-15 | **School year 2025** created (1 January to 31 December 2025) for last year's records. The current year stays 2026. | Claude (needed for the owner's 2025 history) | Script 10. 2025 term dates to be entered when known. Never delete a school year with learners (cascade). |
+| 2026-10-15 | A learner imported **without an admission number** takes the number of the learner with the same name (and birth date, when both are known) in another year; otherwise a new BSA number. | Claude | Keeps one learner's years linked for progression. Several matches → flagged, not guessed. |
 | 2026-10-10 | Weblizar tables stay the system of record; BSA code lives in `bsa-school-management` and the `bsa-portal` child theme, never in vendor files. | Claude | — |
 | 2026-10-10 | Library, transport, hostel modules unused. | Claude | — |
 

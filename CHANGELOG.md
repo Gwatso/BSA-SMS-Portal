@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-10-15: Import data, learners and parents (plugin 0.12.0, production)
+
+A new **Import data** screen in wp-admin (owner and school administrator) to bring in
+last year's and this year's records from the files the school already has.
+
+- **Sources:** Excel (.xlsx), Word (.docx, class lists read straight from their tables,
+  including tables split over pages), CSV, or a table copied from Word or Excel and
+  pasted in. Old .xls and .doc files: save as .xlsx/.docx, or copy and paste.
+- **Three steps:** choose the school year and the list; match the columns (guessed from
+  the headings, e.g. "Name", "D.O.B", "Contact number", "Father's name", "Grade 7
+  units"; can be changed); check every row, then import. Nothing is saved before the
+  last step.
+- **Checks on every row:** errors (row skipped): no name, no or unknown class, a class
+  needing its stream ("Form 3" → Sciences or Commercials), the same admission number or
+  learner twice, an admission number already used that year. Things to check (imported):
+  one name only, sex or birth date not understood, age outside 10–21, phone not a
+  Zimbabwe mobile, no parent phone, boarder/day not understood, Grade 7 units outside
+  4–36. Notes: linked to another year, new number to be given.
+- **Tidying:** names in CAPITALS become Title Case; phones written 07XXXXXXXX (+263…
+  accepted); dates in any common form (24/05/2012, 24 May 2012, Excel dates); classes
+  as written on school lists ("Form One", "F3 Sci", "2A"); boarder/day as words or B/D.
+  A **class for every row** can be chosen for a list of one class (a Word list titled
+  "Form 2 A").
+- **Linking years:** a learner without an admission number keeps the number from the
+  other year when the same name (and birth date) is found; otherwise a new BSA number
+  is given. Results and progression follow learners across years by this number.
+- **Saved:** a Weblizar learner record per row (parents' names and phones, guardian in
+  the note), Grade 7 units, primary school and birth certificate number in the admission
+  record. All rows or none. **No logins and no messages** (parent emails come later,
+  owner decision); no admission invoices.
+- **Undo:** each import is listed and can be undone; learners with fees, marks or
+  register entries already recorded are kept.
+- **Template:** a CSV learner template (opens in Excel) whose headings are all matched
+  automatically.
+- **School year 2025** added (script 10) so last year's lists can be imported.
+- Marks import follows when the marks files arrive (owner).
+
 ## 2026-10-15: BSA Intranet (plugin 0.11.0, production)
 
 The staff hub planned in the Lovable "BSA Intranet" prototype, rebuilt inside the

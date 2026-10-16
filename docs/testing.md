@@ -478,6 +478,45 @@ scrolling; the slider moves and updates its screen-reader state and dots; the sh
 attendance picture checked. Changed during the check: on phones, today's tasks and
 attendance now come before notices and news.
 
+### Import data, plugin 0.12.0 (2026-10-15)
+
+#### Integration test: `tests/integration/import.php` (63/63 PASS)
+Staged copy, then live (again after adding the 2025 school year). Reading and values need
+no database; the all-or-nothing check runs the import's own transaction with a forced
+failure; everything else inside a rolled-back transaction, into the last school year
+(no real learners).
+
+| Area | Checks | Result |
+|---|---|---|
+| Reading | CSV (byte-order mark, quoted commas, semicolons), pasted tabs, old Windows text; heading row found under a title; line numbers; .xlsx built in the test (sheet via workbook, shared/rich/inline text, gaps, Excel dates); .docx (tables joined over pages, repeated headings dropped, merged cells, other tables ignored); wrong files refused | PASS |
+| Matching | Typical school headings and every template heading matched to their fields | PASS |
+| Values | Classes ("Form One", "FORM II A", "F3 Sci", two columns; stream needed, unknown form); dates (day first, words, Excel numbers; impossible dates refused); sex; phones; boarder or day; name tidying | PASS |
+| Rights | Owner and school administrator yes; teacher, bursar, parent no | PASS |
+| All or nothing | Second learner failing → first learner and its admission record not kept, no import listed | PASS |
+| Checking | Each error, warning and note on a 9-row list; guardian in the note and as contact phone; admission number taken from the same learner in the other year; class for every row | PASS |
+| Importing | 5 saved, 4 skipped; Weblizar record fields; BSA number after the highest; enrollment numbers without gaps; admission record; no logins; listed; same list again refused | PASS |
+| Undo | 4 removed, learner with a register entry kept; admission record removed; not twice; shown as undone | PASS |
+| Screens | Start, columns, check (tiles, every row, guardian phone once), done and history; teacher refused | PASS |
+| Rollback, notices | Nothing left; import list as before; no PHP notices | PASS |
+
+The first runs found only test mistakes (a variable reused for the Word heading row, a
+style rule counted as an error row); a two-year assumption in this test and in
+`results.php` was changed to "the last two school years" before 2025 was added.
+
+#### Over HTTP after going live: `tests/integration/import-http.php` (28/28 PASS)
+As the school administrator through the real forms: screen opens (no "WordPress", in the
+menu); template download (CSV with byte-order mark and headings); pasted table → columns
+→ check (2 ready, "Form 3" refused) → import (2 saved with phones, dates, classes, BSA
+numbers, no logins; list not kept) → undo (both removed, message). A Word class list
+uploaded as a real file (PHP's `is_uploaded_file` path) read with "Class for every row".
+Refused: visitor (sign-in), teacher (no screen, no menu, forged upload, undo, template
+with another user's link), forged import. Test learners removed; import list as before.
+
+#### Visual check
+Start, columns, check and done screens rendered from the captured synthetic data at 1280
+and 390 px: no sideways scrolling. Changed during the check: a guardian's phone is shown
+once in the check list; "1 rows" messages now singular.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
