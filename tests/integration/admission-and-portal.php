@@ -5,7 +5,7 @@
  * `execute-php` (send everything after the opening tag).
  *
  * Synthetic users, staff, a second school and a student record (in the existing
- * Sciences section) live inside a database transaction that is rolled back. Files
+ * class) live inside a database transaction that is rolled back. Files
  * written to the private store are not covered by the transaction, so the test
  * deletes every file it created and checks none remain.
  *
@@ -137,8 +137,8 @@ try {
 	$other_school = (int) $wpdb->insert_id;
 	$mk_staff( $other, 'employee', serialize( array( 'manage_admissions' ) ), $other_school );
 
-	$section = (int) $wpdb->get_var( "SELECT ID FROM {$p}wlsm_sections WHERE label = 'Sciences' LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-	$check( 'fixture: Sciences section and second school', $section > 0 && $other_school > 0 );
+	$section = (int) $wpdb->get_var( "SELECT ID FROM {$p}wlsm_sections WHERE label = 'A' LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	$check( 'fixture: a class and a second school', $section > 0 && $other_school > 0 );
 	$wpdb->insert(
 		"{$p}wlsm_student_records",
 		array(

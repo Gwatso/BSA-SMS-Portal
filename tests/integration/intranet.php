@@ -151,7 +151,7 @@ try {
 	$receipt = BSA_Intranet::receipts_html( $urgent );
 	$check( 'receipts: "Acknowledged by 1 of N staff" with who has and has not', false !== strpos( $receipt, 'Acknowledged by 1 of ' . count( $staff ) . ' staff' ) && false !== strpos( $receipt, 'Willard Hlabati' ) && false !== strpos( $receipt, 'not yet' ) );
 
-	// Attendance: synthetic learners marked today in Form 3 Sciences.
+	// Attendance: synthetic learners marked today in Form 3 A.
 	$mk_l = function ( $name ) use ( $wpdb, $p ) {
 		$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => $name, 'gender' => 'female', 'enrollment_number' => 'TEST-INTRA', 'admission_number' => 'TEST-INTRA', 'session_id' => 1, 'section_id' => 6, 'is_active' => 1 ) );
 		return (int) $wpdb->insert_id;
@@ -161,10 +161,10 @@ try {
 		$wpdb->insert( "{$p}wlsm_attendance", array( 'attendance_date' => $today, 'status' => $status, 'student_record_id' => $sid, 'added_by' => $owner, 'created_at' => current_time( 'mysql' ) ) );
 	}
 	$att = BSA_Intranet::attendance();
-	$f3s = array_values( array_filter( $att['classes'], static function ( $c ) { return 'Form 3 Sciences' === $c['title']; } ) );
-	$check( 'attendance: today, Form 3 Sciences 3 of 4 attended (late counts), 1 absent, 1 late', $att['today'] && $f3s && 3 === $f3s[0]['attended'] && 4 === $f3s[0]['possible'] && 1 === $f3s[0]['absent'] && 1 === $f3s[0]['late'], wp_json_encode( $f3s ) );
+	$f3s = array_values( array_filter( $att['classes'], static function ( $c ) { return 'Form 3 A' === $c['title']; } ) );
+	$check( 'attendance: today, Form 3 A 3 of 4 attended (late counts), 1 absent, 1 late', $att['today'] && $f3s && 3 === $f3s[0]['attended'] && 4 === $f3s[0]['possible'] && 1 === $f3s[0]['absent'] && 1 === $f3s[0]['late'], wp_json_encode( $f3s ) );
 	$text = BSA_Intranet::attendance_text( $att );
-	$check( 'attendance: WhatsApp text with title in bold, each class and unmarked classes', 0 === strpos( $text, '*BSA attendance, ' ) && false !== strpos( $text, 'Form 3 Sciences: 75% (3/4)' ) && ( ! $att['unmarked'] || false !== strpos( $text, $att['unmarked'][0] . ': not marked' ) ) );
+	$check( 'attendance: WhatsApp text with title in bold, each class and unmarked classes', 0 === strpos( $text, '*BSA attendance, ' ) && false !== strpos( $text, 'Form 3 A: 75% (3/4)' ) && ( ! $att['unmarked'] || false !== strpos( $text, $att['unmarked'][0] . ': not marked' ) ) );
 	$check( 'attendance: trend includes today', $att['trend'] && null !== end( $att['trend'] ) );
 
 	// Screens.

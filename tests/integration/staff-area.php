@@ -147,7 +147,7 @@ try {
 	$check( 'fixture: a current term (Term 3 2026)', $term && 3 === $term['term'] );
 	$staff = BSA_School::staff( $teacher );
 	$f1a   = (int) $staff->section_id;
-	$sci   = 6; // Form 3 Sciences.
+	$sci   = 6; // Form 3 A.
 	$check( 'fixture: the teacher is class teacher of Form 1 A', 'Form 1 A' === BSA_School::section( $f1a )->title && in_array( 'assigned_class', $staff->permissions, true ) );
 	if ( ! BSA_School::learners( $f1a, $session ) ) {
 		wp_set_current_user( $teacher );
@@ -209,7 +209,7 @@ try {
 			return ! BSA_School::learners( $r['section'], $session );
 		}
 	);
-	$check( 'teacher home: Physics in Form 3 Sciences under my subjects; classes without learners skipped', 1 === count( $mine ) && 'Form 3 Sciences' === $mine[0]['class'] && ! $empty, wp_json_encode( $ts['subjects'] ) );
+	$check( 'teacher home: Physics in Form 3 A under my subjects; classes without learners skipped', 1 === count( $mine ) && 'Form 3 A' === $mine[0]['class'] && ! $empty, wp_json_encode( $ts['subjects'] ) );
 	$check( 'teacher home: no fees section', null === $ts['finance'] );
 	$bs = BSA_Staff_Area::home_state( $bursar );
 	$recent = wp_list_pluck( $bs['finance']['recent'] ?? array(), 'transaction_id' );

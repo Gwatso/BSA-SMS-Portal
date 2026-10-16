@@ -72,12 +72,12 @@ try {
 	BSA_School::flush();
 	BSA_Reports::flush();
 
-	$x       = 6; // Form 3 Sciences.
-	$y       = 8; // Form 3 Commercials.
+	$x       = 6; // Form 3 A.
+	$y       = 7; // Form 4 A.
 	$titles  = wp_list_pluck( BSA_School::sections(), 'title', 'ID' );
 	$subs    = BSA_Marks::section_subjects( $x );
 	$n       = count( $subs );
-	$check( 'fixture: Form 3 Sciences and Commercials with their subjects', 'Form 3 Sciences' === ( $titles[ $x ] ?? '' ) && 'Form 3 Commercials' === ( $titles[ $y ] ?? '' ) && $n > 2, $n . ' subjects' );
+	$check( 'fixture: Form 3 A and Form 4 A with their subjects', 'Form 3 A' === ( $titles[ $x ] ?? '' ) && 'Form 4 A' === ( $titles[ $y ] ?? '' ) && $n > 2, $n . ' subjects' );
 	$session = (int) get_option( 'wlsm_current_session' );
 	$day     = '2026-11-02'; // A Monday with no real register yet.
 	$term    = 3;
@@ -92,7 +92,7 @@ try {
 		}
 		return array( 'learners' => 0, 'invoiced' => 0.0, 'paid' => 0.0, 'balance' => 0.0, 'owing' => 0 );
 	};
-	$x_fee0   = $row( $fees0, 'Form 3 Sciences' );
+	$x_fee0   = $row( $fees0, 'Form 3 A' );
 	$att0     = BSA_Dashboard::attendance( $day, $session );
 	$marks0   = BSA_Dashboard::marks( $session, $term );
 	$marks2_0 = BSA_Dashboard::marks( $session, 2 );
@@ -101,7 +101,7 @@ try {
 	$zero_att = array( 'learners' => 0, 'marked' => 0, 'present' => 0, 'late' => 0, 'absent' => 0, 'holiday' => 0 );
 	$zero_mk  = array( 'learners' => 0, 'expected' => 0, 'entered' => 0, 'published' => 0 );
 
-	// Three learners in Form 3 Sciences, one in Form 3 Commercials.
+	// Three learners in Form 3 A, one in Form 4 A.
 	$mk = function ( $name, $section ) use ( $wpdb, $p, $session ) {
 		$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => $name, 'gender' => 'female', 'enrollment_number' => 'TEST-DASH', 'admission_number' => 'TEST-DASH', 'session_id' => $session, 'section_id' => $section, 'is_active' => 1 ) );
 		return (int) $wpdb->insert_id;
@@ -128,12 +128,12 @@ try {
 	$inv( $gone, 300, 0 ); // A learner who has left is not counted.
 
 	$fees1  = BSA_Dashboard::fees();
-	$x_fee1 = $row( $fees1, 'Form 3 Sciences' );
+	$x_fee1 = $row( $fees1, 'Form 3 A' );
 	$delta  = array();
 	foreach ( array( 'learners', 'invoiced', 'paid', 'balance', 'owing' ) as $k ) {
 		$delta[ $k ] = round( $x_fee1[ $k ] - $x_fee0[ $k ], 2 );
 	}
-	$check( 'fees: Form 3 Sciences gains 3 learners, 850 invoiced, 400 paid, 450 outstanding, 2 owing', array( 'learners' => 3, 'invoiced' => 850.0, 'paid' => 400.0, 'balance' => 450.0, 'owing' => 2 ) == $delta, wp_json_encode( $delta ) ); // phpcs:ignore Universal.Operators.StrictComparisons
+	$check( 'fees: Form 3 A gains 3 learners, 850 invoiced, 400 paid, 450 outstanding, 2 owing', array( 'learners' => 3, 'invoiced' => 850.0, 'paid' => 400.0, 'balance' => 450.0, 'owing' => 2 ) == $delta, wp_json_encode( $delta ) ); // phpcs:ignore Universal.Operators.StrictComparisons
 	$check( 'fees: school totals move by the same amounts', 850.0 === round( $fees1['invoiced'] - $fees0['invoiced'], 2 ) && 400.0 === round( $fees1['paid'] - $fees0['paid'], 2 ) && 450.0 === round( $fees1['balance'] - $fees0['balance'], 2 ) && 2 === $fees1['learners_owing'] - $fees0['learners_owing'] );
 	$week1 = BSA_Dashboard::received( gmdate( 'Y-m-d', strtotime( $today . ' -6 days' ) ), $today );
 	$check( 'fees: last 7 days counts today\'s 300, not the payment 10 days ago', 1 === $week1['count'] - $week0['count'] && 300.0 === round( $week1['amount'] - $week0['amount'], 2 ) );
@@ -158,10 +158,10 @@ try {
 	foreach ( $zero_att as $k => $v ) {
 		$xa[ $k ] = $att1[ $x ][ $k ] - ( $att0[ $x ][ $k ] ?? 0 );
 	}
-	$check( 'register: Form 3 Sciences 3 marked (1 present, 1 late, 1 absent); subject registers ignored', array( 'learners' => 3, 'marked' => 3, 'present' => 1, 'late' => 1, 'absent' => 1, 'holiday' => 0 ) === $xa, wp_json_encode( $xa ) );
+	$check( 'register: Form 3 A 3 marked (1 present, 1 late, 1 absent); subject registers ignored', array( 'learners' => 3, 'marked' => 3, 'present' => 1, 'late' => 1, 'absent' => 1, 'holiday' => 0 ) === $xa, wp_json_encode( $xa ) );
 	$check( 'fixture: no real register on the Monday', 0 === ( $att0[ $x ]['marked'] ?? 0 ) + ( $att0[ $y ]['marked'] ?? 0 ) );
 	$check( 'register: present and late count as attended (2 of 3)', abs( (float) $att1[ $x ]['rate'] - 2 / 3 ) < 0.0001, (string) $att1[ $x ]['rate'] );
-	$check( 'register: Form 3 Commercials not marked, no rate', 1 === $att1[ $y ]['learners'] - ( $att0[ $y ]['learners'] ?? 0 ) && 0 === $att1[ $y ]['marked'] && null === $att1[ $y ]['rate'] );
+	$check( 'register: Form 4 A not marked, no rate', 1 === $att1[ $y ]['learners'] - ( $att0[ $y ]['learners'] ?? 0 ) && 0 === $att1[ $y ]['marked'] && null === $att1[ $y ]['rate'] );
 	$check( 'register: last day taken is the Monday (subject registers do not count)', $day === BSA_Dashboard::last_register_day( '2026-11-05' ) && $day !== BSA_Dashboard::last_register_day( '2026-11-01' ), BSA_Dashboard::last_register_day( '2026-11-05' ) );
 
 	// Marks for Term 3: L1 takes 2 subjects (both exam marks in); L2 and L3 take all;
@@ -183,7 +183,7 @@ try {
 	foreach ( $zero_mk as $k => $v ) {
 		$xm[ $k ] = $marks1[ $x ][ $k ] - ( $marks0[ $x ][ $k ] ?? 0 );
 	}
-	$check( 'marks: Form 3 Sciences expects 2 + 2 × ' . $n . ' exam marks, 3 entered, 1 report card published', array( 'learners' => 3, 'expected' => 2 + 2 * $n, 'entered' => 3, 'published' => 1 ) === $xm, wp_json_encode( $xm ) );
+	$check( 'marks: Form 3 A expects 2 + 2 × ' . $n . ' exam marks, 3 entered, 1 report card published', array( 'learners' => 3, 'expected' => 2 + 2 * $n, 'entered' => 3, 'published' => 1 ) === $xm, wp_json_encode( $xm ) );
 	$check( 'marks: Term 3 marks not counted in Term 2', ( $marks2_0[ $x ]['entered'] ?? 0 ) === BSA_Dashboard::marks( $session, 2 )[ $x ]['entered'] );
 
 	// Subject teachers.
@@ -192,7 +192,7 @@ try {
 	$wpdb->insert( "{$p}wlsm_admin_subject", array( 'admin_id' => $admin, 'subject_id' => (int) $subs[0]->ID, 'created_at' => current_time( 'mysql' ) ) );
 	$unasg1 = BSA_Dashboard::unassigned_subjects();
 	$check( 'subjects: assigning ' . $subs[0]->label . ' removes it from Form 3\'s unassigned list', in_array( $subs[0]->label, $form3, true ) ? ( count( $unasg1['Form 3'] ?? array() ) === count( $form3 ) - 1 && ! in_array( $subs[0]->label, $unasg1['Form 3'] ?? array(), true ) ) : ! in_array( $subs[0]->label, $unasg1['Form 3'] ?? array(), true ), wp_json_encode( $unasg1['Form 3'] ?? array() ) );
-	$check( 'subjects: each form listed once', count( $unasg1 ) === count( array_unique( array_keys( $unasg1 ) ) ) && ! isset( $unasg1['Form 3 Sciences'] ) );
+	$check( 'subjects: each form listed once', count( $unasg1 ) === count( array_unique( array_keys( $unasg1 ) ) ) && ! isset( $unasg1['Form 3 A'] ) );
 
 	// Needs attention, from hand-made states.
 	BSA_Terms::save( $session, array( 1 => array( 'start' => '2026-01-13', 'end' => '2026-04-02' ), 2 => array( 'start' => '2026-05-05', 'end' => '2026-08-06' ), 3 => array( 'start' => '2026-09-08', 'end' => '2026-12-01' ) ) );
@@ -209,6 +209,8 @@ try {
 		return wp_list_pluck( BSA_Dashboard::attention( $state ), 'text' );
 	};
 	$check( 'attention: nothing when terms are set, registers marked and accounts clean', array() === BSA_Dashboard::attention( $clean ), wp_json_encode( $texts( $clean ) ) );
+	$a = BSA_Dashboard::attention( array_merge( $clean, array( 'streams_unset' => array( 'Form 3 A' => 2 ) ) ) );
+	$check( 'attention: learners without a stream, with a Streams link', 1 === count( $a ) && false !== strpos( $a[0]['text'], 'Form 3 A (2)' ) && false !== strpos( $a[0]['link'], 'page=bsa-streams' ), wp_json_encode( $a ) );
 	$s = array_merge( $clean, array( 'term' => null ) );
 	$a = BSA_Dashboard::attention( $s );
 	$check( 'attention: no term covering today is an action with a School Terms link', 1 === count( $a ) && 'warning' === $a[0]['level'] && false !== strpos( $a[0]['link'], 'page=' . BSA_Terms::PAGE ) );
@@ -218,7 +220,7 @@ try {
 	$s = $clean;
 	$s['attendance'][ $y ] = array( 'learners' => 1, 'marked' => 0 );
 	$a = BSA_Dashboard::attention( $s );
-	$check( 'attention: unmarked register named by class, with a Class Register link', 1 === count( $a ) && 'Register not marked today: Form 3 Commercials.' === $a[0]['text'] && false !== strpos( $a[0]['link'], 'page=' . BSA_Register::PAGE ) );
+	$check( 'attention: unmarked register named by class, with a Class Register link', 1 === count( $a ) && 'Register not marked today: Form 4 A.' === $a[0]['text'] && false !== strpos( $a[0]['link'], 'page=' . BSA_Register::PAGE ) );
 	$s['is_school_day'] = false;
 	$check( 'attention: no register reminder on a weekend or holiday', array() === BSA_Dashboard::attention( $s ) );
 	$s = array_merge( $clean, array( 'term' => array( 'session' => $session, 'term' => 1, 'start' => '2026-01-13', 'end' => '2026-04-02' ) ) );
@@ -259,7 +261,7 @@ try {
 	$check( 'screen: title, needs attention, six tiles and three cards', false !== strpos( $html, '<h1>School Dashboard</h1>' ) && false !== strpos( $html, 'Needs attention' ) && 6 === substr_count( $html, 'class="bsa-tile"' ) && false !== strpos( $html, 'Fees by class this year' ) && false !== strpos( $html, 'Marks entry, Term 3' ) );
 	$fee_text  = BSA_Dashboard::money( $x_fee1['paid'] ) . ' of ' . number_format_i18n( $x_fee1['invoiced'], 2 );
 	$mark_text = $marks1[ $x ]['entered'] . ' of ' . $marks1[ $x ]['expected'] . ' (';
-	$check( 'screen: synthetic class shown with its fees and marks written out', false !== strpos( $html, '<th scope="row">Form 3 Sciences</th>' ) && false !== strpos( $html, '>' . $fee_text . ' (' ) && false !== strpos( $html, '>' . $mark_text ), $fee_text . ' / ' . $mark_text );
+	$check( 'screen: synthetic class shown with its fees and marks written out', false !== strpos( $html, '<th scope="row">Form 3 A</th>' ) && false !== strpos( $html, '>' . $fee_text . ' (' ) && false !== strpos( $html, '>' . $mark_text ), $fee_text . ' / ' . $mark_text );
 	$check( 'screen: links to Fee Reports, Class Register and Report Cards', false !== strpos( $html, 'page=' . BSA_Finance::PAGE ) && false !== strpos( $html, 'page=' . BSA_Register::PAGE ) && false !== strpos( $html, 'page=' . BSA_Reports::PAGE ) );
 	$check( 'screen: status never colour alone (icons carry a word)', false === strpos( $html, 'Not marked' ) || false !== strpos( $html, 'dashicons-warning" aria-hidden="true"></span> Not marked' ) );
 	$check( 'screen: renders in under 3 seconds', $secs < 3, round( $secs, 2 ) . ' s' );

@@ -90,7 +90,7 @@ try {
 	$paste = "Name\tSurname\tSex\tDate of birth\tClass\tParent phone\n"
 		. "Tatenda\tHttptest\tM\t12/04/2013\tForm 1\t0771 111 222\n"
 		. "Ruvimbo\tHttptest\tF\t03/09/2012\tForm 2 A\t+263 712 333 444\n"
-		. "Nokuthula\tHttptest\tF\t01/01/2011\tForm 3\t0773 555 666\n";
+		. "Nokuthula\tHttptest\tF\t01/01/2011\tForm 5\t0773 555 666\n";
 	$r = $req( 'head', $post, array( 'method' => 'POST', 'body' => array( 'action' => 'bsa_import_upload', '_wpnonce' => $nonce( $first['body'], 'bsa_import_upload' ), 'session' => $year, 'paste' => $paste ) ) );
 	$check( 'paste: read and on to matching the columns', 302 === $r['code'] && false !== strpos( $r['location'], 'step=map' ), $r['code'] . ' ' . $r['location'] );
 	$r = $req( 'head', $page . '&step=map' );
@@ -99,7 +99,7 @@ try {
 	$r   = $req( 'head', $page . '&' . http_build_query( array( 'step' => 'map', 'map' => $map, 'default_class' => 0 ) ) );
 	$check( 'columns: confirmed', 200 === $r['code'] && false !== strpos( $r['body'], 'location.replace' ) );
 	$chk = $req( 'head', $page . '&step=check' );
-	$check( 'check: 2 ready, 1 error ("Form 3" needs the stream), "Import 2 learners"', 200 === $chk['code'] && false !== strpos( $chk['body'], 'Import 2 learners' ) && false !== strpos( $chk['body'], 'say which stream' ) && ! $php_error( $chk['body'] ), (string) $chk['code'] );
+	$check( 'check: 2 ready, 1 error ("Form 5" does not exist), "Import 2 learners"', 200 === $chk['code'] && false !== strpos( $chk['body'], 'Import 2 learners' ) && false !== strpos( $chk['body'], 'Form 5 does not exist' ) && ! $php_error( $chk['body'] ), (string) $chk['code'] );
 	$check( 'check: nothing saved yet', 0 === $count() );
 	$r = $req( 'head', $post, array( 'method' => 'POST', 'body' => array( 'action' => 'bsa_import_run', '_wpnonce' => 'forged' ) ) );
 	$check( 'import: a forged request is refused', 403 === $r['code'] && 0 === $count(), (string) $r['code'] );

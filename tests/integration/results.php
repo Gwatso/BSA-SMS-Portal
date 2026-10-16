@@ -73,12 +73,12 @@ try {
 	BSA_School::flush();
 	BSA_Reports::flush();
 
-	$sci = 6; // Form 3 Sciences.
-	$f4s = 7; // Form 4 Sciences.
+	$sci = 6; // Form 3 A.
+	$f4s = 7; // Form 4 A.
 	// The last two school years (2026 and 2027; earlier years hold imported records).
 	$s1  = $sessions[ count( $sessions ) - 2 ];
 	$s2  = $sessions[ count( $sessions ) - 1 ];
-	$check( 'fixture: no real learners in Form 3 Sciences 2026 or Form 4 Sciences 2027', ! BSA_School::learners( $sci, $s1 ) && ! BSA_School::learners( $f4s, $s2 ) );
+	$check( 'fixture: no real learners in Form 3 A 2026 or Form 4 A 2027', ! BSA_School::learners( $sci, $s1 ) && ! BSA_School::learners( $f4s, $s2 ) );
 	BSA_Terms::save( $s1, array( 1 => array( 'start' => '2026-01-13', 'end' => '2026-04-02' ), 2 => array( 'start' => '2026-05-05', 'end' => '2026-08-06' ), 3 => array( 'start' => '2026-09-08', 'end' => '2026-12-01' ) ) );
 	BSA_Terms::save( $s2, array( 1 => array( 'start' => '2027-01-12', 'end' => '2027-04-01' ) ) );
 	delete_option( BSA_Results::OPTION );
@@ -111,7 +111,7 @@ try {
 	$e = $mk( 'Res Test Echo', $sci, $s1, 'TEST-RES-E' );    // Two marks in, can still pass 5.
 	$f = $mk( 'Res Test Foxtrot', $sci, $s1, 'TEST-RES-F' ); // Three low marks.
 	$g = $mk( 'Res Test Golf', $sci, $s1, 'TEST-RES-G' );    // Absent 3 of only 5 days.
-	// Charlie's 2027 record in Form 4 Sciences, with that form's own subjects.
+	// Charlie's 2027 record in Form 4 A, with that form's own subjects.
 	$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => 'Res Test Hotel', 'gender' => 'female', 'enrollment_number' => 'TEST-RES-C', 'admission_number' => 'TEST-RES-C', 'session_id' => $s2, 'section_id' => $f4s, 'is_active' => 1 ) );
 	$h     = (int) $wpdb->insert_id;
 	$f4sub = array();
@@ -218,13 +218,13 @@ try {
 		$captured['learner'] = $render( $head, array_merge( $base, array( 'tab' => 'learner', 'student' => $c ) ) );
 	}
 	$html = $render( $head, $base );
-	$check( 'screen overview: figures, classes and subjects of Form 3 Sciences', false !== strpos( $html, 'Classes, Term 3' ) && false !== strpos( $html, 'Subjects, Form 3 Sciences, Term 3' ) && false !== strpos( $html, '4 of 5 (80%)' ) && false !== strpos( $html, '>Physics</th>' ) && false !== strpos( $html, 'B: 3' ) );
+	$check( 'screen overview: figures, classes and subjects of Form 3 A', false !== strpos( $html, 'Classes, Term 3' ) && false !== strpos( $html, 'Subjects, Form 3 A, Term 3' ) && false !== strpos( $html, '4 of 5 (80%)' ) && false !== strpos( $html, '>Physics</th>' ) && false !== strpos( $html, 'B: 3' ) );
 	$html = $render( $head, array_merge( $base, array( 'tab' => 'risk' ) ) );
 	$check( 'screen at risk: four learners with reasons, rules form for the school administrator', false !== strpos( $html, '4 learners at risk, Term 3' ) && false !== strpos( $html, 'Res Test Bravo' ) && false !== strpos( $html, '2 of 6 subjects passed' ) && false !== strpos( $html, 'Attendance 66.7% (8 of 12 days)' ) && false !== strpos( $html, 'bsa_save_risk_rules' ) && false === strpos( $html, 'Res Test Alpha' ) );
 	$html = $render( $head, array_merge( $base, array( 'tab' => 'progress' ) ) );
 	$check( 'screen progression: class averages with a trend line and biggest changes', false !== strpos( $html, 'Class averages by term, ' ) && false !== strpos( $html, '<svg class="bsa-spark"' ) && false !== strpos( $html, 'Most improved' ) && false !== strpos( $html, 'Biggest drops' ) && false !== strpos( $html, 'Res Test Charlie' ) );
 	$html = $render( $head, array_merge( $base, array( 'tab' => 'learner', 'student' => $c ) ) );
-	$check( 'screen learner: marks with grades by term, reasons, position for staff', false !== strpos( $html, 'Res Test Charlie, Form 3 Sciences' ) && false !== strpos( $html, '75 (A)' ) && false !== strpos( $html, '60 (B)' ) && false !== strpos( $html, 'At risk in Term 3' ) && false !== strpos( $html, '>Position</th>' ) );
+	$check( 'screen learner: marks with grades by term, reasons, position for staff', false !== strpos( $html, 'Res Test Charlie, Form 3 A' ) && false !== strpos( $html, '75 (A)' ) && false !== strpos( $html, '60 (B)' ) && false !== strpos( $html, 'At risk in Term 3' ) && false !== strpos( $html, '>Position</th>' ) );
 	$html = $render( $teacher, array( 'tab' => 'learner', 'student' => $c, 'session' => $s1, 'term' => 3 ) );
 	$check( 'screen: a class teacher cannot open a learner of another class', false !== strpos( $html, 'This learner is not in your classes.' ) && false === strpos( $html, '75 (A)' ) );
 	$html = $render( $teacher, array( 'tab' => 'risk', 'session' => $s1, 'term' => 3 ) );

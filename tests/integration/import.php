@@ -97,7 +97,7 @@ $check( 'template: every heading of the learner template is matched to its own f
 $classes = array(
 	'Form 3 Sciences'    => 6,
 	'F3 Sci'             => 6,
-	'form 4 commercials' => 9,
+	'form 4 commercials' => 7,
 	'Form 1'             => 4,
 	'Form One'           => 4,
 	'FORM II A'          => 5,
@@ -112,11 +112,11 @@ foreach ( $classes as $text => $want ) {
 	}
 }
 $check( 'classes: "Form 3 Sciences", "F3 Sci", "Form One", "FORM II A", "2A" …', ! $bad, implode( '; ', $bad ) );
-$check( 'classes: form and stream in two columns', 7 === BSA_Import::parse_class( 'Form 4', 'Sciences' ) && 8 === BSA_Import::parse_class( '3', 'Commercials' ) );
+$check( 'classes: form and stream in two columns (one class per form; the stream is a subject choice)', 7 === BSA_Import::parse_class( 'Form 4', 'Sciences' ) && 6 === BSA_Import::parse_class( '3', 'Commercials' ) );
 $e1 = BSA_Import::parse_class( 'Form 3' );
 $e2 = BSA_Import::parse_class( 'Form 5' );
 $e3 = BSA_Import::parse_class( 'Form 1 Sciences' );
-$check( 'classes: stream needed, unknown form, missing stream are errors', is_wp_error( $e1 ) && false !== strpos( $e1->get_error_message(), 'say which stream' ) && is_wp_error( $e2 ) && is_wp_error( $e3 ) && false !== strpos( $e3->get_error_message(), 'no Sciences stream' ), ( is_wp_error( $e1 ) ? $e1->get_error_message() : '' ) );
+$check( 'classes: an unknown form is an error; "Form 3" without a stream and "Form 1 Sciences" are the form\'s one class', 6 === $e1 && is_wp_error( $e2 ) && 4 === $e3, wp_json_encode( array( $e1, $e3 ) ) );
 
 $dates = array(
 	'24/05/2012'   => '2012-05-24',
@@ -268,7 +268,7 @@ add_filter( 'bsa_sm_import_transaction', '__return_false' );
 $wpdb->query( 'START TRANSACTION' );
 try {
 	BSA_School::flush();
-	foreach ( array( 4, 5, 6, 9 ) as $sec ) {
+	foreach ( array( 4, 5, 6, 7 ) as $sec ) {
 		$check( "fixture: no real learners in section $sec of the second year", ! BSA_School::learners( $sec, $s2 ) );
 	}
 	// Two learners of the first year, for linking.
@@ -307,14 +307,15 @@ try {
 	$check( 'line 3: "Form One"; a new admission number will be given; no parent phone flagged', 4 === $by[3]['record']['section_id'] && $has( 3, 'notes', 'new admission number' ) && $has( 3, 'warnings', 'No parent or guardian phone' ) && ! $by[3]['errors'] );
 	$check( 'line 4: no class is an error; guardian kept in the note and as the contact phone', $has( 4, 'errors', 'No class' ) && 'Guardian: Aunt Testimport 0773000111' === $by[4]['record']['note'] && '0773000111' === $by[4]['record']['father_phone'] );
 	$check( 'line 5: an admission number used twice in the list is an error', $has( 5, 'errors', 'Same admission number as line 2' ) );
-	$check( 'line 6: linked to the same learner in the first year', $has( 6, 'notes', 'Linked to the same learner' ) && ! $by[6]['errors'] && 9 === $by[6]['record']['section_id'] );
+	$check( 'line 6: linked to the same learner in the first year', $has( 6, 'notes', 'Linked to the same learner' ) && ! $by[6]['errors'] && 7 === $by[6]['record']['section_id'] && 'Commercials' === $by[6]['stream'] );
 	$check( 'line 7: no number, same name and birth date as in the first year → keeps that admission number', 'TEST-IMP-OLD2' === $by[7]['record']['admission_number'] && $has( 7, 'notes', 'TEST-IMP-OLD2 taken from' ) && ! $by[7]['errors'], wp_json_encode( $by[7]['notes'] ) );
 	$check(
 		'line 8: one name, sex, impossible date, phone, boarder or day and Grade 7 units are flagged, not refused',
 		! $by[8]['errors'] && $has( 8, 'warnings', 'Only one name' ) && $has( 8, 'warnings', 'Sex "X"' ) && $has( 8, 'warnings', 'Date of birth "31/02/2012"' ) && $has( 8, 'warnings', 'not a Zimbabwe mobile' ) && $has( 8, 'warnings', 'Boarder or day "weekly"' ) && $has( 8, 'warnings', 'between 4 and 36' ) && 'Kuda' === $by[8]['record']['name'] && 5 === $by[8]['record']['section_id'] && null === $by[8]['record']['dob'],
 		wp_json_encode( $by[8]['warnings'] )
 	);
-	$check( 'line 9: "Form 3" without a stream is an error', $has( 9, 'errors', 'say which stream' ) );
+	$check( 'line 9: "Form 3" without a stream goes into Form 3 A, stream to set later (note)', ! $by[9]['errors'] && 6 === $by[9]['record']['section_id'] && '' === $by[9]['stream'] && $has( 9, 'notes', 'No stream' ) );
+	$check( 'line 2: "Form 3 Sciences" is Form 3 A with the Sciences subjects; Form 1 gets no stream note', 'Sciences' === $by[2]['stream'] && ! $has( 2, 'notes', 'No stream' ) && ! $has( 3, 'notes', 'No stream' ) );
 	$check( 'line 10: the same learner twice in the list is an error', $has( 10, 'errors', 'Same learner as line 3' ) );
 
 	// One-class list without a class column.
@@ -339,7 +340,7 @@ try {
 	$pending = get_transient( 'bsa_import_' . $head );
 	$check( 'screen: confirming the columns keeps them and moves on to checking', false !== strpos( $html, 'location.replace' ) && ! empty( $pending['mapping_confirmed'] ) && $mapping == $pending['mapping'] && 0 === $pending['default_section'] ); // phpcs:ignore Universal.Operators.StrictComparisons
 	$html = $render( array( 'page' => 'bsa-import', 'step' => 'check' ) );
-	$check( 'screen: check shows 5 ready, 2 to look at, 4 errors, every row and "Import 5 learners"', 1 === preg_match( '/Ready to import<\/div><div class="bsa-tile-value">5</', $html ) && 1 === preg_match( '/With something to check<\/div><div class="bsa-tile-value">2</', $html ) && 1 === preg_match( '/With errors<\/div><div class="bsa-tile-value">4</', $html ) && 9 === substr_count( $html, '<th scope="row">' ) && false !== strpos( $html, 'Import 5 learners' ) && 4 === substr_count( $html, 'class="bsa-row-error"' ), '' );
+	$check( 'screen: check shows 6 ready, 2 to look at, 3 errors, every row and "Import 6 learners"', 1 === preg_match( '/Ready to import<\/div><div class="bsa-tile-value">6</', $html ) && 1 === preg_match( '/With something to check<\/div><div class="bsa-tile-value">2</', $html ) && 1 === preg_match( '/With errors<\/div><div class="bsa-tile-value">3</', $html ) && 9 === substr_count( $html, '<th scope="row">' ) && false !== strpos( $html, 'Import 6 learners' ) && 3 === substr_count( $html, 'class="bsa-row-error"' ) && false !== strpos( $html, 'Form 3 A · Sciences' ), '' );
 	if ( $bsa_capture ) {
 		$captured['check'] = $html;
 	}
@@ -352,7 +353,7 @@ try {
 	$bsa_before = (int) $wpdb->get_var( "SELECT MAX(CAST(SUBSTRING(admission_number, 4) AS UNSIGNED)) FROM {$p}wlsm_student_records WHERE admission_number REGEXP '^BSA[0-9]+$'" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	$check( 'import: refused for a teacher', is_wp_error( BSA_Import::import( $rows, $teacher, 'x' ) ) );
 	$done = BSA_Import::import( $rows, $head, 'test-list.csv' );
-	$check( 'import: 5 learners saved, 4 rows skipped', is_array( $done ) && 5 === $done['imported'] && 4 === $done['skipped'], wp_json_encode( $done ) );
+	$check( 'import: 6 learners saved, 3 rows skipped', is_array( $done ) && 6 === $done['imported'] && 3 === $done['skipped'], wp_json_encode( $done ) );
 	$batch   = is_array( $done ) ? $done['batch'] : '';
 	$batches = get_option( BSA_Import::BATCHES );
 	$ids     = array_map( 'intval', $batches[ $batch ]['ids'] ?? array( 0 ) );
@@ -365,16 +366,18 @@ try {
 	$check( 'import: learner record as Weblizar keeps it (enrollment number, roll = admission number, active, country, type, parents)', $t && sprintf( '%06d', $enr_before + 1 ) === $t->enrollment_number && 'TEST-IMP-001' === $t->roll_number && '1' === (string) $t->is_active && 'Zimbabwe' === $t->country && $board === $t->student_type && 'Tafadzwa Testimport' === $t->father_name && '0771234567' === $t->father_phone && '2011-03-14' === $t->dob && (int) $head === (int) $t->added_by && 'a:0:{}' === $t->activities && ! $t->user_id && ! $t->parent_user_id, wp_json_encode( $t ) );
 	$rudo = $byname['Rudo Testimport'] ?? null;
 	$check( 'import: new admission number BSA### after the highest one', $rudo && sprintf( 'BSA%03d', $bsa_before + 1 ) === $rudo->admission_number && $rudo->admission_number === $rudo->roll_number, $rudo ? $rudo->admission_number : 'missing' );
-	$check( 'import: five learners in the order of the list, enrollment numbers without gaps', array( 'Tendai Testimport', 'Rudo Testimport', 'Farai Testimport', 'Nyasha Testimport', 'Kuda' ) === wp_list_pluck( $saved, 'name' ) && array_map( function ( $i ) use ( $enr_before ) { return sprintf( '%06d', $enr_before + $i ); }, range( 1, 5 ) ) === wp_list_pluck( $saved, 'enrollment_number' ), wp_json_encode( wp_list_pluck( $saved, 'enrollment_number' ) ) );
+	$check( 'import: six learners in the order of the list, enrollment numbers without gaps', array( 'Tendai Testimport', 'Rudo Testimport', 'Farai Testimport', 'Nyasha Testimport', 'Kuda', 'Tino Testimport' ) === wp_list_pluck( $saved, 'name' ) && array_map( function ( $i ) use ( $enr_before ) { return sprintf( '%06d', $enr_before + $i ); }, range( 1, 6 ) ) === wp_list_pluck( $saved, 'enrollment_number' ), wp_json_encode( wp_list_pluck( $saved, 'enrollment_number' ) ) );
+	$tmap = BSA_Streams::subject_map( array( (int) ( $byname['Tendai Testimport']->ID ?? 0 ), (int) ( $byname['Tino Testimport']->ID ?? 0 ) ) );
+	$check( 'import: Tendai gets the Sciences subjects; Tino (no stream) every subject', 'Sciences' === BSA_Streams::stream_of( 6, array_values( $tmap )[0] ) && 10 === count( array_values( $tmap )[0] ) && array() === array_values( $tmap )[1] );
 	$check( 'import: learner without a number in the list keeps the first-year number; no logins', 'TEST-IMP-OLD2' === ( $byname['Nyasha Testimport']->admission_number ?? '' ) && ! array_filter( wp_list_pluck( $saved, 'user_id' ) ) && ! array_filter( wp_list_pluck( $saved, 'parent_user_id' ) ) );
 	$record = $t ? BSA_Admission_Records::get_record( (int) $t->ID ) : array();
 	$check( 'import: Grade 7 units, primary school and birth certificate in the admission record', 8 === (int) ( $record['grade7_units'] ?? 0 ) && 'Chipadze Primary' === ( $record['grade7_school'] ?? '' ) && '12-345678A12' === ( $record['birth_certificate_no'] ?? '' ) && (int) $head === (int) ( $record['updated_by'] ?? 0 ), wp_json_encode( $record ) );
 	$check( 'import: learners appear in their class for the year', in_array( (int) $t->ID, array_map( 'intval', wp_list_pluck( BSA_School::learners( 6, $s2 ), 'ID' ) ), true ) );
-	$check( 'import: listed with source, year, user and learners', isset( $batches[ $batch ] ) && 'test-list.csv' === $batches[ $batch ]['source'] && $s2 === $batches[ $batch ]['session'] && $head === $batches[ $batch ]['user'] && 5 === count( $batches[ $batch ]['ids'] ) && '' === $batches[ $batch ]['undone'] );
+	$check( 'import: listed with source, year, user and learners', isset( $batches[ $batch ] ) && 'test-list.csv' === $batches[ $batch ]['source'] && $s2 === $batches[ $batch ]['session'] && $head === $batches[ $batch ]['user'] && 6 === count( $batches[ $batch ]['ids'] ) && '' === $batches[ $batch ]['undone'] );
 	$again = BSA_Import::check( $parts['data'], $mapping, $s2 );
 	$check( 'the same list again: admission numbers already used this year are errors', in_array( 'Admission number already used this year (Tendai Testimport).', $again[0]['errors'], true ), wp_json_encode( $again[0]['errors'] ) );
-	$html = $render( array( 'page' => 'bsa-import', 'done' => $batch, 'n' => '5', 'skipped' => '4' ) );
-	$check( 'screen: success message and the import listed with an Undo button', false !== strpos( $html, '5 learners imported. 4 rows with errors were skipped. You can undo' ) && false !== strpos( $html, 'value="' . $batch . '"' ) && false !== strpos( $html, '>Undo</button>' ) );
+	$html = $render( array( 'page' => 'bsa-import', 'done' => $batch, 'n' => '6', 'skipped' => '3' ) );
+	$check( 'screen: success message and the import listed with an Undo button', false !== strpos( $html, '6 learners imported. 3 rows with errors were skipped. You can undo' ) && false !== strpos( $html, 'value="' . $batch . '"' ) && false !== strpos( $html, '>Undo</button>' ) );
 	if ( $bsa_capture ) {
 		$captured['done'] = $html;
 	}
@@ -385,7 +388,7 @@ try {
 	$check( 'undo: refused for the bursar', is_wp_error( BSA_Import::undo( $batch, $bursar ) ) );
 	$undo = BSA_Import::undo( $batch, $head );
 	$left = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$p}wlsm_student_records WHERE ID IN (" . implode( ',', $ids ) . ')' ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-	$check( 'undo: 4 removed; the learner with a register entry is kept', is_array( $undo ) && 4 === $undo['removed'] && array( 'Farai Testimport' ) === $undo['kept'] && 1 === $left, wp_json_encode( $undo ) . " left $left" );
+	$check( 'undo: 5 removed; the learner with a register entry is kept', is_array( $undo ) && 5 === $undo['removed'] && array( 'Farai Testimport' ) === $undo['kept'] && 1 === $left, wp_json_encode( $undo ) . " left $left" );
 	$check( 'undo: admission record removed with the learner', 0 === (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . BSA_Admission_Records::table() . ' WHERE student_record_id = %d', (int) $t->ID ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	$check( 'undo: cannot be done twice', is_wp_error( BSA_Import::undo( $batch, $head ) ) && '' !== get_option( BSA_Import::BATCHES )[ $batch ]['undone'] );
 	$html = $render( array( 'page' => 'bsa-import' ) );

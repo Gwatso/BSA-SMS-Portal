@@ -6,7 +6,7 @@
  *
  * The pages are fetched by loopback requests signed in as synthetic users, so the
  * fixtures cannot sit in a transaction (the requests use their own database connection):
- * a synthetic learner (Form 3 Sciences, own login), a sibling (Form 1 A) and their parent,
+ * a synthetic learner (Form 3 A, own login), a sibling (Form 1 A) and their parent,
  * an invoice with a part-payment, attendance, a notice and a published report card are
  * written, the pages fetched, and every row deleted by ID in `finally` (checked at the
  * end). The fee audit hook is detached meanwhile so no test entries reach Simple History.
@@ -37,7 +37,7 @@ try {
 	};
 	$la  = $mk_user( 'bsa_test_fam_learner', 'Tariro Test' );
 	$par = $mk_user( 'bsa_test_fam_parent', 'Test Parent' );
-	$sci = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 3' AND se.label = 'Sciences'" );
+	$sci = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 3' AND se.label = 'A'" );
 	$rec = function ( $name, $section, $user, $no ) use ( $wpdb, $p, $par, &$made ) {
 		$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => $name, 'gender' => 'female', 'enrollment_number' => $no, 'admission_number' => $no, 'session_id' => 1, 'section_id' => $section, 'user_id' => $user ? $user : null, 'parent_user_id' => $par, 'father_name' => 'Test Parent', 'father_phone' => '+263 77 000 0000', 'is_active' => 1, 'admission_date' => '2026-01-13', 'created_at' => current_time( 'mysql' ) ) );
 		$made['records'][] = (int) $wpdb->insert_id;

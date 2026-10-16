@@ -4,7 +4,7 @@
  * run on the live site through Novamira `execute-php` (send everything after the opening
  * tag).
  *
- * Four synthetic Form 3 Sciences learners, a subject assignment for the teacher, term
+ * Four synthetic Form 3 A learners (and one in Form 4 A), a subject assignment for the teacher, term
  * dates, marks, comments and publication are written inside a transaction and rolled
  * back. Expected results are worked out by hand in the comments.
  *
@@ -78,13 +78,13 @@ try {
 	BSA_School::flush();
 	BSA_Reports::flush();
 
-	$sci  = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 3' AND se.label = 'Sciences'" );
-	$com  = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 3' AND se.label = 'Commercials'" );
+	$sci  = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 3' AND se.label = 'A'" );
+	$com  = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 4' AND se.label = 'A'" );
 	$subs = array();
 	foreach ( BSA_Marks::section_subjects( $sci ) as $row ) {
 		$subs[ $row->label ] = (int) $row->ID;
 	}
-	$check( 'fixture: Form 3 Sciences and Commercials, 13 subjects, English first', $sci && $com && 13 === count( $subs ) && 'English Language' === array_key_first( $subs ), implode( ', ', array_keys( $subs ) ) );
+	$check( 'fixture: Form 3 A and Form 4 A, 13 subjects, English first', $sci && $com && 13 === count( $subs ) && 'English Language' === array_key_first( $subs ), implode( ', ', array_keys( $subs ) ) );
 
 	// Rights before any assignment.
 	$check( 'rights: owner and school administrator enter every subject', 13 === count( BSA_Marks::allowed_subjects( $owner, $sci ) ) && 13 === count( BSA_Marks::allowed_subjects( $head, $sci ) ) );
@@ -94,10 +94,10 @@ try {
 	// Assign Physics in Form 3 to the teacher (Weblizar staff → subjects).
 	$admin_row = (int) $wpdb->get_var( $wpdb->prepare( "SELECT a.ID FROM {$p}wlsm_admins a JOIN {$p}wlsm_staff s ON s.ID = a.staff_id WHERE s.user_id = %d", $teacher ) );
 	$wpdb->insert( "{$p}wlsm_admin_subject", array( 'admin_id' => $admin_row, 'subject_id' => $subs['Physics'], 'created_at' => current_time( 'mysql' ) ) );
-	$check( 'rights: subject teacher gets Physics in both Form 3 streams only', array( $subs['Physics'] ) === BSA_Marks::allowed_subjects( $teacher, $sci ) && array( $subs['Physics'] ) === BSA_Marks::allowed_subjects( $teacher, $com ) );
+	$check( 'rights: subject teacher gets Form 3 Physics only (not Form 4)', array( $subs['Physics'] ) === BSA_Marks::allowed_subjects( $teacher, $sci ) && array() === BSA_Marks::allowed_subjects( $teacher, $com ) );
 	$check( 'rights: report cards for owner (all) and class teacher (Form 1 A) only', count( BSA_Reports::allowed_sections( $owner ) ) === count( BSA_School::sections() ) && array( 4 ) === BSA_Reports::allowed_sections( $teacher ) && array() === BSA_Reports::allowed_sections( $bursar ) );
 
-	// Term dates and four learners in Form 3 Sciences (and one in Commercials).
+	// Term dates and four learners in Form 3 A (and one in Form 4 A).
 	BSA_Terms::save( 1, array( 1 => array( 'start' => '2026-01-13', 'end' => '2026-04-02' ), 2 => array( 'start' => '2026-05-05', 'end' => '2026-08-06' ) ) );
 	$mk = function ( $name, $section ) use ( $wpdb, $p ) {
 		$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => $name, 'gender' => 'female', 'enrollment_number' => 'TEST-RPT', 'admission_number' => 'TEST-RPT', 'session_id' => 1, 'section_id' => $section, 'is_active' => 1 ) );
@@ -140,7 +140,7 @@ try {
 	$r = BSA_Marks::save( $teacher, $sci, 1, 1, $subs['Chemistry'], array( $b => array( 'exam' => '70' ) ) );
 	$check( 'marks: subject teacher cannot enter Chemistry', 0 === $r['saved'] && $r['errors'] );
 	$r = BSA_Marks::save( $head, $sci, 1, 1, $subs['History'], array( $e => array( 'exam' => '70' ) ) );
-	$check( 'marks: a learner from another stream is refused', 0 === $r['saved'] && $r['errors'] );
+	$check( 'marks: a learner from another class is refused', 0 === $r['saved'] && $r['errors'] );
 	$r = BSA_Marks::save( $head, $sci, 1, 1, $subs['Mathematics'], array( $a => array( 'exam' => '75' ) ) );
 	$check( 'marks: re-saving unchanged marks changes nothing', 0 === $r['saved'] && ! $r['errors'] );
 
@@ -161,8 +161,8 @@ try {
 	foreach ( $card['subjects'] as $s ) {
 		$phy = 'Physics' === $s['label'] ? $s : $phy;
 	}
-	$check( 'card: form, term, year', 'Form 3 Sciences' === $card['form'] && 1 === $card['term'] && '2026' === $card['year'] );
-	$check( 'card: no. in form counts both streams', $card['in_form'] >= 5, (string) $card['in_form'] );
+	$check( 'card: form, term, year', 'Form 3 A' === $card['form'] && 1 === $card['term'] && '2026' === $card['year'] );
+	$check( 'card: no. in form counts the whole form', $card['in_form'] >= 4, (string) $card['in_form'] );
 	$check( 'card: position 1, 6 recorded, 6 passed, Pass', 1 === $card['position'] && 6 === $card['recorded'] && 6 === $card['passed'] && 'Pass' === $card['result'] );
 	$check( 'card: attendance 2 out of 3', array( 'attended' => 2, 'possible' => 3 ) === $card['attendance'] );
 	$check( 'card: English first: term 68 B, exam 80 A, project 72.5, remark, head\'s initials', 'English Language' === $eng['label'] && '68' === $eng['term_mark'] && 'B' === $eng['term_grade'] && '80' === $eng['exam_mark'] && 'A' === $eng['exam_grade'] && '72.5' === $eng['project'] && 'Good effort' === $eng['remark'] && BSA_Grades::initials( get_userdata( $head )->display_name ) === $eng['initials'], wp_json_encode( $eng ) );
@@ -182,7 +182,7 @@ try {
 	$r = BSA_Reports::publish( $teacher, $sci, 1, 1 );
 	$check( 'publish: teacher cannot publish', is_wp_error( $r ) );
 	$r = BSA_Reports::publish( $head, $sci, 1, 1 );
-	$check( 'publish: head publishes the 4 learners of Form 3 Sciences', 4 === $r && BSA_Marks::is_published( $a, 1, 1 ) && BSA_Marks::is_published( $c, 1, 1 ) && ! BSA_Marks::is_published( $e, 1, 1 ) );
+	$check( 'publish: head publishes the 4 learners of Form 3 A', 4 === $r && BSA_Marks::is_published( $a, 1, 1 ) && BSA_Marks::is_published( $c, 1, 1 ) && ! BSA_Marks::is_published( $e, 1, 1 ) );
 	$r = BSA_Marks::save( $teacher, $sci, 1, 1, $subs['Physics'], array( $a => array( 'exam' => '71' ) ) );
 	$check( 'publish: subject teacher can no longer change a published mark', 0 === $r['saved'] && $r['errors'] );
 	$r = BSA_Marks::save( $head, $sci, 1, 1, $subs['Physics'], array( $a => array( 'exam' => '71' ) ) );
@@ -213,7 +213,7 @@ try {
 	ob_start();
 	BSA_Marks::render_page();
 	$html = ob_get_clean();
-	$check( 'screen: teacher asking for Chemistry gets Physics instead', false !== strpos( $html, 'Physics, Form 3 Sciences' ) && false === strpos( $html, 'Chemistry, Form 3' ) );
+	$check( 'screen: teacher asking for Chemistry gets Physics instead', false !== strpos( $html, 'Physics, Form 3 A' ) && false === strpos( $html, 'Chemistry, Form 3' ) );
 	$check( 'screen: published marks are read-only for the teacher', false !== strpos( $html, 'readonly' ) );
 	wp_set_current_user( $head );
 	$_GET = array( 'page' => BSA_Reports::PAGE, 'section' => $sci, 'session' => 1, 'term' => 1, 'student' => $a );

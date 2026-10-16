@@ -49,7 +49,7 @@ try {
 	$learner = $mk_user( 'bsa_test_fam_learner', 'Tariro Test' );
 	$parent  = $mk_user( 'bsa_test_fam_parent', 'Test Parent' );
 	$other_p = $mk_user( 'bsa_test_fam_other', 'Other Parent' );
-	$sci     = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 3' AND se.label = 'Sciences'" );
+	$sci     = (int) $wpdb->get_var( "SELECT se.ID FROM {$p}wlsm_sections se JOIN {$p}wlsm_class_school cs ON cs.ID = se.class_school_id JOIN {$p}wlsm_classes c ON c.ID = cs.class_id WHERE c.label = 'Form 3' AND se.label = 'A'" );
 	$rec     = function ( $name, $section, $user, $par ) use ( $wpdb, $p ) {
 		$wpdb->insert( "{$p}wlsm_student_records", array( 'name' => $name, 'gender' => 'female', 'enrollment_number' => 'TEST-FAM', 'admission_number' => 'TEST-FAM', 'session_id' => 1, 'section_id' => $section, 'user_id' => $user ? $user : null, 'parent_user_id' => $par, 'is_active' => 1 ) );
 		return (int) $wpdb->insert_id;
