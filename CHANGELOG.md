@@ -9,7 +9,7 @@ Mock data so every screen has something to show before real data is entered. Add
   learner), Form 3 A 30, Form 4 A 30. Each has parents (one parent login per family; six
   families have two children at BSA), a 2025 record for those already at BSA last year,
   birth certificate numbers and Grade 7 slips (a few units-only or missing).
-- **Streams:** Form 3 is 16 Sciences and 12 Commercials, with 2 not yet chosen. Form 4
+- **Streams:** Form 3 is 17 Sciences and 11 Commercials, with 2 not yet chosen. Form 4
   mostly takes the sciences; 4 learners have their own mix.
 - **Staff:** ten demo teachers covering every subject (class teachers for Form 2 A, 3 A
   and 4 A; Mr Hlabati stays class teacher of Form 1 A) and a demo bursar.
