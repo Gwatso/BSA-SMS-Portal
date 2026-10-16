@@ -23,6 +23,52 @@ class BSA_Portal {
 		add_filter( 'login_redirect', array( __CLASS__, 'login_redirect' ), 20, 3 );
 		add_filter( 'show_admin_bar', array( __CLASS__, 'show_admin_bar' ) );
 		add_action( 'admin_init', array( __CLASS__, 'keep_families_out_of_admin' ), 1 );
+		add_action( 'template_redirect', array( __CLASS__, 'staff_account_to_dashboard' ), 1 );
+		add_filter( 'wp_nav_menu_objects', array( __CLASS__, 'staff_menu' ) );
+	}
+
+	/**
+	 * Whether a signed-in user is staff (not a learner or parent).
+	 *
+	 * @param int $user_id User ID.
+	 * @return bool
+	 */
+	private static function is_staff_user( $user_id ) {
+		return $user_id && ! self::is_family_user( $user_id ) && ( BSA_Access_Guard::is_staff( $user_id ) || user_can( $user_id, 'manage_options' ) );
+	}
+
+	/**
+	 * The account page is for learners and parents: staff who open it go to their own
+	 * dashboard instead of "There is no student or parent record".
+	 */
+	public static function staff_account_to_dashboard() {
+		$page_id = (int) get_option( 'bsa_sm_account_page_id' );
+		if ( ! $page_id || ! is_page( $page_id ) || ! self::is_staff_user( get_current_user_id() ) ) {
+			return;
+		}
+		wp_safe_redirect( BSA_Staff_Area::home_url( get_current_user_id() ) );
+		exit;
+	}
+
+	/**
+	 * For staff, the site menu's "My Account" becomes "My Dashboard", to their dashboard.
+	 *
+	 * @param object[] $items Menu items.
+	 * @return object[]
+	 */
+	public static function staff_menu( $items ) {
+		$user_id = get_current_user_id();
+		if ( ! self::is_staff_user( $user_id ) ) {
+			return $items;
+		}
+		$account = untrailingslashit( self::account_url() );
+		foreach ( $items as $item ) {
+			if ( untrailingslashit( (string) $item->url ) === $account ) {
+				$item->title = __( 'My Dashboard', 'bsa-school-management' );
+				$item->url   = BSA_Staff_Area::home_url( $user_id );
+			}
+		}
+		return $items;
 	}
 
 	/**
@@ -50,8 +96,9 @@ class BSA_Portal {
 	}
 
 	/**
-	 * Staff go to the intranet (the owner to wp-admin); learners and parents go to their
-	 * account page.
+	 * Staff go to their own dashboard (School Dashboard for school administrators, the
+	 * home screen for teachers and the bursar; the owner to wp-admin); learners and
+	 * parents go to their account page. Owner request 2026-10-16 (was the intranet).
 	 *
 	 * @param string           $redirect_to Requested redirect.
 	 * @param string           $requested   Requested redirect (raw).
@@ -66,7 +113,7 @@ class BSA_Portal {
 			return self::account_url();
 		}
 		if ( BSA_Access_Guard::is_staff( $user->ID ) && ( '' === $requested || admin_url() === $redirect_to ) ) {
-			return BSA_Staff_Area::applies( $user->ID ) && class_exists( 'BSA_Intranet' ) ? BSA_Intranet::url() : admin_url();
+			return BSA_Staff_Area::home_url( $user->ID );
 		}
 		return $redirect_to;
 	}

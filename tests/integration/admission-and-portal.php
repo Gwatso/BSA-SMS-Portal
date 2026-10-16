@@ -253,7 +253,9 @@ try {
 	$check( 'family: not an account without learners', ! BSA_Portal::is_family_user( $nobody ) );
 	$check( 'redirect: learner to My Account', $account === BSA_Portal::login_redirect( admin_url(), '', get_userdata( $learner ) ) );
 	$check( 'redirect: parent to My Account even when wp-admin was requested', $account === BSA_Portal::login_redirect( admin_url( 'profile.php' ), admin_url( 'profile.php' ), get_userdata( $parent ) ) );
-	$check( 'redirect: teacher to the intranet', home_url( '/intranet' ) === BSA_Portal::login_redirect( admin_url(), '', get_userdata( $teacher ) ) );
+	$check( 'redirect: teacher to their home screen', admin_url( 'admin.php?page=bsa-home' ) === BSA_Portal::login_redirect( admin_url(), '', get_userdata( $teacher ) ) );
+	$masango = get_user_by( 'login', 'Masango' );
+	$check( 'redirect: school administrator to the School Dashboard', $masango && admin_url( 'admin.php?page=bsa-dashboard' ) === BSA_Portal::login_redirect( admin_url(), '', $masango ) );
 	$check( 'redirect: staff keep a requested page', admin_url( 'admin.php?page=x' ) === BSA_Portal::login_redirect( admin_url( 'admin.php?page=x' ), admin_url( 'admin.php?page=x' ), get_userdata( $bursar ) ) );
 	$check( 'redirect: failed sign-in untouched', 'x' === BSA_Portal::login_redirect( 'x', '', new WP_Error( 'bad' ) ) );
 	wp_set_current_user( $learner );
