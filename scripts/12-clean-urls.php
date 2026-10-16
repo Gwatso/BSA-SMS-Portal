@@ -40,23 +40,35 @@ $get = function ( $url, array $cookies = array() ) {
 	$r = wp_remote_get( $url, array( 'timeout' => 30, 'redirection' => 0, 'sslverify' => false, 'cookies' => $cookies ) );
 	return array( 'code' => (int) wp_remote_retrieve_response_code( $r ), 'location' => (string) wp_remote_retrieve_header( $r, 'location' ), 'body' => (string) wp_remote_retrieve_body( $r ) );
 };
-$checks = array();
-$r      = $get( home_url( '/sign-in' ) );
-$checks['/sign-in shows the sign-in form'] = 200 === $r['code'] && false !== strpos( $r['body'], 'name="log"' );
-$r      = $get( home_url( '/staff/' ) );
-$checks['/staff sends visitors to sign in'] = 302 === $r['code'] && false !== strpos( $r['location'], 'redirect_to=' );
-$head = get_user_by( 'login', 'Masango' );
-if ( $head ) {
-	$exp     = time() + 300;
-	$token   = WP_Session_Tokens::get_instance( $head->ID )->create( $exp );
-	$cookies = array(
-		new WP_Http_Cookie( array( 'name' => SECURE_AUTH_COOKIE, 'value' => wp_generate_auth_cookie( $head->ID, $exp, 'secure_auth', $token ) ) ),
-		new WP_Http_Cookie( array( 'name' => LOGGED_IN_COOKIE, 'value' => wp_generate_auth_cookie( $head->ID, $exp, 'logged_in', $token ) ) ),
-	);
-	$r = $get( home_url( '/staff/dashboard' ), $cookies );
-	WP_Session_Tokens::get_instance( $head->ID )->destroy( $token );
-	$checks['/staff/dashboard opens for the school administrator'] = 200 === $r['code'] && false !== strpos( $r['body'], 'School Dashboard' );
+$run_checks = function () use ( $get ) {
+	$checks = array();
+	$r      = $get( home_url( '/sign-in' ) );
+	$checks['/sign-in shows the sign-in form'] = 200 === $r['code'] && false !== strpos( $r['body'], 'name="log"' );
+	$r      = $get( home_url( '/staff/' ) );
+	$checks['/staff sends visitors to sign in'] = 302 === $r['code'] && false !== strpos( $r['location'], 'redirect_to=' );
+	$admin = get_user_by( 'login', 'Masango' );
+	if ( $admin ) {
+		$exp     = time() + 300;
+		$token   = WP_Session_Tokens::get_instance( $admin->ID )->create( $exp );
+		$cookies = array(
+			new WP_Http_Cookie( array( 'name' => SECURE_AUTH_COOKIE, 'value' => wp_generate_auth_cookie( $admin->ID, $exp, 'secure_auth', $token ) ) ),
+			new WP_Http_Cookie( array( 'name' => LOGGED_IN_COOKIE, 'value' => wp_generate_auth_cookie( $admin->ID, $exp, 'logged_in', $token ) ) ),
+		);
+		$r = $get( home_url( '/staff/dashboard' ), $cookies );
+		WP_Session_Tokens::get_instance( $admin->ID )->destroy( $token );
+		$checks['/staff/dashboard opens for the school administrator'] = 200 === $r['code'] && false !== strpos( $r['body'], 'School Dashboard' );
+	}
+	return $checks;
+};
+// The web server can take a few seconds to notice a changed .htaccess: try up to 4 times.
+for ( $try = 1; $try <= 4; $try++ ) {
+	sleep( 1 === $try ? 2 : 4 );
+	$checks = $run_checks();
+	if ( ! in_array( false, $checks, true ) ) {
+		break;
+	}
 }
+$log[] = 'Checked after ' . min( $try, 4 ) . ' attempt(s).';
 foreach ( $checks as $name => $ok ) {
 	$log[] = ( $ok ? 'PASS ' : 'FAIL ' ) . $name;
 }

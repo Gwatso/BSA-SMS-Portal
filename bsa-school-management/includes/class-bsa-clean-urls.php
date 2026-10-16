@@ -59,21 +59,23 @@ class BSA_Clean_Urls {
 	}
 
 	/**
-	 * The .htaccess block.
+	 * The .htaccess block. Substitutions are full paths from the site root: on the
+	 * school's LiteSpeed server relative ones were not picked up for /staff/<screen>.
 	 *
 	 * @return string[]
 	 */
 	public static function rules() {
+		$base = trailingslashit( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ) );
 		return array(
 			'# Staff screens at /' . self::STAFF . ' (WordPress wp-admin) and signing in at /' . self::SIGNIN . ' (wp-login.php).',
 			'# Added by the BSA School Management plugin; delete this block to switch it off.',
 			'<IfModule mod_rewrite.c>',
 			'RewriteEngine On',
-			'RewriteBase /',
-			'RewriteRule ^' . self::SIGNIN . '/?$ wp-login.php [QSA,L]',
-			'RewriteRule ^' . self::STAFF . '/?$ wp-admin/index.php [QSA,L]',
-			'RewriteRule ^' . self::STAFF . '/([a-z0-9-]+)/?$ wp-admin/admin.php?page=bsa-$1 [QSA,L]',
-			'RewriteRule ^' . self::STAFF . '/(.+)$ wp-admin/$1 [QSA,L]',
+			'RewriteBase ' . $base,
+			'RewriteRule ^' . self::SIGNIN . '/?$ ' . $base . 'wp-login.php [QSA,L]',
+			'RewriteRule ^' . self::STAFF . '/?$ ' . $base . 'wp-admin/index.php [QSA,L]',
+			'RewriteRule ^' . self::STAFF . '/([a-z0-9-]+)/?$ ' . $base . 'wp-admin/admin.php?page=bsa-$1 [QSA,L]',
+			'RewriteRule ^' . self::STAFF . '/(.+)$ ' . $base . 'wp-admin/$1 [QSA,L]',
 			'</IfModule>',
 		);
 	}
@@ -88,13 +90,14 @@ class BSA_Clean_Urls {
 	}
 
 	/**
-	 * The .htaccess text without the BSA block.
+	 * The .htaccess text without the BSA block (exactly what with_block() added: the
+	 * block and the blank line after it).
 	 *
 	 * @param string $text File text.
 	 * @return string
 	 */
 	public static function without_block( $text ) {
-		return (string) preg_replace( '/\n?# BEGIN ' . preg_quote( self::MARKER, '/' ) . '\n.*?# END ' . preg_quote( self::MARKER, '/' ) . '\n/s', "\n", $text );
+		return (string) preg_replace( '/# BEGIN ' . preg_quote( self::MARKER, '/' ) . '\n.*?# END ' . preg_quote( self::MARKER, '/' ) . '\n\n?/s', '', $text );
 	}
 
 	/**
