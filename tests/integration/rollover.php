@@ -251,7 +251,8 @@ try {
 
 	// Current year.
 	$check( 'current year: refused for a teacher', ! BSA_Rollover::make_current( $to, $teacher ) && (string) $current_before === (string) get_option( 'wlsm_current_session' ) );
-	$check( 'current year: switched by the school administrator', BSA_Rollover::make_current( $to, $head ) && (string) $to === (string) get_option( 'wlsm_current_session' ) );
+	update_user_meta( $head, 'wlsm_current_session', $from );
+	$check( 'current year: switched by the school administrator, for everyone (personal year choice cleared)', BSA_Rollover::make_current( $to, $head ) && (string) $to === (string) get_option( 'wlsm_current_session' ) && '' === get_user_meta( $head, 'wlsm_current_session', true ) );
 
 	wp_set_current_user( $teacher );
 	$denied = array();

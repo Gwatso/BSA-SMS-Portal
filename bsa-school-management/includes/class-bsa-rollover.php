@@ -348,6 +348,8 @@ class BSA_Rollover {
 			return false;
 		}
 		update_option( 'wlsm_current_session', (int) $session_id );
+		// Staff who picked a year in School Management's year switcher follow the new one.
+		delete_metadata( 'user', 0, 'wlsm_current_session', '', true );
 		if ( function_exists( 'SimpleLogger' ) ) {
 			SimpleLogger()->info( 'Current school year set to {year}', array( 'year' => BSA_School::sessions()[ $session_id ] ) );
 		}
@@ -557,7 +559,7 @@ class BSA_Rollover {
 			return;
 		}
 		/* translators: %s: year. */
-		echo '<section class="bsa-card"><h2>' . esc_html( sprintf( __( 'Start %s', 'bsa-school-management' ), $sessions[ $to ] ) ) . '</h2><p class="bsa-card-sub">' . esc_html( sprintf( /* translators: 1: current year, 2: next year. */ __( 'School Management currently opens on %1$s. In January, after the rollover, make %2$s the current year (fees, admissions and Weblizar screens then use it). BSA screens follow the term dates.', 'bsa-school-management' ), $sessions[ BSA_School::current_session() ] ?? '', $sessions[ $to ] ) ) . '</p>';
+		echo '<section class="bsa-card"><h2>' . esc_html( sprintf( __( 'Start %s', 'bsa-school-management' ), $sessions[ $to ] ) ) . '</h2><p class="bsa-card-sub">' . esc_html( sprintf( /* translators: 1: current year, 2: next year. */ __( 'School Management currently opens on %1$s. In January, after the rollover, make %2$s the current year for everyone (fees, admissions and Weblizar screens then use it). BSA screens follow the term dates.', 'bsa-school-management' ), $sessions[ BSA_School::current_session() ] ?? '', $sessions[ $to ] ) ) . '</p>';
 		/* translators: %s: year. */
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" onsubmit="return confirm(' . esc_attr( wp_json_encode( sprintf( __( 'Make %s the current year?', 'bsa-school-management' ), $sessions[ $to ] ) ) ) . ');"><input type="hidden" name="action" value="bsa_rollover_switch"><input type="hidden" name="session" value="' . (int) $to . '">';
 		wp_nonce_field( 'bsa_rollover_switch' );
