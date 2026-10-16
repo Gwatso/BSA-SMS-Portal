@@ -249,7 +249,14 @@ class BSA_Streams {
 				continue;
 			}
 			$learners = BSA_School::learners( (int) $sec->ID, $session_id );
-			$n        = count( array_filter( self::subject_map( wp_list_pluck( $learners, 'ID' ) ), 'empty' ) );
+			$n        = count(
+				array_filter(
+					self::subject_map( wp_list_pluck( $learners, 'ID' ) ),
+					static function ( $subjects ) {
+						return ! $subjects;
+					}
+				)
+			);
 			if ( $n ) {
 				$out[ $sec->title ] = $n;
 			}

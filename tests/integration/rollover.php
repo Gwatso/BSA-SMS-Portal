@@ -102,8 +102,8 @@ $check( 'rollover: next year and next class (Form 4 → none)', $to === BSA_Roll
 BSA_Marks::maybe_migrate();
 $batches_before = get_option( BSA_Rollover::BATCHES, false );
 $current_before = get_option( 'wlsm_current_session' );
-$fake_user      = 999999901;
-$fake_parent    = 999999902;
+$fake_user      = 0;
+$fake_parent    = 0;
 $mk             = function ( $name, $section, $session, $adm, array $extra = array() ) use ( $wpdb, $p ) {
 	$wpdb->insert( "{$p}wlsm_student_records", array_merge( array( 'name' => $name, 'gender' => 'female', 'enrollment_number' => 'T-' . $adm, 'admission_number' => $adm, 'roll_number' => $adm, 'section_id' => $section, 'session_id' => $session, 'is_active' => 1, 'student_type' => '2', 'country' => 'Zimbabwe' ), $extra ) );
 	return (int) $wpdb->insert_id;
@@ -142,7 +142,13 @@ $wpdb->query( 'START TRANSACTION' );
 try {
 	BSA_School::flush();
 	$check( 'fixture: no real learners in the first year', ! (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$p}wlsm_student_records WHERE session_id = %d", $from ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	// Two throwaway logins (rolled back with everything else).
+	foreach ( array( 'fake_user', 'fake_parent' ) as $who ) {
+		$wpdb->insert( $wpdb->users, array( 'user_login' => 'bsa_test_roll_' . $who, 'user_pass' => 'x', 'user_nicename' => 'bsa_test_roll_' . $who, 'user_email' => $who . '@example.invalid', 'user_registered' => current_time( 'mysql', true ), 'display_name' => 'Test ' . $who ) );
+		$$who = (int) $wpdb->insert_id;
+	}
 	$ama  = $mk( 'Ama Testroll', $f1, $from, 'TEST-ROLL-A', array( 'user_id' => $fake_user, 'parent_user_id' => $fake_parent ) );
+	$check( 'fixture: synthetic learners and logins created', $fake_user && $fake_parent && $ama, $wpdb->last_error );
 	$bon  = $mk( 'Bongi Testroll', $f2, $from, 'TEST-ROLL-B' );
 	$chi  = $mk( 'Chido Testroll', $f2, $from, 'TEST-ROLL-C' );
 	$dar  = $mk( 'Dara Testroll', $f2, $from, 'TEST-ROLL-D' );
