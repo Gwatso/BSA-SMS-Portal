@@ -37,4 +37,6 @@ portal `portal.bindurascienceacademy.co.zw` (Weblizar School Management + Blocks
 | — Family Accounts check | **Done** (plugin 0.7.0): flags shared, crossed or missing family logins and bad emails; office guide |
 | 7. Extra lessons | On hold until the owner confirms |
 
+**Demo data is loaded** (2026-10-16, for presenting to the directors). Remove it before entering real data: run `scripts/13-demo-data.php` with `$bsa_mode = 'remove'`. On the day of a presentation, `$bsa_mode = 'extend'` fills the register up to that day.
+
 By owner decision, work happens directly on production. Every change is committed here.

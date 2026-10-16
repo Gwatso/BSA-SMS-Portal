@@ -369,7 +369,7 @@ if ( 'people' === $bsa_phase ) {
 	foreach ( $staff_list as $i => $st ) {
 		list( $first, $last ) = explode( ' ', $st[0], 2 );
 		$pass                 = 1 === $i ? wp_generate_password( 14, false ) : '';
-		list( $uid, $login )  = $new_user( strtolower( $first[0] . '.' . $last ), $st[2] . ' ' . $st[0], $first, $last, $pass );
+		list( $uid, $login )  = $new_user( strtolower( $first[0] . '.' . $last ), $st[0], $first, $last, $pass ); // No title: report cards use the initials.
 		update_user_meta( $uid, 'wlsm_school_id', 1 );
 		$wpdb->insert( "{$p}wlsm_staff", array( 'role' => WLSM_M_Role::get_employee_key(), 'permissions' => $teacher_role->permissions, 'school_id' => 1, 'user_id' => $uid, 'created_at' => $now ) );
 		$staff_id         = (int) $wpdb->insert_id;
@@ -394,7 +394,7 @@ if ( 'people' === $bsa_phase ) {
 		}
 	}
 	$pass                 = wp_generate_password( 14, false );
-	list( $uid, $login )  = $new_user( 'r.kambarami', 'Mrs Ruth Kambarami', 'Ruth', 'Kambarami', $pass );
+	list( $uid, $login )  = $new_user( 'r.kambarami', 'Ruth Kambarami', 'Ruth', 'Kambarami', $pass );
 	update_user_meta( $uid, 'wlsm_school_id', 1 );
 	$wpdb->insert( "{$p}wlsm_staff", array( 'role' => WLSM_M_Role::get_employee_key(), 'permissions' => $bursar_role->permissions, 'school_id' => 1, 'user_id' => $uid, 'created_at' => $now ) );
 	$staff_id       = (int) $wpdb->insert_id;

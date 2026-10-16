@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-10-16: Demo data for the directors' presentation (script 13, production)
+
+Mock data so every screen has something to show before real data is entered. Added by
+`scripts/13-demo-data.php` after a database snapshot (`bsa-backups/2026-10-16-pre-demo/`).
+
+- **119 demo learners** with Zimbabwean names: Form 1 A 30, Form 2 A 29 (plus the real
+  learner), Form 3 A 30, Form 4 A 30. Each has parents (one parent login per family; six
+  families have two children at BSA), a 2025 record for those already at BSA last year,
+  birth certificate numbers and Grade 7 slips (a few units-only or missing).
+- **Streams:** Form 3 is 16 Sciences and 12 Commercials, with 2 not yet chosen. Form 4
+  mostly takes the sciences; 4 learners have their own mix.
+- **Staff:** ten demo teachers covering every subject (class teachers for Form 2 A, 3 A
+  and 4 A; Mr Hlabati stays class teacher of Form 1 A) and a demo bursar.
+- **Results:** exam, course and project marks for every term of 2025 and 2026.
+  - About 65% average, with realistic stories: a few learners who arrived with strong
+    Grade 7 results and are struggling from Form 1 Term 1, sharp drops, improvers, and
+    learners with poor attendance.
+  - Term 3 2026 Form 2 History and Geography are still to be marked.
+  - Report cards are published for 2025 and 2026 Terms 1–2; Term 3 comments are being
+    drafted.
+- **Register:** daily register for 2025 Term 3 and all of 2026 up to today; Form 4 A not
+  yet marked today; the head's weekly checks.
+- **Fees:** three term invoices per learner, payments in cash and by bank transfer (some
+  this week and today), a few merit scholarships, about 83% collected.
+- **Intranet:**
+  - 12 school news items and achievements from the public website (kept when the demo
+    is removed).
+  - Demo staff notices with read receipts, events (staff meeting, parents'
+    consultation, exams, Form 4 celebration evening) and resources.
+  - Two notices for families on the account page.
+- **Term dates** the demo needs (2025; 2026 Terms 1–2; 2027 Term 1) were added as
+  placeholders. The removal takes them out again unless they have been changed.
+- **Removal:** `remove` deletes exactly what was added (listed in the option
+  `bsa_sm_demo`); `extend` tops the register up to today. No email was sent.
+
 ## 2026-10-16: Clean addresses, no "wp-admin" in the address bar (plugin 0.15.0, production)
 
 - **Staff screens are at /staff**: for example `/staff/dashboard` instead of

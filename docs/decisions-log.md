@@ -92,6 +92,7 @@ Keeps project context across Claude Code sessions. Newest entries first.
 | 2026-10-16 | **"Below Grade 7 level" is a fifth at-risk sign**: 2 grades or more below the entry level, on the slip's scale (adjustable, 1–8). **Staff only.** | Owner (sign, audience) + Claude (default 2 grades) | If a whole class drops (secondary marks being lower), the "class, on average" tile shows it; the number can be raised. |
 | 2026-10-16 | **Staff land on their own dashboard after signing in** (School Dashboard for the school administrator, home screen for teachers and the bursar), not the intranet; "My Account" reads "My Dashboard" for staff. | Owner | Plugin 0.14.1. Replaces the 2026-10-15 landing on /intranet. |
 | 2026-10-16 | **No "wp-admin" or "wp-login.php" in addresses**: staff screens at /staff (BSA screens shortest: /staff/dashboard), signing in at /sign-in. | Owner ("Yes: /staff and /sign-in") | Plugin 0.15.0 and script 12 (.htaccess block, checked before switching on; old addresses redirect). WordPress files are not moved or renamed. |
+| 2026-10-16 | **Demo data for presenting to the directors**, before real data: about 30 mock learners per class with Zimbabwean names, and data on every screen; news from the public website on the intranet. | Owner | Script 13; listed in `bsa_sm_demo` and removed with `remove` before real data is entered (website news kept). Demo phones 070…, emails @demo.bindurascienceacademy.co.zw. |
 
 ## Verified facts to reuse
 
