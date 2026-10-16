@@ -517,6 +517,63 @@ Start, columns, check and done screens rendered from the captured synthetic data
 and 390 px: no sideways scrolling. Changed during the check: a guardian's phone is shown
 once in the check list; "1 rows" messages now singular.
 
+### Streams and year-end rollover, plugin 0.13.0 (2026-10-16)
+
+#### Integration test: `tests/integration/rollover.php` (46/46 PASS)
+Live, after script 11. It uses synthetic learners in 2025 (no real learners) rolled into
+2026 inside a rolled-back transaction. The all-or-nothing check runs the rollover's own
+transaction with a forced failure.
+
+| Area | Checks | Result |
+|---|---|---|
+| Classes | One class per form (Form 1 A … Form 4 A) | PASS |
+| Streams | Owner's subject lists; subject → stream; stream words; Forms 3–4 only; 13 subjects, 10 per stream; stream read from subjects ("not set", "own choice"); who may set them | PASS |
+| Saving | Through save(): other classes ignored; the same again changes nothing; "keep" | PASS |
+| Marks | Physics sheet lists Sciences and not-set learners, not Commercials; Combined Science the reverse; Mathematics everyone; a Commercials learner's Physics mark refused; report-card subjects per stream | PASS |
+| Dashboard | Learners without a stream counted per class | PASS |
+| Rollover plan | Next year and next class; defaults; "already" next year; no admission number | PASS |
+| Rollover | Refused with a learner missing a number (nothing written), for a teacher, for a wrong year; 7 moved, 3 leaving; new record fields (same admission and roll number, new enrollment number, boarder kept); logins moved; old record active and listed; promotion link; admission documents moved; streams into Form 3 (set or later) and into Form 4 (kept on Form 4's subjects); repeaters; leavers and completers | PASS |
+| Parents | Own the new record and last year's (promotion link); last year's published card still listed | PASS |
+| Again, undo | Second run: nothing to do. Undo: 6 removed, a record with a register entry kept; logins, documents and links restored; not twice | PASS |
+| Current year | Teacher refused; school administrator switches it and staff members' own year choices are cleared | PASS |
+| Screens, rollback | Streams and rollover screens; teacher refused; nothing left; no PHP notices | PASS |
+
+The first runs found three real problems, fixed before going live:
+- "no stream" count: an invalid PHP callback.
+- Weblizar allows a login on one record only (unique key), so the rollover now frees it
+  before giving it to the new record, and undo works in reverse.
+- The test's made-up login IDs were refused by Weblizar's foreign key, so the test now
+  creates throwaway logins.
+
+#### Over HTTP: `tests/integration/rollover-http.php` (15/15 PASS)
+As the school administrator through the real forms:
+- Streams screen (no "WordPress", in the menu) and a stream saved.
+- Rollover screen; without the confirmation tick nothing happens.
+- Rollover run: 3 moved (Sciences into Form 3, repeater, Commercials kept into Form 4),
+  1 completing Form 4.
+- Message and Undo; undo removes the 3.
+- Refused: Form 1 class teacher (Streams screen, forged save), teacher (rollover,
+  switching the year).
+
+The test refuses to run if the earliest year holds real learners, and never switches the
+current year.
+
+#### Whole suite after the change (live)
+- rollover 46/46, rollover-http 15/15, import 65/65, import-http 28/28, reports 56/56,
+  dashboard 38/38, results 40/40.
+- staff-area 32/32 + HTTP 29/29, family 29/29 + HTTP 14/14, intranet 36/36 + HTTP 32/32.
+- register 53/53, accounts 19/19, finance 49/49, access-guard 20/20,
+  admission-and-portal 60/60, security 49/49.
+- Tests that named "Form 3 Sciences" or the Commercials sections now use Form 3 A and
+  Form 4 A.
+
+#### Visual check
+Streams and rollover screens rendered from the captured synthetic data at 1280 and
+390 px. Changed during the check:
+- The rollover tiles now sit four in a row.
+- On phones each learner's choices stack under the name, with a "Stream next year"
+  label (before, the stream column was off the screen).
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is

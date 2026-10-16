@@ -1,5 +1,53 @@
 # Changelog
 
+## 2026-10-16: One class per form, streams and the year-end rollover (plugin 0.13.0, production)
+
+**One Form 3 and one Form 4 class (owner).** BSA runs one class per form: one class
+teacher and one register. Sciences and Commercials are subject choices inside Forms 3
+and 4, not separate classes. Script 11 renamed "Form 3 Sciences" and "Form 4 Sciences"
+to **Form 3 A** and **Form 4 A**. It deleted the two Commercials sections, which were
+empty (nothing referred to them).
+
+- **Streams screen** (wp-admin → Streams; school administrator for both forms, a class
+  teacher for their own class):
+  - It shows the subjects for everyone and for each stream.
+  - Each learner's stream can be set as Sciences, Commercials or not set.
+  - The school administrator can change which subjects belong to each stream.
+  - Owner's lists:
+    - **Everyone:** Mathematics, English Language, Principles of Accounting, History,
+      Computer Science, Shona Language, Geography.
+    - **Sciences:** Physics, Chemistry, Biology.
+    - **Commercials:** Heritage Studies, Combined Science, Business Enterprise Skills.
+- A learner's stream is kept as their Weblizar subjects. **Marks sheets** list only the
+  learners taking each subject, and a Physics mark for a Commercials learner is
+  refused. **Report cards** show each learner's own subjects. The **position** is
+  within the whole class (owner). Learners without a stream take every subject and are
+  listed under "Needs attention" on the School Dashboard.
+- The **import** reads "Form 3 Sciences" as Form 3 A with the Sciences subjects. "Form 3"
+  without a stream is accepted, with a note to set the stream later. A stream given for
+  Form 1 or 2 is ignored, with a warning.
+
+**Year-end rollover** (wp-admin → Year-end rollover; owner and school administrator):
+
+- Every class of the year ending is listed with a choice for each learner:
+  - Forms 1–3: move up to the next form (default), repeat, or leave the school.
+  - Form 4: complete Form 4 (default) or repeat.
+- Learners going into Form 3 choose Sciences or Commercials, or later. Form 3 learners
+  keep their stream into Form 4.
+- Learners already in the next year are shown and skipped. Moving up needs an admission
+  number.
+- Records are created as Weblizar's own promotion does it: same admission and roll
+  number, a new enrollment number, a promotion link, and the learner and parent logins
+  moved to the new record. The **admission documents** record moves too.
+- **The year just ended stays visible:** its records stay active, so registers, marks,
+  report cards and results remain. Parents keep last year's report cards through the
+  promotion link.
+- No invoices are created and no messages are sent.
+- Confirmation tick, all or nothing, and **undo**. Undo keeps any new-year record that
+  already has fees, marks or a register entry.
+- **"Make 2027 the current year"** button for January. It switches School Management's
+  current year for everyone, including staff who had picked a year themselves.
+
 ## 2026-10-15: Import data, learners and parents (plugin 0.12.0, production)
 
 A new **Import data** screen in wp-admin (owner and school administrator) to bring in

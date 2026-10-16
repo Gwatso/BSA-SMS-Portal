@@ -62,6 +62,9 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Admissions and learner records | Manage | — | — |
 | School Dashboard (fees, register, marks, needs attention) | Yes (owner, school administrator) | — | — |
 | Results: classes, subjects, learners at risk, progression, one learner's year | All classes; can change the at-risk rules | Class teacher: own class. Subject teacher: their subjects (no learner list) | — |
+| Streams: set learners' Sciences or Commercials in Forms 3–4 | Yes (owner, school administrator; a class teacher for their own class) | — | — |
+| Streams: change which subjects belong to each stream | Yes (owner, school administrator) | — | — |
+| Year-end rollover; undo it; make the next year current | Yes (owner, school administrator) | — | — |
 | Import data: learners and parents from files; undo an import | Yes (owner, school administrator) | — | — |
 | Intranet (/intranet): read, acknowledge notices | Yes | Yes | Yes |
 | Intranet: post news, announcements, notices, achievements, events, resources; read receipts; share attendance to WhatsApp | Yes (owner, school administrator) | — | — |
@@ -81,8 +84,9 @@ transfers, amount above zero and at most the invoice balance. **Fee Reports** ar
 administrators, Weblizar "admin" staff, and staff with `manage_invoices` or `stats_payments`.
 
 **Subject teachers:** assign subjects in School Management → Staff → Edit → Subjects.
-A subject teacher can then enter that subject's marks for every stream of the form
-(Form 3 Sciences and Commercials, for example). "Administrators" in the Marks and Report
+A subject teacher can then enter that subject's marks for the learners of the form who
+take it (in Forms 3 and 4, only the Sciences or only the Commercials learners for a
+stream subject). "Administrators" in the Marks and Report
 Cards rows means the owner and Weblizar "admin" staff (the school administrator).
 
 **Admission documents** are open to administrators and to any staff member given

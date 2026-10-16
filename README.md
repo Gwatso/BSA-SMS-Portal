@@ -20,12 +20,13 @@ portal `portal.bindurascienceacademy.co.zw` (Weblizar School Management + Blocks
 |---|---|
 | 0. Audit | Done ([audit](docs/audit-report.md)) |
 | 1. Safety baseline | **Done** (off-site backups, 2FA, email verified). Open: DKIM DNS record |
-| 3. School configuration | **Done**: school, Forms 1–4 (Sciences/Commercials streams in Forms 3–4), sessions, subjects, term fees, admission fields and documents, email, Teacher and Bursar roles ([permissions](docs/permission-matrix.md)). Branding and portal pages live (Home, My Account) |
+| 3. School configuration | **Done**: school, Forms 1–4 (one class each; Sciences and Commercials are subject streams in Forms 3–4), sessions, subjects, term fees, admission fields and documents, email, Teacher and Bursar roles ([permissions](docs/permission-matrix.md)). Branding and portal pages live (Home, My Account) |
 | 6. Finance | **Core done** (plugin 0.3.0): cash/bank rules, part-payments, unique invoice numbers, audit trail, Fee Reports. Waiting: bank details, term dates |
 | 5. Attendance | **Done** (plugin 0.4.0): School Terms, Class Register mirroring the paper register. Waiting: term dates |
 | 4. Academics & report cards | **Done** (plugin 0.5.0): Marks entry, grading rules, Report Cards (results, positions, comments, publish, print, parent view) ([spec](docs/academics-spec.md)). Waiting: subject-teacher assignments, remaining term dates |
 | 8. Parent and learner portal | **Done** (plugin 0.6.0, theme 0.2.5): Report Cards for learners and parents, parent Fee Structure, account settings link, phone-friendly tables, notices fixed, fee lock-out off, unused Weblizar items hidden, Help page for families |
 | 9. QA and hardening | **Done** (plugin 0.7.1, theme 0.2.6; home hero theme 0.3.0): all suites green, security sweep 49/49, accessibility and phone checks, login-name leak and backup schedule fixed ([report](docs/qa-report-phase9.md)) |
+| — Streams and year-end rollover | **Done** (plugin 0.13.0): one class per form; Sciences/Commercials as subject choices (Streams screen, marks sheets per subject); rollover to the next year with move up / repeat / leave / complete Form 4, stream choice into Form 3, undo, and a "make current" button. Run it after Term 3 report cards are published |
 | — Import data | **Done** (plugin 0.12.0): learners and parents from Excel, Word, CSV or a pasted table, with checks, preview and undo; school year 2025 added. Waiting: the school's files; marks import when marks arrive |
 | — BSA Intranet | **Done** (plugin 0.11.0): /intranet staff hub with sliding top stories, news, notices with read receipts, achievements, events, OneDrive/Drive resources, calendar, tasks from school data, attendance chart with WhatsApp sharing |
 | — Results dashboards | **Done** (plugin 0.10.0): results by class and subject, learners at risk with reasons (staff only), progression by term, one learner's year; Progress for families from published report cards |

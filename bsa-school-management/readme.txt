@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.12.0
+Stable tag: 0.13.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -97,6 +97,13 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.13.0 =
+* Streams: Sciences and Commercials as subject choices inside one Form 3 and one Form 4
+  class; Streams screen; marks sheets list only the learners taking each subject.
+* Year-end rollover: move up, repeat, leave or complete Form 4 for every learner; stream
+  choice into Form 3; logins and admission documents move to the new year; the year
+  ended stays visible; parents keep past report cards; undo; make the next year current.
 
 = 0.12.0 =
 * Import data (owner and school administrator): learners and parents from Excel (.xlsx),
