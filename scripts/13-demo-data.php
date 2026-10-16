@@ -13,7 +13,8 @@
  * exactly that list. No email is sent while this runs.
  *
  * Set before running (Novamira `execute-php`, everything after the opening tag):
- *   $bsa_mode  = 'add' | 'status' | 'extend' | 'remove'
+ *   $bsa_mode  = 'add' | 'status' | 'extend' | 'remove' | 'redo' (phase 'academics' only:
+ *                marks, report cards and Grade 7 grades again)
  *   $bsa_phase = 'people' | 'academics' | 'attendance' | 'fees' | 'intranet' (mode 'add';
  *                run them in this order, one call each)
  *   $bsa_keep_news = true (mode 'remove': keep the public-website news; default true)
@@ -271,6 +272,16 @@ if ( 'extend' === $bsa_mode ) {
 	return array( 'days added' => $days, 'rows' => count( $rows ) );
 }
 
+if ( 'redo' === $bsa_mode && 'academics' === $bsa_phase && ! empty( $reg['phases']['academics'] ) ) {
+	// Marks, report cards and Grade 7 grades again (people, register and fees stay).
+	$r = $ids_sql( $reg['records'] );
+	$wpdb->query( 'DELETE FROM ' . BSA_Marks::table() . " WHERE student_record_id IN ($r)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+	$wpdb->query( 'DELETE FROM ' . BSA_Marks::reports_table() . " WHERE student_record_id IN ($r)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+	$wpdb->query( 'UPDATE ' . BSA_Admission_Records::table() . " SET grade7_school = '', grade7_year = NULL, grade7_units = NULL, grade7_english = NULL, grade7_maths = NULL, grade7_science = NULL, grade7_language = NULL, grade7_social = NULL, grade7_pe_arts = NULL WHERE student_record_id IN ($r)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+	unset( $reg['phases']['academics'] );
+	$save();
+	$bsa_mode = 'add';
+}
 if ( 'add' !== $bsa_mode ) {
 	return array( 'Unknown mode.' );
 }
@@ -408,7 +419,6 @@ if ( 'people' === $bsa_phase ) {
 	$town  = array( 'Chiwaridzo', 'Chipadze', 'Aerodrome', 'Shashi View', 'Garikai', 'Bindura Town', 'Chiwaridzo', 'Chipadze' );
 	$away  = array( 'Mt Darwin', 'Shamva', 'Concession', 'Glendale', 'Mvurwi', 'Harare', 'Guruve', 'Marondera' );
 	$faith = array( 'Christian (Apostolic)', 'Christian (Catholic)', 'Christian (Methodist)', 'Christian (Anglican)', 'Christian (Pentecostal)', 'Christian (SDA)', 'Christian (ZAOGA)', 'Christian' );
-	$prim  = array( 'Bindura Primary School', 'Chipadze Primary School', 'Chiwaridzo Primary School', 'Shashi Primary School', 'Kitsiyatota Primary School', 'Hermitage Primary School', 'Mt Darwin Primary School', 'Shamva Primary School' );
 	$types = array();
 	foreach ( $wpdb->get_results( "SELECT ID, label FROM {$p}wlsm_student_type" ) as $t ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$types[ false !== stripos( $t->label, 'board' ) ? 'boarder' : 'day' ] = (string) $t->ID;
@@ -515,11 +525,9 @@ if ( 'people' === $bsa_phase ) {
 	}
 	$absent = array( $ix['Form 1'][27], $ix['Form 2'][13], $ix['Form 3'][22], $ix['Form 3'][26], $ix['Form 4'][15] );
 	foreach ( $learners as $i => &$l ) {
-		$l['story']   = $story[ $i ] ?? '';
-		$l['ability'] = round( $clamp( 'g7drop' === $l['story'] ? $normal( 47, 3 ) : $normal( 61, 12 ), 30, 92 ), 1 );
-		$l['trend']   = 'improve' === $l['story'] ? 4.5 : ( 'g7drop' === $l['story'] ? -2.5 : round( $normal( 0, 1.2 ), 2 ) );
-		$l['absent']  = in_array( $i, $absent, true );
-		$l['seed']    = $rand( 1, 1000000 );
+		$l['story']  = $story[ $i ] ?? '';
+		$l['absent'] = in_array( $i, $absent, true );
+		$l['seed']   = $rand( 1, 1000000 );
 	}
 	unset( $l );
 
@@ -650,38 +658,10 @@ if ( 'people' === $bsa_phase ) {
 	}
 	unset( $l );
 
-	// Grade 7 slips: most with all six grades, a few with total units only, a few missing.
-	$g7  = function ( $pct ) {
-		foreach ( array( 1 => 85, 2 => 77, 3 => 70, 4 => 60, 5 => 50, 6 => 40, 7 => 30, 8 => 20 ) as $g => $min ) {
-			if ( $pct >= $min ) {
-				return $g;
-			}
-		}
-		return 9;
-	};
-	$cnt = 0;
-	foreach ( $learners as $i => &$l ) {
-		++$cnt;
-		$rec = array( 'birth_certificate_no' => 0 === $cnt % 9 ? '' : $bc() );
-		if ( 0 !== $cnt % 17 ) {
-			$lvl = 'g7drop' === $l['story'] ? 88 : $l['ability'] + 12;
-			$gr  = array();
-			foreach ( array( 'english', 'maths', 'science', 'language', 'social', 'pe_arts' ) as $k ) {
-				$gr[ $k ] = $g7( $clamp( $normal( $lvl, 'g7drop' === $l['story'] ? 3 : 7 ), 5, 99 ) );
-			}
-			$rec += array( 'grade7_school' => $pick( $prim ), 'grade7_year' => 2026 - (int) substr( $l['form'], -1 ) );
-			if ( 0 === $cnt % 11 ) {
-				$rec['grade7_units'] = array_sum( $gr ); // Older slip copy: total units only.
-			} else {
-				foreach ( $gr as $k => $g ) {
-					$rec[ 'grade7_' . $k ] = $g;
-				}
-				$rec['grade7_units'] = array_sum( $gr );
-			}
-		}
-		BSA_Admission_Records::save_record( $l['recs'][2026], $rec, $head_id );
+	// Birth certificate numbers (Grade 7 slips are added with the marks).
+	foreach ( $learners as $i => $l ) {
+		BSA_Admission_Records::save_record( $l['recs'][2026], array( 'birth_certificate_no' => 0 === ( $i + 1 ) % 9 ? '' : $bc() ), $head_id );
 	}
-	unset( $l );
 
 	foreach ( $learners as &$l ) {
 		unset( $l['f'] );
@@ -720,6 +700,44 @@ if ( 'academics' === $bsa_phase ) {
 		}
 	}
 	$save();
+
+	// Ability and direction of travel per learner (from the learner's seed, so a redo
+	// gives the same people new marks only if these numbers change).
+	foreach ( $reg['learners'] as &$l ) {
+		mt_srand( $l['seed'] + 1 );
+		$l['ability'] = round( $clamp( 'g7drop' === $l['story'] ? $normal( 53, 2.5 ) : $normal( 67, 9.5 ), 40, 94 ), 1 );
+		$l['trend']   = 'improve' === $l['story'] ? 4 : ( 'g7drop' === $l['story'] ? -2 : round( $normal( 0, 1 ), 2 ) );
+	}
+	unset( $l );
+
+	// Grade 7 slips: most with all six grades, a few with total units only, a few missing.
+	$prim = array( 'Bindura Primary School', 'Chipadze Primary School', 'Chiwaridzo Primary School', 'Shashi Primary School', 'Kitsiyatota Primary School', 'Hermitage Primary School', 'Mt Darwin Primary School', 'Shamva Primary School' );
+	$g7   = function ( $pct ) {
+		foreach ( array( 1 => 85, 2 => 77, 3 => 70, 4 => 60, 5 => 50, 6 => 40, 7 => 30, 8 => 20 ) as $g => $min ) {
+			if ( $pct >= $min ) {
+				return $g;
+			}
+		}
+		return 9;
+	};
+	foreach ( $reg['learners'] as $i => $l ) {
+		if ( 0 === ( $i + 1 ) % 17 ) {
+			continue; // No slip on file yet.
+		}
+		mt_srand( $l['seed'] + 2 );
+		$lvl = 'g7drop' === $l['story'] ? 88 : $l['ability'] + 4;
+		$gr  = array();
+		foreach ( array( 'english', 'maths', 'science', 'language', 'social', 'pe_arts' ) as $k ) {
+			$gr[ $k ] = $g7( $clamp( $normal( $lvl, 'g7drop' === $l['story'] ? 3 : 5 ), 5, 99 ) );
+		}
+		$rec = array( 'grade7_school' => $pick( $prim ), 'grade7_year' => 2026 - (int) substr( $l['form'], -1 ), 'grade7_units' => array_sum( $gr ) );
+		if ( 0 !== ( $i + 1 ) % 11 ) { // Every eleventh: an older slip copy, total units only.
+			foreach ( $gr as $k => $g ) {
+				$rec[ 'grade7_' . $k ] = $g;
+			}
+		}
+		BSA_Admission_Records::save_record( $l['recs'][2026], $rec, $head_id );
+	}
 
 	$diff  = array( 'Mathematics' => -5, 'Physics' => -4, 'Chemistry' => -4, 'Principles of Accounting' => -2, 'Biology' => -1, 'English Language' => 2, 'Shona Language' => 7, 'Computer Science' => 3, 'History' => 0, 'Geography' => 0, 'Combined Science' => 1, 'Business Enterprise Skills' => 4, 'Heritage Studies' => 4 );
 	$prev  = array( 'Form 2' => 'Form 1', 'Form 3' => 'Form 2', 'Form 4' => 'Form 3' );
