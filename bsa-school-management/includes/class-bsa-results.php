@@ -877,7 +877,10 @@ class BSA_Results {
 			}
 			list( $code, $words, $icon ) = self::entry_status( $e['gap'], $rules );
 			$chips = '';
-			foreach ( $e['pairs'] as $pair ) {
+			if ( ! array_filter( $e['entry']['grades'], 'is_int' ) ) {
+				$chips = '<li>' . esc_html__( 'Total units only: compared on the overall average', 'bsa-school-management' ) . '</li>';
+			}
+			foreach ( $chips ? array() : $e['pairs'] as $pair ) {
 				$chips .= '<li>' . esc_html( $pair['label'] . ' ' . ( null === $pair['then'] ? '–' : $pair['then'] ) . ' → ' . ( null === $pair['now'] ? '–' : $pair['now'] ) ) . '</li>';
 			}
 			$now = null === $e['now'] ? '–' : self::num( $e['now'] ) . ( null !== $e['now_average'] ? ' (' . self::pct( $e['now_average'] ) . ')' : '' );
@@ -1040,11 +1043,12 @@ class BSA_Results {
 				}
 				echo '</tr>';
 			}
-			echo '<tr class="bsa-total"><th scope="row">' . esc_html__( 'Change on entry', 'bsa-school-management' ) . '</th><td class="num">' . esc_html( null === $entry['level'] ? '–' : self::num( $entry['level'] ) ) . '</td>';
+			echo '<tr class="bsa-total"><th scope="row">' . esc_html__( 'Level at entry → now', 'bsa-school-management' ) . '</th><td class="num"></td>';
 			for ( $t = 1; $t <= 3; $t++ ) {
-				echo '<td class="num">' . esc_html( BSA_Entry::gap_text( $terms[ $t ]['gap'] ) ) . '</td>';
+				$c = $terms[ $t ];
+				echo '<td class="num">' . ( null === $c['gap'] ? '–' : esc_html( self::num( $c['level'] ) . ' → ' . self::num( $c['now'] ) ) . '<br><span class="bsa-note">' . esc_html( BSA_Entry::gap_text( $c['gap'] ) ) . '</span>' ) . '</td>';
 			}
-			echo '</tr></tbody></table></div><p class="bsa-note">' . esc_html__( 'Grades on the Grade 7 slip\'s scale: 1 (85–100%) to 9 (0–19%); term marks converted with the same key.', 'bsa-school-management' ) . '</p>';
+			echo '</tr></tbody></table></div><p class="bsa-note">' . esc_html__( 'Grades on the Grade 7 slip\'s scale: 1 (85–100%) to 9 (0–19%); term marks converted with the same key. The levels are averages over the subjects compared that term (Physical Edu & Arts has no exam subject to compare).', 'bsa-school-management' ) . '</p>';
 		}
 		echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Reports::PAGE . '&section=' . $section . '&session=' . $session . '&term=' . $s['term'] ) ) . '">' . esc_html__( 'Report Cards', 'bsa-school-management' ) . ' →</a></p></section>';
 	}
