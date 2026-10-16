@@ -70,7 +70,7 @@ try {
 	$r = $req( 'teacher', $page );
 	$check( 'teacher: no Import data screen', 200 !== $r['code'] || false === strpos( $r['body'], 'bsa_import_upload' ), (string) $r['code'] );
 	$r = $req( 'teacher', admin_url( 'admin.php?page=bsa-home' ) );
-	$check( 'teacher: no "Import data" in the menu', 200 === $r['code'] && false === strpos( $r['body'], 'page=bsa-import' ) );
+	$check( 'teacher: no "Import data" in the menu', 200 === $r['code'] && false === strpos( $r['body'], 'page=bsa-import' ) && false === strpos( $r['body'], '/staff/import' ) );
 	$r = $req( 'teacher', $post, array( 'method' => 'POST', 'body' => array( 'action' => 'bsa_import_upload', '_wpnonce' => 'forged', 'session' => $year, 'paste' => "Name\tClass\nX Httptest\tForm 1" ) ) );
 	$check( 'teacher: a forged upload is refused', 403 === $r['code'] && false === get_transient( 'bsa_import_' . $users['teacher'] ), (string) $r['code'] );
 
@@ -93,12 +93,12 @@ try {
 		. "Nokuthula\tHttptest\tF\t01/01/2011\tForm 5\t0773 555 666\n";
 	$r = $req( 'head', $post, array( 'method' => 'POST', 'body' => array( 'action' => 'bsa_import_upload', '_wpnonce' => $nonce( $first['body'], 'bsa_import_upload' ), 'session' => $year, 'paste' => $paste ) ) );
 	$check( 'paste: read and on to matching the columns', 302 === $r['code'] && false !== strpos( $r['location'], 'step=map' ), $r['code'] . ' ' . $r['location'] );
-	$r = $req( 'head', $page . '&step=map' );
+	$r = $req( 'head', add_query_arg( 'step', 'map', $page ) );
 	$check( 'columns: "3 rows read from pasted table", headings matched', 200 === $r['code'] && false !== strpos( $r['body'], '3 rows read from pasted table' ) && false !== strpos( $r['body'], '<option value="5" selected=\'selected\'>Parent phone</option>' ) && ! $php_error( $r['body'] ), (string) $r['code'] );
 	$map = array( 'first_names' => 0, 'surname' => 1, 'gender' => 2, 'dob' => 3, 'class' => 4, 'guardian_phone' => 5 );
-	$r   = $req( 'head', $page . '&' . http_build_query( array( 'step' => 'map', 'map' => $map, 'default_class' => 0 ) ) );
+	$r   = $req( 'head', $page . ( false === strpos( $page, '?' ) ? '?' : '&' ) . http_build_query( array( 'step' => 'map', 'map' => $map, 'default_class' => 0 ) ) );
 	$check( 'columns: confirmed', 200 === $r['code'] && false !== strpos( $r['body'], 'location.replace' ) );
-	$chk = $req( 'head', $page . '&step=check' );
+	$chk = $req( 'head', add_query_arg( 'step', 'check', $page ) );
 	$check( 'check: 2 ready, 1 error ("Form 5" not recognised), "Import 2 learners"', 200 === $chk['code'] && false !== strpos( $chk['body'], 'Import 2 learners' ) && false !== strpos( $chk['body'], 'Class &quot;Form 5&quot; not recognised' ) && ! $php_error( $chk['body'] ), (string) $chk['code'] );
 	$check( 'check: nothing saved yet', 0 === $count() );
 	$r = $req( 'head', $post, array( 'method' => 'POST', 'body' => array( 'action' => 'bsa_import_run', '_wpnonce' => 'forged' ) ) );
@@ -143,10 +143,10 @@ try {
 	$body .= "--$bound\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Form 2A class list.docx\"\r\nContent-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document\r\n\r\n$docx\r\n--$bound--\r\n";
 	$r = $req( 'head', $post, array( 'method' => 'POST', 'body' => $body, 'headers' => array( 'Content-Type' => 'multipart/form-data; boundary=' . $bound ) ) );
 	$check( 'Word upload: read and on to matching the columns', 302 === $r['code'] && false !== strpos( $r['location'], 'step=map' ), $r['code'] . ' ' . $r['location'] );
-	$r = $req( 'head', $page . '&step=map' );
+	$r = $req( 'head', add_query_arg( 'step', 'map', $page ) );
 	$check( 'Word upload: "2 rows read from Form-2A-class-list.docx", names found', false !== strpos( $r['body'], '2 rows read from Form-2A-class-list.docx' ) && false !== strpos( $r['body'], 'Panashe Httptest · Vimbai Httptest' ), '' );
-	$req( 'head', $page . '&' . http_build_query( array( 'step' => 'map', 'map' => array( 'name' => 1, 'gender' => 2 ), 'default_class' => 5 ) ) );
-	$chk = $req( 'head', $page . '&step=check' );
+	$req( 'head', $page . ( false === strpos( $page, '?' ) ? '?' : '&' ) . http_build_query( array( 'step' => 'map', 'map' => array( 'name' => 1, 'gender' => 2 ), 'default_class' => 5 ) ) );
+	$chk = $req( 'head', add_query_arg( 'step', 'check', $page ) );
 	$check( 'Word upload: "Class for every row" puts both in Form 2 A; ready to import', false !== strpos( $chk['body'], 'Import 2 learners' ) && 2 === substr_count( $chk['body'], '<td>Form 2 A</td>' ) );
 	$r = $req( 'head', $post, array( 'method' => 'POST', 'body' => array( 'action' => 'bsa_import_upload', '_wpnonce' => $nonce( $first['body'], 'bsa_import_upload' ), 'session' => (string) $year, 'paste' => '' ) ) );
 	$check( 'nothing chosen: asked to choose a file or paste a table', 302 === $r['code'] && false !== strpos( rawurldecode( $r['location'] ), 'Choose a file or paste a table' ), $r['location'] );

@@ -29,6 +29,10 @@ $results = array();
 $check   = function ( $name, $ok, $detail = '' ) use ( &$results ) {
 	$results[] = ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== (string) $detail ? ' - ' . $detail : '' );
 };
+// A link to a BSA screen, as admin.php?page=bsa-<screen>&… or (clean addresses on) /staff/<screen>?….
+$has_link = function ( $html, $screen, $rest = '' ) {
+	return false !== strpos( $html, 'page=bsa-' . $screen . ( '' !== $rest ? '&#038;' . $rest : '' ) ) || false !== strpos( $html, '/staff/' . $screen . ( '' !== $rest ? '?' . $rest : '' ) );
+};
 $original = get_current_user_id();
 $notices  = array();
 set_error_handler(
@@ -221,13 +225,13 @@ try {
 	ob_start();
 	BSA_Staff_Area::render_home();
 	$html = ob_get_clean();
-	$check( 'teacher screen: greeting, role, my class, my subjects, links', 1 === preg_match( '/<h1>Good (morning|afternoon|evening), \w+<\/h1>/', $html ) && false !== strpos( $html, 'Class teacher, Form 1 A' ) && false !== strpos( $html, 'My class: Form 1 A' ) && false !== strpos( $html, 'My subjects, Term 3' ) && false !== strpos( $html, 'page=bsa-marks&#038;section=' . $sci . '&#038;subject=' . $phys ) && false !== strpos( $html, 'page=bsa-class-register&#038;section=' . $f1a ) );
+	$check( 'teacher screen: greeting, role, my class, my subjects, links', 1 === preg_match( '/<h1>Good (morning|afternoon|evening), \w+<\/h1>/', $html ) && false !== strpos( $html, 'Class teacher, Form 1 A' ) && false !== strpos( $html, 'My class: Form 1 A' ) && false !== strpos( $html, 'My subjects, Term 3' ) && $has_link( $html, 'marks', 'section=' . $sci . '&#038;subject=' . $phys ) && $has_link( $html, 'class-register', 'section=' . $f1a ) );
 	$check( 'teacher screen: no fees, no WordPress', false === strpos( $html, 'Largest balances' ) && false === stripos( wp_strip_all_tags( $html ), 'wordpress' ) );
 	wp_set_current_user( $bursar );
 	ob_start();
 	BSA_Staff_Area::render_home();
 	$html = ob_get_clean();
-	$check( 'bursar screen: fee figures, by class, largest balances, recent payments, links', false !== strpos( $html, 'Collected this year' ) && false !== strpos( $html, 'Largest balances' ) && false !== strpos( $html, 'Staff Test Charlie' ) && false !== strpos( $html, 'Recent payments (30 days)' ) && false !== strpos( $html, 'page=sm-staff-invoices' ) && false !== strpos( $html, 'page=bsa-fee-reports' ) && false === strpos( $html, 'My class' ) );
+	$check( 'bursar screen: fee figures, by class, largest balances, recent payments, links', false !== strpos( $html, 'Collected this year' ) && false !== strpos( $html, 'Largest balances' ) && false !== strpos( $html, 'Staff Test Charlie' ) && false !== strpos( $html, 'Recent payments (30 days)' ) && false !== strpos( $html, 'page=sm-staff-invoices' ) && $has_link( $html, 'fee-reports' ) && false === strpos( $html, 'My class' ) );
 } catch ( Throwable $ex ) {
 	$check( 'no unexpected error', false, get_class( $ex ) . ': ' . $ex->getMessage() . ' @' . basename( $ex->getFile() ) . ':' . $ex->getLine() );
 } finally {

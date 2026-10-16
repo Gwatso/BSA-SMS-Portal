@@ -182,7 +182,7 @@ try {
 	if ( $bsa_capture ) {
 		$captured = array( 'home' => $home_h, 'notice' => $render( $head, 'item', array(), $urgent ), 'resources' => $render( $teacher, 'resources' ), 'calendar' => $render( $teacher, 'calendar' ) );
 	}
-	$check( 'home (school administrator): share chart and WhatsApp text, Post link', false !== strpos( $home_h, 'https://wa.me/?text=' ) && false !== strpos( $home_h, 'bsi-att-data' ) && false !== strpos( $home_h, 'page=bsa-intranet' ) );
+	$check( 'home (school administrator): share chart and WhatsApp text, Post link', false !== strpos( $home_h, 'https://wa.me/?text=' ) && false !== strpos( $home_h, 'bsi-att-data' ) && ( false !== strpos( $home_h, 'page=bsa-intranet' ) || false !== strpos( $home_h, '/staff/intranet' ) ) );
 	$item_t = $render( $bursar, 'item', array(), $urgent );
 	$check( 'notice page (bursar): acknowledge button with a nonce, no receipts', false !== strpos( $item_t, 'bsa_intranet_ack' ) && false !== strpos( $item_t, '_wpnonce' ) && false === strpos( $item_t, 'Read receipts' ) );
 	$item_h = $render( $head, 'item', array(), $urgent );

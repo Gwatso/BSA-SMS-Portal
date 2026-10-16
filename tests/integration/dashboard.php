@@ -25,6 +25,10 @@ $results = array();
 $check   = function ( $name, $ok, $detail = '' ) use ( &$results ) {
 	$results[] = ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== (string) $detail ? ' - ' . $detail : '' );
 };
+// A link to a screen, as admin.php?page=<slug> or (clean addresses on) /staff/<screen>.
+$links_to = function ( $html, $page ) {
+	return false !== strpos( $html, 'page=' . $page ) || ( 0 === strpos( $page, 'bsa-' ) && false !== strpos( $html, '/staff/' . substr( $page, 4 ) ) );
+};
 $original = get_current_user_id();
 $notices  = array();
 set_error_handler(
@@ -210,17 +214,17 @@ try {
 	};
 	$check( 'attention: nothing when terms are set, registers marked and accounts clean', array() === BSA_Dashboard::attention( $clean ), wp_json_encode( $texts( $clean ) ) );
 	$a = BSA_Dashboard::attention( array_merge( $clean, array( 'streams_unset' => array( 'Form 3 A' => 2 ) ) ) );
-	$check( 'attention: learners without a stream, with a Streams link', 1 === count( $a ) && false !== strpos( $a[0]['text'], 'Form 3 A (2)' ) && false !== strpos( $a[0]['link'], 'page=bsa-streams' ), wp_json_encode( $a ) );
+	$check( 'attention: learners without a stream, with a Streams link', 1 === count( $a ) && false !== strpos( $a[0]['text'], 'Form 3 A (2)' ) && $links_to( $a[0]['link'], 'bsa-streams' ), wp_json_encode( $a ) );
 	$s = array_merge( $clean, array( 'term' => null ) );
 	$a = BSA_Dashboard::attention( $s );
-	$check( 'attention: no term covering today is an action with a School Terms link', 1 === count( $a ) && 'warning' === $a[0]['level'] && false !== strpos( $a[0]['link'], 'page=' . BSA_Terms::PAGE ) );
+	$check( 'attention: no term covering today is an action with a School Terms link', 1 === count( $a ) && 'warning' === $a[0]['level'] && $links_to( $a[0]['link'], BSA_Terms::PAGE ) );
 	$s = array_merge( $clean, array( 'term' => array( 'session' => 999, 'term' => 3, 'start' => '2026-09-08', 'end' => '2099-12-01' ) ) );
 	$a = BSA_Dashboard::attention( $s );
 	$check( 'attention: next term start missing is an action', 1 === count( $a ) && false !== strpos( $a[0]['text'], 'after Term 3 is not set' ) );
 	$s = $clean;
 	$s['attendance'][ $y ] = array( 'learners' => 1, 'marked' => 0 );
 	$a = BSA_Dashboard::attention( $s );
-	$check( 'attention: unmarked register named by class, with a Class Register link', 1 === count( $a ) && 'Register not marked today: Form 4 A.' === $a[0]['text'] && false !== strpos( $a[0]['link'], 'page=' . BSA_Register::PAGE ) );
+	$check( 'attention: unmarked register named by class, with a Class Register link', 1 === count( $a ) && 'Register not marked today: Form 4 A.' === $a[0]['text'] && $links_to( $a[0]['link'], BSA_Register::PAGE ) );
 	$s['is_school_day'] = false;
 	$check( 'attention: no register reminder on a weekend or holiday', array() === BSA_Dashboard::attention( $s ) );
 	$s = array_merge( $clean, array( 'term' => array( 'session' => $session, 'term' => 1, 'start' => '2026-01-13', 'end' => '2026-04-02' ) ) );
@@ -233,7 +237,7 @@ try {
 	$check( 'attention: subjects without a teacher counted per form, with a Subjects link', 1 === count( $a ) && 0 === strpos( $a[0]['text'], '3 subjects have no subject teacher assigned: Form 1 (2), Form 3 (1).' ) && false !== strpos( $a[0]['link'], 'page=sm-staff-subjects' ) );
 	$s = array_merge( $clean, array( 'accounts' => array( 'errors' => 1, 'warnings' => 2 ) ) );
 	$a = BSA_Dashboard::attention( $s );
-	$check( 'attention: family account errors are an action', 1 === count( $a ) && 'warning' === $a[0]['level'] && 'Family accounts: 1 to fix, 2 to check.' === $a[0]['text'] && false !== strpos( $a[0]['link'], 'page=' . BSA_Accounts::PAGE ) );
+	$check( 'attention: family account errors are an action', 1 === count( $a ) && 'warning' === $a[0]['level'] && 'Family accounts: 1 to fix, 2 to check.' === $a[0]['text'] && $links_to( $a[0]['link'], BSA_Accounts::PAGE ) );
 	$s['accounts']['errors'] = 0;
 	$a = BSA_Dashboard::attention( $s );
 	$check( 'attention: family account warnings alone are a note', 1 === count( $a ) && 'info' === $a[0]['level'] );
@@ -262,7 +266,7 @@ try {
 	$fee_text  = BSA_Dashboard::money( $x_fee1['paid'] ) . ' of ' . number_format_i18n( $x_fee1['invoiced'], 2 );
 	$mark_text = $marks1[ $x ]['entered'] . ' of ' . $marks1[ $x ]['expected'] . ' (';
 	$check( 'screen: synthetic class shown with its fees and marks written out', false !== strpos( $html, '<th scope="row">Form 3 A</th>' ) && false !== strpos( $html, '>' . $fee_text . ' (' ) && false !== strpos( $html, '>' . $mark_text ), $fee_text . ' / ' . $mark_text );
-	$check( 'screen: links to Fee Reports, Class Register and Report Cards', false !== strpos( $html, 'page=' . BSA_Finance::PAGE ) && false !== strpos( $html, 'page=' . BSA_Register::PAGE ) && false !== strpos( $html, 'page=' . BSA_Reports::PAGE ) );
+	$check( 'screen: links to Fee Reports, Class Register and Report Cards', $links_to( $html, BSA_Finance::PAGE ) && $links_to( $html, BSA_Register::PAGE ) && $links_to( $html, BSA_Reports::PAGE ) );
 	$check( 'screen: status never colour alone (icons carry a word)', false === strpos( $html, 'Not marked' ) || false !== strpos( $html, 'dashicons-warning" aria-hidden="true"></span> Not marked' ) );
 	$check( 'screen: renders in under 3 seconds', $secs < 3, round( $secs, 2 ) . ' s' );
 	wp_set_current_user( $bursar );
