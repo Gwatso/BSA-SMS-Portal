@@ -23,6 +23,8 @@ class BSA_Portal {
 		add_filter( 'login_redirect', array( __CLASS__, 'login_redirect' ), 20, 3 );
 		add_filter( 'show_admin_bar', array( __CLASS__, 'show_admin_bar' ) );
 		add_action( 'admin_init', array( __CLASS__, 'keep_families_out_of_admin' ), 1 );
+		// A staff screen they may not open stops before admin_init with "not allowed".
+		add_action( 'admin_page_access_denied', array( __CLASS__, 'keep_families_out_of_admin' ), 1 );
 		add_action( 'template_redirect', array( __CLASS__, 'staff_account_to_dashboard' ), 1 );
 		add_filter( 'wp_nav_menu_objects', array( __CLASS__, 'staff_menu' ) );
 	}

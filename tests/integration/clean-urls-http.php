@@ -123,7 +123,7 @@ try {
 	);
 	$p   = $req( '', $home . '/staff/home', array( 'cookies' => $jar ) );
 	$check( 'sign-in form: with the cookies received, /staff/home opens', 200 === $p['code'] && false !== strpos( $p['body'], 'Bursar' ), (string) $p['code'] );
-	preg_match( '#/sign-in\?action=logout(&amp;|&)_wpnonce=([a-f0-9]+)#', $p['body'], $m );
+	preg_match( '#/sign-in\?action=logout(&amp;|&#038;|&)_wpnonce=([a-f0-9]+)#', $p['body'], $m );
 	$check( 'sign-out link uses /sign-in', ! empty( $m[2] ) );
 	$o       = $req( '', $home . '/sign-in?action=logout&_wpnonce=' . ( $m[2] ?? '' ), array( 'cookies' => $jar ) );
 	$cleared = (bool) preg_grep( '#^' . preg_quote( SECURE_AUTH_COOKIE, '#' ) . '=.*path=/staff#i', $o['set'] );
