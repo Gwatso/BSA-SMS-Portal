@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-16: Staff land on their dashboard (plugin 0.14.1, production)
+
+- After signing in, **Masango goes straight to the School Dashboard**, and teachers and
+  the bursar go to their home screen. Before this they went to the intranet, which is
+  still one click away. Learners and parents still go to My Account; the owner still
+  goes to WordPress.
+- For staff, the site menu's **"My Account" is "My Dashboard"** and leads to their
+  dashboard. Staff who open the account page are sent there too, instead of seeing
+  "There is no student or parent record".
+
 ## 2026-10-16: Grade 7 entry level against results now (plugin 0.14.0, production)
 
 The owner's observation: some learners arrive with strong Grade 7 results, then struggle

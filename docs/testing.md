@@ -607,6 +607,20 @@ The tab and the learner page were rendered from the captured synthetic data at 1
   1.4 → 4.2), not an average that included PE & Arts.
 - Units-only learners show "Total units only" instead of empty subject pairs.
 
+### Landing after sign-in, plugin 0.14.1 (2026-10-16)
+
+`tests/integration/landing-http.php` (13/13 PASS):
+- The school administrator, a teacher and the bursar are sent to their dashboards after
+  signing in.
+- My Account sends staff to their dashboard, and the site menu shows "My Dashboard" with
+  that link.
+- The sample parent's My Account shows their child with the menu unchanged.
+- The real sign-in form, posted as the sample parent with a throwaway password (then
+  restored), lands on My Account.
+
+`admission-and-portal` 61/61 (redirect checks updated). intranet-http 32/32,
+staff-area-http 29/29, family-http 14/14 and security 49/49 re-run.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
