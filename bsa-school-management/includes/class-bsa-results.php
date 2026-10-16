@@ -1,7 +1,8 @@
 <?php
 /**
  * Results dashboards: results by class and subject, learners at risk, progression from
- * term to term, one learner's record across the year, and a progress view for families.
+ * term to term, Grade 7 entry level against results now (BSA_Entry), one learner's record
+ * across the year, and a progress view for families.
  *
  * Figures come from the BSA marks (exam marks; the same arithmetic as Report Cards:
  * subject pass at 50 % rounded half up, result Pass with five subjects passed) and the
@@ -47,20 +48,20 @@ class BSA_Results {
 	/**
 	 * Default at-risk rules (owner decision; adjustable on the screen).
 	 *
-	 * @return array{average:int, passes:int, drop:int, attendance:int}
+	 * @return array{average:int, passes:int, drop:int, attendance:int, entry:int}
 	 */
 	public static function defaults() {
-		return array( 'average' => 50, 'passes' => 5, 'drop' => 10, 'attendance' => 85 );
+		return array( 'average' => 50, 'passes' => 5, 'drop' => 10, 'attendance' => 85, 'entry' => 2 );
 	}
 
 	/**
 	 * Checks rules typed on the screen.
 	 *
-	 * @param array $input average, passes, drop, attendance.
+	 * @param array $input average, passes, drop, attendance, entry (Grade 7 grades).
 	 * @return array{0: array, 1: string[]} [rules, errors]
 	 */
 	public static function validate_rules( array $input ) {
-		$limits = array( 'average' => array( 1, 100 ), 'passes' => array( 1, 13 ), 'drop' => array( 1, 100 ), 'attendance' => array( 1, 100 ) );
+		$limits = array( 'average' => array( 1, 100 ), 'passes' => array( 1, 13 ), 'drop' => array( 1, 100 ), 'attendance' => array( 1, 100 ), 'entry' => array( 1, 8 ) );
 		$rules  = array();
 		$errors = array();
 		foreach ( $limits as $key => $range ) {
@@ -78,7 +79,7 @@ class BSA_Results {
 	/**
 	 * Rules in force.
 	 *
-	 * @return array{average:int, passes:int, drop:int, attendance:int}
+	 * @return array{average:int, passes:int, drop:int, attendance:int, entry:int}
 	 */
 	public static function rules() {
 		$stored = get_option( self::OPTION, array() );
@@ -191,6 +192,7 @@ class BSA_Results {
 		$results  = BSA_Reports::class_results( $section_id, $session_id, $term );
 		$att      = self::attendance( array_map( 'intval', wp_list_pluck( $learners, 'ID' ) ), $session_id, $term );
 		$prev     = self::previous_term( $session_id, $term );
+		$entry    = BSA_Entry::for_class( $section_id, $session_id, $term );
 		$out      = array();
 		foreach ( $learners as $l ) {
 			$id   = (int) $l->ID;
@@ -218,6 +220,7 @@ class BSA_Results {
 				'attended'   => $a['attended'],
 				'possible'   => $a['possible'],
 				'rate'       => $a['possible'] ? $a['attended'] / $a['possible'] : null,
+				'entry'      => $entry[ $id ] ?? null,
 			);
 			$row['reasons'] = self::risk_reasons( $row, $rules );
 			$out[ $id ]     = $row;
@@ -246,6 +249,11 @@ class BSA_Results {
 		if ( null !== $row['change'] && -$row['change'] >= $rules['drop'] - 0.0001 ) {
 			/* translators: 1: marks lost, 2: previous average, 3: average. */
 			$out[] = array( 'code' => 'drop', 'text' => sprintf( __( 'Average down %1$s marks (%2$s → %3$s)', 'bsa-school-management' ), self::num( -$row['change'] ), self::pct( $row['previous'] ), self::pct( $row['average'] ) ) );
+		}
+		$e = $row['entry'] ?? null;
+		if ( $e && null !== $e['gap'] && $e['gap'] >= ( $rules['entry'] ?? 2 ) - 0.0001 ) {
+			/* translators: 1: grades lower, 2: level at entry, 3: level now. */
+			$out[] = array( 'code' => 'entry', 'text' => sprintf( __( 'Below Grade 7 level: %1$s (entered at %2$s, now %3$s)', 'bsa-school-management' ), BSA_Entry::gap_text( $e['gap'] ), self::num( $e['level'] ), self::num( $e['now'] ) ) );
 		}
 		if ( $row['possible'] >= self::MIN_DAYS && 100 * $row['rate'] < $rules['attendance'] ) {
 			/* translators: 1: percentage, 2: days attended, 3: register days. */
@@ -522,7 +530,7 @@ class BSA_Results {
 		$section  = absint( $source['section'] ?? 0 );
 		$section  = in_array( $section, $sections, true ) ? $section : (int) ( $with[0] ?? ( $sections[0] ?? 0 ) );
 		$tab      = sanitize_key( $source['tab'] ?? 'overview' );
-		$tabs     = $sections ? array( 'overview', 'risk', 'progress', 'learner' ) : array( 'overview' );
+		$tabs     = $sections ? array( 'overview', 'risk', 'entry', 'progress', 'learner' ) : array( 'overview' );
 		return array(
 			'sections' => $sections,
 			'with'     => $with,
@@ -575,7 +583,7 @@ class BSA_Results {
 
 		echo '<div class="wrap bsa-dash bsa-results"><h1>' . esc_html__( 'Results', 'bsa-school-management' ) . '</h1>';
 		BSA_Dashboard::styles();
-		echo '<style>' . self::chart_css() . '.bsa-results .nav-tab-wrapper{margin:0 0 16px}.bsa-results .bsa-filters{margin:0 0 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.bsa-reasons{margin:0;list-style:none}.bsa-reasons li{margin:0 0 2px;white-space:normal}.bsa-reasons .dashicons{color:#b26200;font-size:16px;width:16px;height:16px;vertical-align:text-bottom}.bsa-grades{white-space:nowrap;font-variant-numeric:tabular-nums}.bsa-grades span{display:inline-block;margin-right:8px}.bsa-up{color:#0a6b0a}.bsa-down{color:#a83200}.bsa-rules input[type=number]{width:5em}.bsa-results .bsa-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}@media (max-width:1100px){.bsa-results .bsa-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:600px){.bsa-results .bsa-tiles{grid-template-columns:minmax(0,1fr)}}.bsa-rules p{margin:6px 0}.bsa-results .bsa-note{color:#50575e}.bsa-results tr.bsa-total th,.bsa-results tr.bsa-total td{background:#F6F7F9}</style>';
+		echo '<style>' . self::chart_css() . '.bsa-results .nav-tab-wrapper{margin:0 0 16px}.bsa-results .bsa-filters{margin:0 0 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.bsa-reasons{margin:0;list-style:none}.bsa-reasons li{margin:0 0 2px;white-space:normal}.bsa-reasons .dashicons{color:#b26200;font-size:16px;width:16px;height:16px;vertical-align:text-bottom}.bsa-grades{white-space:nowrap;font-variant-numeric:tabular-nums}.bsa-grades span{display:inline-block;margin-right:8px}.bsa-up{color:#0a6b0a}.bsa-down{color:#a83200}.bsa-rules input[type=number]{width:5em}.bsa-results .bsa-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}@media (max-width:1100px){.bsa-results .bsa-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:600px){.bsa-results .bsa-tiles{grid-template-columns:minmax(0,1fr)}}.bsa-rules p{margin:6px 0}.bsa-results .bsa-note{color:#50575e}.bsa-results tr.bsa-total th,.bsa-results tr.bsa-total td{background:#F6F7F9}.bsa-results .bsa-chips{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px}.bsa-results .bsa-chips li{margin:0;padding:1px 8px;border:1px solid #dcdcde;border-radius:999px;background:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}.bsa-entry-below .dashicons{color:#a83200}.bsa-entry-above .dashicons{color:#0a6b0a}.bsa-entry-near .dashicons,.bsa-entry-none .dashicons{color:#50575e}</style>';
 		if ( 'rules' === $notice ) {
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'At-risk rules saved.', 'bsa-school-management' ) . '</p></div>';
 		} elseif ( 'rules_failed' === $notice ) {
@@ -585,6 +593,7 @@ class BSA_Results {
 		$tabs = array(
 			'overview' => __( 'Overview', 'bsa-school-management' ),
 			'risk'     => __( 'Learners at risk', 'bsa-school-management' ),
+			'entry'    => __( 'Grade 7 entry', 'bsa-school-management' ),
 			'progress' => __( 'Progression', 'bsa-school-management' ),
 		);
 		if ( $s['sections'] ) {
@@ -601,7 +610,7 @@ class BSA_Results {
 		if ( 'learner' === $s['tab'] ) {
 			echo '<input type="hidden" name="student" value="' . esc_attr( (string) $s['student'] ) . '">';
 		}
-		if ( $s['sections'] && in_array( $s['tab'], array( 'overview', 'progress' ), true ) ) {
+		if ( $s['sections'] && in_array( $s['tab'], array( 'overview', 'entry', 'progress' ), true ) ) {
 			echo '<label for="bsa-section">' . esc_html__( 'Class', 'bsa-school-management' ) . '</label> <select id="bsa-section" name="section">';
 			foreach ( $s['sections'] as $id ) {
 				printf( '<option value="%d"%s>%s</option>', (int) $id, selected( $s['section'], $id, false ), esc_html( BSA_School::section( $id )->title ) );
@@ -627,6 +636,8 @@ class BSA_Results {
 			self::render_subject_teacher( $s );
 		} elseif ( 'risk' === $s['tab'] ) {
 			self::render_risk( $s );
+		} elseif ( 'entry' === $s['tab'] ) {
+			self::render_entry( $s );
 		} elseif ( 'progress' === $s['tab'] ) {
 			self::render_progress( $s );
 		} elseif ( 'learner' === $s['tab'] ) {
@@ -749,8 +760,8 @@ class BSA_Results {
 		$rows  = self::at_risk( $s['sections'], $s['session'], $s['term'] );
 		/* translators: 1: number, 2: term. */
 		echo '<section class="bsa-card"><h2>' . esc_html( sprintf( _n( '%1$d learner at risk, Term %2$d', '%1$d learners at risk, Term %2$d', count( $rows ), 'bsa-school-management' ), count( $rows ), $s['term'] ) ) . '</h2>';
-		/* translators: 1: average, 2: passes, 3: drop, 4: attendance. */
-		echo '<p class="bsa-card-sub">' . esc_html( sprintf( __( 'Flagged when any of these apply: average below %1$d%%; fewer than %2$d subjects passed (counting subjects still to be marked as passes); average down %3$d marks or more on the previous term; attendance below %4$d%%. Only staff see this list.', 'bsa-school-management' ), $rules['average'], $rules['passes'], $rules['drop'], $rules['attendance'] ) ) . '</p>';
+		/* translators: 1: average, 2: passes, 3: drop, 4: attendance, 5: Grade 7 grades. */
+		echo '<p class="bsa-card-sub">' . esc_html( sprintf( __( 'Flagged when any of these apply: average below %1$d%%; fewer than %2$d subjects passed (counting subjects still to be marked as passes); average down %3$d marks or more on the previous term; attendance below %4$d%%; results %5$d or more grades below the Grade 7 level (on the Grade 7 slip\'s 1–9 scale). Only staff see this list.', 'bsa-school-management' ), $rules['average'], $rules['passes'], $rules['drop'], $rules['attendance'], $rules['entry'] ) ) . '</p>';
 		if ( ! $rows ) {
 			echo '<p class="bsa-ok"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span> ' . esc_html__( 'No learners at risk for this term.', 'bsa-school-management' ) . '</p>';
 		} else {
@@ -769,16 +780,120 @@ class BSA_Results {
 				'passes'     => __( 'Fewer subjects passed than', 'bsa-school-management' ),
 				'drop'       => __( 'Average down by at least (marks)', 'bsa-school-management' ),
 				'attendance' => __( 'Attendance below (%)', 'bsa-school-management' ),
+				'entry'      => __( 'Below the Grade 7 level by at least (grades)', 'bsa-school-management' ),
 			);
 			echo '<section class="bsa-card bsa-rules"><h2>' . esc_html__( 'At-risk rules', 'bsa-school-management' ) . '</h2><form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="bsa_save_risk_rules">';
 			wp_nonce_field( 'bsa_save_risk_rules' );
 			echo '<input type="hidden" name="back" value="' . esc_attr( self::url( $s, array( 'tab' => 'risk' ) ) ) . '">';
 			foreach ( $fields as $key => $label ) {
-				echo '<p><label for="bsa-rule-' . esc_attr( $key ) . '">' . esc_html( $label ) . '</label> <input type="number" min="1" max="' . ( 'passes' === $key ? 13 : 100 ) . '" step="1" id="bsa-rule-' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="' . esc_attr( (string) $rules[ $key ] ) . '"></p>';
+				echo '<p><label for="bsa-rule-' . esc_attr( $key ) . '">' . esc_html( $label ) . '</label> <input type="number" min="1" max="' . ( 'passes' === $key ? 13 : ( 'entry' === $key ? 8 : 100 ) ) . '" step="1" id="bsa-rule-' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="' . esc_attr( (string) $rules[ $key ] ) . '"></p>';
 			}
 			submit_button( __( 'Save rules', 'bsa-school-management' ), 'secondary', 'submit', false );
 			echo '</form></section>';
 		}
+	}
+
+	/**
+	 * Status of a learner against their Grade 7 level: [code, words, icon].
+	 *
+	 * @param float|null $gap   Gap in grades (positive: below entry level).
+	 * @param array      $rules Rules.
+	 * @return array{0:string,1:string,2:string}
+	 */
+	private static function entry_status( $gap, array $rules ) {
+		if ( null === $gap ) {
+			return array( 'none', __( 'Not compared yet', 'bsa-school-management' ), 'minus' );
+		}
+		if ( $gap >= $rules['entry'] - 0.0001 ) {
+			return array( 'below', __( 'Below Grade 7 level', 'bsa-school-management' ), 'arrow-down-alt' );
+		}
+		if ( $gap <= -1 + 0.0001 ) {
+			return array( 'above', __( 'Above Grade 7 level', 'bsa-school-management' ), 'arrow-up-alt' );
+		}
+		return array( 'near', __( 'Near Grade 7 level', 'bsa-school-management' ), 'yes' );
+	}
+
+	/**
+	 * Grade 7 entry: each learner's Grade 7 level against the term's results, on the slip's
+	 * 1–9 scale, with the subjects compared.
+	 *
+	 * @param array $s State.
+	 */
+	private static function render_entry( array $s ) {
+		$rules = self::rules();
+		$sec   = BSA_School::section( $s['section'] );
+		$rows  = $sec ? self::learner_rows( $s['section'], $s['session'], $s['term'], $rules ) : array();
+		$with  = array_filter(
+			$rows,
+			static function ( $r ) {
+				return ! empty( $r['entry']['entry'] );
+			}
+		);
+		$gaps  = array_values( array_filter( array_map( static function ( $r ) { return $r['entry']['gap'] ?? null; }, $with ), 'is_numeric' ) ); // phpcs:ignore Generic.Formatting.MultipleStatementAlignment
+		$count = array( 'below' => 0, 'above' => 0 );
+		foreach ( $gaps as $g ) {
+			$st = self::entry_status( $g, $rules )[0];
+			if ( isset( $count[ $st ] ) ) {
+				++$count[ $st ];
+			}
+		}
+		echo '<div class="bsa-tiles">';
+		$tiles = array(
+			array( __( 'With Grade 7 results', 'bsa-school-management' ), number_format_i18n( count( $with ) ), sprintf( /* translators: %d: learners. */ __( 'of %d learners', 'bsa-school-management' ), count( $rows ) ) ),
+			/* translators: %d: grades. */
+			array( __( 'Below Grade 7 level', 'bsa-school-management' ), number_format_i18n( $count['below'] ), sprintf( _n( '%d grade or more lower', '%d grades or more lower', $rules['entry'], 'bsa-school-management' ), $rules['entry'] ) ),
+			array( __( 'Above Grade 7 level', 'bsa-school-management' ), number_format_i18n( $count['above'] ), __( '1 grade or more higher', 'bsa-school-management' ) ),
+			array( __( 'Class, on average', 'bsa-school-management' ), $gaps ? BSA_Entry::gap_text( array_sum( $gaps ) / count( $gaps ) ) : '–', sprintf( /* translators: %d: learners compared. */ _n( '%d learner compared', '%d learners compared', count( $gaps ), 'bsa-school-management' ), count( $gaps ) ) ),
+		);
+		foreach ( $tiles as $t ) {
+			echo '<div class="bsa-tile"><div class="bsa-tile-label">' . esc_html( $t[0] ) . '</div><div class="bsa-tile-value">' . esc_html( $t[1] ) . '</div><div class="bsa-tile-note">' . esc_html( $t[2] ) . '</div></div>';
+		}
+		echo '</div>';
+		/* translators: 1: class, 2: term. */
+		echo '<section class="bsa-card"><h2>' . esc_html( sprintf( __( 'Grade 7 entry and Term %2$d, %1$s', 'bsa-school-management' ), $sec ? $sec->title : '', $s['term'] ) ) . '</h2>';
+		echo '<p class="bsa-card-sub">' . esc_html__( 'Term exam marks are put on the Grade 7 slip\'s scale (1 best, 9 lowest) and compared subject by subject with the grades the learner came with: English with English Language, Mathematics with Mathematics, Shona with Shona Language, Agric, Science & Tech with the sciences, Social Science with History, Geography and Heritage Studies. Only staff see this.', 'bsa-school-management' ) . '</p>';
+		if ( ! $rows ) {
+			echo '<p>' . esc_html__( 'No learners in this class for the selected year.', 'bsa-school-management' ) . '</p></section>';
+			return;
+		}
+		uasort(
+			$rows,
+			static function ( $a, $b ) {
+				$ga = $a['entry']['gap'] ?? null;
+				$gb = $b['entry']['gap'] ?? null;
+				if ( null === $ga || null === $gb ) {
+					return ( null === $ga ) <=> ( null === $gb );
+				}
+				return $gb <=> $ga;
+			}
+		);
+		echo '<div class="bsa-scroll"><table class="bsa-table bsa-entry"><thead><tr><th scope="col">' . esc_html__( 'Learner', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Grade 7 units', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Level at entry', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Level now', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Change', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Subjects (entry → now)', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
+		$missing = array();
+		foreach ( $rows as $r ) {
+			$e = $r['entry'];
+			if ( empty( $e['entry'] ) ) {
+				$missing[] = $r;
+				continue;
+			}
+			list( $code, $words, $icon ) = self::entry_status( $e['gap'], $rules );
+			$chips = '';
+			foreach ( $e['pairs'] as $pair ) {
+				$chips .= '<li>' . esc_html( $pair['label'] . ' ' . ( null === $pair['then'] ? '–' : $pair['then'] ) . ' → ' . ( null === $pair['now'] ? '–' : $pair['now'] ) ) . '</li>';
+			}
+			$now = null === $e['now'] ? '–' : self::num( $e['now'] ) . ( null !== $e['now_average'] ? ' (' . self::pct( $e['now_average'] ) . ')' : '' );
+			echo '<tr><th scope="row"><a href="' . esc_url( self::url( $s, array( 'tab' => 'learner', 'student' => $r['id'] ) ) ) . '">' . esc_html( $r['name'] ) . '</a></th><td class="num">' . esc_html( null === $e['entry']['units'] ? '–' : (string) $e['entry']['units'] ) . '</td><td class="num">' . esc_html( null === $e['level'] ? '–' : self::num( $e['level'] ) ) . '</td><td class="num">' . esc_html( $now ) . '</td><td class="bsa-entry-' . esc_attr( $code ) . '"><span class="dashicons dashicons-' . esc_attr( $icon ) . '" aria-hidden="true"></span> ' . esc_html( $words ) . ( null !== $e['gap'] ? '<br><span class="bsa-note">' . esc_html( BSA_Entry::gap_text( $e['gap'] ) ) . '</span>' : '' ) . '</td><td><ul class="bsa-chips">' . $chips . '</ul></td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped parts.
+		}
+		echo '</tbody></table></div>';
+		if ( $missing ) {
+			/* translators: %d: learners. */
+			echo '<p class="bsa-note">' . esc_html( sprintf( _n( '%d learner has no Grade 7 results on file:', '%d learners have no Grade 7 results on file:', count( $missing ), 'bsa-school-management' ), count( $missing ) ) . ' ' . implode( ', ', wp_list_pluck( $missing, 'name' ) ) ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Admission_Records::PAGE ) ) . '">' . esc_html__( 'Add them in Admission Documents', 'bsa-school-management' ) . '</a></p>';
+		}
+		$key = array();
+		foreach ( array_keys( BSA_Entry::BANDS ) as $g ) {
+			$key[] = $g . ': ' . BSA_Entry::range( $g ) . '%';
+		}
+		/* translators: %s: grade key. */
+		echo '<p class="bsa-note">' . esc_html( sprintf( __( 'Grade key (ZIMSEC Grade 7 slip): %s. "Level" is the average grade over the subjects compared. A learner is flagged at risk when the level now is the set number of grades below the level at entry.', 'bsa-school-management' ), implode( ' · ', $key ) ) ) . '</p></section>';
 	}
 
 	/**
@@ -903,7 +1018,35 @@ class BSA_Results {
 		foreach ( $lines as $label => $fn ) {
 			echo '<tr class="bsa-total"><th scope="row">' . esc_html( $label ) . '</th><td class="num">' . esc_html( $fn( $sum( 1 ) ) ) . '</td><td class="num">' . esc_html( $fn( $sum( 2 ) ) ) . '</td><td class="num">' . esc_html( $fn( $sum( 3 ) ) ) . '</td><td></td></tr>';
 		}
-		echo '</tbody></table></div><p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Reports::PAGE . '&section=' . $section . '&session=' . $session . '&term=' . $s['term'] ) ) . '">' . esc_html__( 'Report Cards', 'bsa-school-management' ) . ' →</a></p></section>';
+		echo '</tbody></table></div>';
+		$entry = BSA_Entry::entries( array( (int) $rec->ID ) )[ (int) $rec->ID ] ?? null;
+		echo '<h3>' . esc_html__( 'Grade 7 entry', 'bsa-school-management' ) . '</h3>';
+		if ( ! $entry ) {
+			echo '<p class="bsa-note">' . esc_html__( 'No Grade 7 results on file.', 'bsa-school-management' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Admission_Records::PAGE . '&student=' . (int) $rec->ID ) ) . '">' . esc_html__( 'Add them in Admission Documents', 'bsa-school-management' ) . '</a></p>';
+		} else {
+			$parts = array_filter( array( $entry['school'], $entry['year'] ? (string) $entry['year'] : '', null === $entry['units'] ? '' : sprintf( /* translators: %d: units. */ __( '%d units', 'bsa-school-management' ), $entry['units'] ) ) );
+			echo '<p class="bsa-card-sub">' . esc_html( implode( ' · ', $parts ) ) . '</p>';
+			$terms = array();
+			$subs  = BSA_Reports::learner_subjects( (int) $rec->ID, $section );
+			for ( $t = 1; $t <= 3; $t++ ) {
+				$terms[ $t ] = BSA_Entry::compare( $entry, BSA_Marks::for_learners( array( (int) $rec->ID ), $session, $t )[ (int) $rec->ID ] ?? array(), $subs );
+			}
+			echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Grade 7 subject', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Grade 7', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Term 1', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Term 2', 'bsa-school-management' ) . '</th><th scope="col" class="num">' . esc_html__( 'Term 3', 'bsa-school-management' ) . '</th></tr></thead><tbody>';
+			foreach ( BSA_Entry::SUBJECTS as $field => $info ) {
+				echo '<tr><th scope="row">' . esc_html( $info[0] ) . '</th><td class="num">' . esc_html( null === $entry['grades'][ $field ] ? '–' : (string) $entry['grades'][ $field ] ) . '</td>';
+				for ( $t = 1; $t <= 3; $t++ ) {
+					$pair = $terms[ $t ]['pairs'][ $field ] ?? null;
+					echo '<td class="num">' . esc_html( $pair && null !== $pair['now'] ? $pair['now'] . ' (' . self::pct( $pair['percent'] ) . ')' : '–' ) . '</td>';
+				}
+				echo '</tr>';
+			}
+			echo '<tr class="bsa-total"><th scope="row">' . esc_html__( 'Change on entry', 'bsa-school-management' ) . '</th><td class="num">' . esc_html( null === $entry['level'] ? '–' : self::num( $entry['level'] ) ) . '</td>';
+			for ( $t = 1; $t <= 3; $t++ ) {
+				echo '<td class="num">' . esc_html( BSA_Entry::gap_text( $terms[ $t ]['gap'] ) ) . '</td>';
+			}
+			echo '</tr></tbody></table></div><p class="bsa-note">' . esc_html__( 'Grades on the Grade 7 slip\'s scale: 1 (85–100%) to 9 (0–19%); term marks converted with the same key.', 'bsa-school-management' ) . '</p>';
+		}
+		echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=' . BSA_Reports::PAGE . '&section=' . $section . '&session=' . $session . '&term=' . $s['term'] ) ) . '">' . esc_html__( 'Report Cards', 'bsa-school-management' ) . ' →</a></p></section>';
 	}
 
 	/**

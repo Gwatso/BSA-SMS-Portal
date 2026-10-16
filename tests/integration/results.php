@@ -45,9 +45,9 @@ foreach ( $die_hooks as $hook ) {
 }
 
 // Helpers (no database).
-$check( 'rules: defaults 50 / 5 / 10 / 85', array( 'average' => 50, 'passes' => 5, 'drop' => 10, 'attendance' => 85 ) === BSA_Results::defaults() );
-list( $r, $e ) = BSA_Results::validate_rules( array( 'average' => '45', 'passes' => '0', 'drop' => 'ten', 'attendance' => '101' ) );
-$check( 'rules: out-of-range and non-numbers refused', array( 'average' => 45 ) === $r && array( 'passes', 'drop', 'attendance' ) === array_keys( $e ) );
+$check( 'rules: defaults 50 / 5 / 10 / 85 / 2 grades below Grade 7 level', array( 'average' => 50, 'passes' => 5, 'drop' => 10, 'attendance' => 85, 'entry' => 2 ) === BSA_Results::defaults() );
+list( $r, $e ) = BSA_Results::validate_rules( array( 'average' => '45', 'passes' => '0', 'drop' => 'ten', 'attendance' => '101', 'entry' => '9' ) );
+$check( 'rules: out-of-range and non-numbers refused', array( 'average' => 45 ) === $r && array( 'passes', 'drop', 'attendance', 'entry' ) === array_keys( $e ) );
 $check( 'format: 63.5%, 70%, +4.5, −12, –', '63.5%' === BSA_Results::pct( 63.45 ) && '70%' === BSA_Results::pct( 70 ) && '+4.5' === BSA_Results::signed( 4.5 ) && '−12' === BSA_Results::signed( -12 ) && '–' === BSA_Results::pct( null ) && '–' === BSA_Results::signed( null ) );
 $sp = BSA_Results::sparkline( array( 'T1' => 60, 'T2' => null, 'T3' => 72.4 ), 'Maths' );
 $check( 'sparkline: two points with values written and an accessible name; nothing for one point', 2 === substr_count( $sp, '<circle' ) && false !== strpos( $sp, 'aria-label="Maths: T1 60%, T3 72.4%"' ) && false !== strpos( $sp, '>72<' ) && '' === BSA_Results::sparkline( array( 'T1' => 60, 'T2' => null ), 'x' ) );

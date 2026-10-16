@@ -1,7 +1,8 @@
 <?php
 /**
  * Admission documents BSA collects that Weblizar has no fields for:
- * birth certificate (number + scan) and Grade 7 results (school, year, units + slip).
+ * birth certificate (number + scan) and Grade 7 results (school, year, units, the six
+ * subject grades of the new-curriculum slip + slip scan).
  *
  * Data lives in {prefix}bsa_admission_records, keyed by Weblizar student_record ID.
  * Scans are stored under uploads/bsa-private/ (web access denied) with random names
@@ -20,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class BSA_Admission_Records {
 
-	const DB_VERSION  = '1';
+	const DB_VERSION  = '2';
 	const PAGE        = 'bsa-admission-documents';
 	const MAX_BYTES   = 5242880; // 5 MB.
 	const FILE_FIELDS = array(
@@ -75,6 +76,12 @@ class BSA_Admission_Records {
 				grade7_school varchar(150) NOT NULL DEFAULT '',
 				grade7_year smallint(5) unsigned DEFAULT NULL,
 				grade7_units tinyint(3) unsigned DEFAULT NULL,
+				grade7_english tinyint(3) unsigned DEFAULT NULL,
+				grade7_maths tinyint(3) unsigned DEFAULT NULL,
+				grade7_science tinyint(3) unsigned DEFAULT NULL,
+				grade7_language tinyint(3) unsigned DEFAULT NULL,
+				grade7_social tinyint(3) unsigned DEFAULT NULL,
+				grade7_pe_arts tinyint(3) unsigned DEFAULT NULL,
 				grade7_results_file varchar(255) NOT NULL DEFAULT '',
 				updated_by bigint(20) unsigned NOT NULL DEFAULT 0,
 				created_at datetime NOT NULL,
@@ -193,6 +200,12 @@ class BSA_Admission_Records {
 			'grade7_school'          => '',
 			'grade7_year'            => null,
 			'grade7_units'           => null,
+			'grade7_english'         => null,
+			'grade7_maths'           => null,
+			'grade7_science'         => null,
+			'grade7_language'        => null,
+			'grade7_social'          => null,
+			'grade7_pe_arts'         => null,
 			'grade7_results_file'    => '',
 		);
 	}
@@ -238,6 +251,33 @@ class BSA_Admission_Records {
 				$errors[] = __( 'Grade 7 units must be a whole number as shown on the results slip.', 'bsa-school-management' );
 			} else {
 				$data['grade7_units'] = (int) $units;
+			}
+		}
+
+		// Subject grades (1–9) on the new-curriculum slip; only fields sent are changed.
+		$given = array();
+		foreach ( BSA_Entry::SUBJECTS as $field => $info ) {
+			if ( ! array_key_exists( $field, $input ) ) {
+				continue;
+			}
+			$g = trim( (string) $input[ $field ] );
+			if ( '' === $g ) {
+				$data[ $field ] = null;
+			} elseif ( ! ctype_digit( $g ) || (int) $g < 1 || (int) $g > 9 ) {
+				/* translators: %s: subject. */
+				$errors[] = sprintf( __( 'Grade 7 %s grade must be a whole number from 1 to 9, as on the slip.', 'bsa-school-management' ), $info[0] );
+			} else {
+				$data[ $field ] = (int) $g;
+				$given[]        = (int) $g;
+			}
+		}
+		if ( count( $given ) === count( BSA_Entry::SUBJECTS ) ) {
+			if ( null === $data['grade7_units'] && '' === $units ) {
+				$data['grade7_units'] = array_sum( $given );
+			} elseif ( null !== $data['grade7_units'] && $data['grade7_units'] !== array_sum( $given ) ) {
+				/* translators: 1: units typed, 2: sum of the subject grades. */
+				$errors[] = sprintf( __( 'Grade 7 units (%1$d) do not match the six subject grades, which add up to %2$d.', 'bsa-school-management' ), $data['grade7_units'], array_sum( $given ) );
+				$data['grade7_units'] = null;
 			}
 		}
 
@@ -349,7 +389,7 @@ class BSA_Admission_Records {
 		// phpcs:enable
 		delete_transient( 'bsa_admission_errors_' . $user_id );
 
-		echo '<div class="wrap bsa-admission">';
+		echo '<div class="wrap bsa-admission"><style>.bsa-admission .bsa-g7{display:flex;flex-wrap:wrap;gap:4px 20px}.bsa-admission .bsa-g7 p{margin:4px 0}</style>';
 		echo '<h1>' . esc_html__( 'Admission Documents', 'bsa-school-management' ) . '</h1>';
 		if ( 'saved' === $notice ) {
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Admission documents saved.', 'bsa-school-management' ) . '</p></div>';
@@ -461,6 +501,11 @@ class BSA_Admission_Records {
 		self::text_row( 'grade7_school', __( 'Primary school (Grade 7)', 'bsa-school-management' ), (string) $record['grade7_school'], 150 );
 		self::text_row( 'grade7_year', __( 'Year Grade 7 was written', 'bsa-school-management' ), (string) $record['grade7_year'], 4, 'number' );
 		self::text_row( 'grade7_units', __( 'Grade 7 total units (as on the results slip)', 'bsa-school-management' ), (string) $record['grade7_units'], 2, 'number' );
+		echo '<tr><th scope="row">' . esc_html__( 'Grade 7 subject grades', 'bsa-school-management' ) . '</th><td><fieldset><legend class="screen-reader-text">' . esc_html__( 'Grade 7 subject grades', 'bsa-school-management' ) . '</legend><p class="description">' . esc_html__( 'As on the slip: 1 (best, 85–100%) to 9. The total units are worked out when all six are filled in.', 'bsa-school-management' ) . '</p><div class="bsa-g7">';
+		foreach ( BSA_Entry::SUBJECTS as $field => $info ) {
+			printf( '<p><label for="%1$s">%2$s</label><br><input type="number" min="1" max="9" step="1" id="%1$s" name="%1$s" value="%3$s" class="small-text"></p>', esc_attr( $field ), esc_html( $info[0] ), esc_attr( (string) $record[ $field ] ) );
+		}
+		echo '</div></fieldset></td></tr>';
 		self::file_row( 'grade7_results_file', $student_id, (string) $record['grade7_results_file'] );
 
 		echo '</tbody></table>';

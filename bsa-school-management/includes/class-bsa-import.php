@@ -54,13 +54,19 @@ class BSA_Import {
 		'grade7_units'         => array( 'Grade 7 units', array( 'grade 7 units', 'grade 7', 'grade 7 results', 'g7 units', 'g7', 'units', 'grade seven units', 'aggregate' ) ),
 		'grade7_school'        => array( 'Primary school', array( 'primary school', 'grade 7 school', 'previous school', 'former school', 'school attended' ) ),
 		'grade7_year'          => array( 'Grade 7 year', array( 'grade 7 year', 'year of grade 7', 'g7 year' ) ),
+		'grade7_english'       => array( 'Grade 7 English (1–9)', array( 'grade 7 english', 'g7 english', 'english grade 7', 'english g7', 'english' ) ),
+		'grade7_maths'         => array( 'Grade 7 Mathematics (1–9)', array( 'grade 7 mathematics', 'grade 7 maths', 'g7 mathematics', 'g7 maths', 'mathematics', 'maths' ) ),
+		'grade7_science'       => array( 'Grade 7 Agric, Science & Tech (1–9)', array( 'grade 7 agric science tech', 'grade 7 science', 'g7 science', 'agric science tech', 'agric science and tech', 'agric science technology', 'agriculture science and technology', 'science and technology', 'science tech' ) ),
+		'grade7_language'      => array( 'Grade 7 Shona (1–9)', array( 'grade 7 shona', 'g7 shona', 'grade 7 indigenous language', 'grade 7 language', 'shona', 'indigenous language' ) ),
+		'grade7_social'        => array( 'Grade 7 Social Science (1–9)', array( 'grade 7 social science', 'g7 social science', 'social science' ) ),
+		'grade7_pe_arts'       => array( 'Grade 7 Physical Edu & Arts (1–9)', array( 'grade 7 physical edu arts', 'grade 7 pe arts', 'g7 pe arts', 'physical edu arts', 'physical education and arts', 'physical education arts', 'pe and arts', 'pe arts' ) ),
 		'birth_certificate_no' => array( 'Birth certificate number', array( 'birth certificate', 'birth certificate number', 'birth certificate no', 'birth cert', 'birth cert no', 'birth entry number', 'birth entry no' ) ),
 	);
 
 	/**
 	 * Headings of the learner template (each matches a field above).
 	 */
-	const TEMPLATE = array( 'Admission number', 'First names', 'Surname', 'Sex', 'Date of birth', 'Class', 'Boarder or day', 'Religion', 'Home address', 'Father name', 'Father phone', 'Mother name', 'Mother phone', 'Guardian name', 'Guardian phone', 'Admission date', 'Grade 7 units', 'Primary school', 'Grade 7 year', 'Birth certificate number' );
+	const TEMPLATE = array( 'Admission number', 'First names', 'Surname', 'Sex', 'Date of birth', 'Class', 'Boarder or day', 'Religion', 'Home address', 'Father name', 'Father phone', 'Mother name', 'Mother phone', 'Guardian name', 'Guardian phone', 'Admission date', 'Grade 7 units', 'Grade 7 English', 'Grade 7 Mathematics', 'Grade 7 Agric Science Tech', 'Grade 7 Shona', 'Grade 7 Social Science', 'Grade 7 PE Arts', 'Primary school', 'Grade 7 year', 'Birth certificate number' );
 
 	/**
 	 * Registers hooks.
@@ -735,19 +741,23 @@ class BSA_Import {
 			if ( '' !== $get( $row, 'admission_date' ) && '' === $adm_date ) {
 				$warnings[] = __( 'Admission date not understood; left empty.', 'bsa-school-management' );
 			}
-			list( $extra, $extra_errors ) = BSA_Admission_Records::validate_fields(
-				array(
-					'birth_certificate_no' => $get( $row, 'birth_certificate_no' ),
-					'grade7_school'        => $get( $row, 'grade7_school' ),
-					'grade7_year'          => $get( $row, 'grade7_year' ),
-					'grade7_units'         => $get( $row, 'grade7_units' ),
-				)
+			$input = array(
+				'birth_certificate_no' => $get( $row, 'birth_certificate_no' ),
+				'grade7_school'        => $get( $row, 'grade7_school' ),
+				'grade7_year'          => $get( $row, 'grade7_year' ),
+				'grade7_units'         => $get( $row, 'grade7_units' ),
 			);
+			foreach ( array_keys( BSA_Entry::SUBJECTS ) as $field ) {
+				if ( isset( $mapping[ $field ] ) ) {
+					$input[ $field ] = $get( $row, $field );
+				}
+			}
+			list( $extra, $extra_errors ) = BSA_Admission_Records::validate_fields( $input );
 			foreach ( $extra_errors as $e ) {
 				$warnings[] = $e . ' ' . __( '(left empty)', 'bsa-school-management' );
 			}
-			if ( null !== $extra['grade7_units'] && ( $extra['grade7_units'] < 4 || $extra['grade7_units'] > 36 ) ) {
-				$warnings[] = __( 'Grade 7 units are usually between 4 and 36: check them.', 'bsa-school-management' );
+			if ( null !== $extra['grade7_units'] && ( $extra['grade7_units'] < 4 || $extra['grade7_units'] > 54 ) ) {
+				$warnings[] = __( 'Grade 7 units are between 6 and 54 on the new slip (4 and 36 on the old one): check them.', 'bsa-school-management' );
 			}
 			$guardian = self::tidy_name( $get( $row, 'guardian_name' ) );
 			$note     = '' !== $guardian || '' !== $phones['guardian_phone'] ? trim( sprintf( /* translators: 1: name, 2: phone. */ __( 'Guardian: %1$s %2$s', 'bsa-school-management' ), $guardian, $phones['guardian_phone'] ) ) : '';
@@ -1067,7 +1077,7 @@ class BSA_Import {
 		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		fwrite( $out, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 		fputcsv( $out, self::TEMPLATE, ',', '"', '' );
-		fputcsv( $out, array( '', 'Example', 'Learner', 'F', '24/05/2012', 'Form 3 Sciences', 'Day', 'Christian', '12 Example Road, Bindura', 'Example Father', '0771234567', 'Example Mother', '0712345678', '', '', '13/01/2025', '8', 'Example Primary School', '2024', '' ), ',', '"', '' );
+		fputcsv( $out, array( '', 'Example', 'Learner', 'F', '24/05/2012', 'Form 1', 'Day', 'Christian', '12 Example Road, Bindura', 'Example Father', '0771234567', 'Example Mother', '0712345678', '', '', '13/01/2025', '10', '1', '1', '2', '2', '1', '3', 'Example Primary School', '2024', '' ), ',', '"', '' );
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
 	}

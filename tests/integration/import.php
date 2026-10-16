@@ -91,7 +91,7 @@ $map = BSA_Import::guess_mapping( array( 'No.', 'NAME', 'SURNAME', 'SEX', 'D.O.B
 $check( 'column matching from typical school headings', array( 'name' => 1, 'surname' => 2, 'class' => 5, 'gender' => 3, 'dob' => 4, 'father_name' => 6, 'guardian_phone' => 7, 'admission_date' => 9, 'grade7_units' => 8 ) == $map, wp_json_encode( $map ) ); // phpcs:ignore Universal.Operators.StrictComparisons -- order does not matter.
 
 $map = BSA_Import::guess_mapping( BSA_Import::TEMPLATE );
-$check( 'template: every heading of the learner template is matched to its own field', 20 === count( $map ) && count( $map ) === count( array_unique( $map ) ) && ! isset( $map['name'] ), wp_json_encode( $map ) );
+$check( 'template: every heading of the learner template is matched to its own field', 26 === count( $map ) && count( $map ) === count( array_unique( $map ) ) && ! isset( $map['name'] ), wp_json_encode( $map ) );
 
 // Values.
 $classes = array(
@@ -282,7 +282,7 @@ try {
 	$csv .= "TEST-IMP-001,Duplicate Testimport,,M,02/02/2011,Form 3 Sciences,Day,,0771000222,,,,,,,\n";
 	$csv .= "TEST-IMP-OLD1,Farai,Testimport,M,01/02/2010,Form 4 Commercials,Day,,0771000333,,,,,,,\n";
 	$csv .= ",Nyasha,Testimport,F,01/03/2010,Form 4 Commercials,Boarder,,,,,Gogo Testimport,0784 555 666,,,\n";
-	$csv .= "TEST-IMP-003,KUDA,,X,31/02/2012,F2,weekly,,12345,,,,,40,,\n";
+	$csv .= "TEST-IMP-003,KUDA,,X,31/02/2012,F2,weekly,,12345,,,,,60,,\n";
 	$csv .= "TEST-IMP-004,Tino Testimport,,M,01/01/2011,Form 3,Day,,0771000444,,,,,,,\n";
 	$csv .= ",Rudo,Testimport,F,24/05/2013,Form 1,Day,,0771000555,,,,,,,\n";
 	$parts   = BSA_Import::split_headers( BSA_Import::read_text( $csv ) );
@@ -311,7 +311,7 @@ try {
 	$check( 'line 7: no number, same name and birth date as in the first year → keeps that admission number', 'TEST-IMP-OLD2' === $by[7]['record']['admission_number'] && $has( 7, 'notes', 'TEST-IMP-OLD2 taken from' ) && ! $by[7]['errors'], wp_json_encode( $by[7]['notes'] ) );
 	$check(
 		'line 8: one name, sex, impossible date, phone, boarder or day and Grade 7 units are flagged, not refused',
-		! $by[8]['errors'] && $has( 8, 'warnings', 'Only one name' ) && $has( 8, 'warnings', 'Sex "X"' ) && $has( 8, 'warnings', 'Date of birth "31/02/2012"' ) && $has( 8, 'warnings', 'not a Zimbabwe mobile' ) && $has( 8, 'warnings', 'Boarder or day "weekly"' ) && $has( 8, 'warnings', 'between 4 and 36' ) && 'Kuda' === $by[8]['record']['name'] && 5 === $by[8]['record']['section_id'] && null === $by[8]['record']['dob'],
+		! $by[8]['errors'] && $has( 8, 'warnings', 'Only one name' ) && $has( 8, 'warnings', 'Sex "X"' ) && $has( 8, 'warnings', 'Date of birth "31/02/2012"' ) && $has( 8, 'warnings', 'not a Zimbabwe mobile' ) && $has( 8, 'warnings', 'Boarder or day "weekly"' ) && $has( 8, 'warnings', 'between 6 and 54' ) && 'Kuda' === $by[8]['record']['name'] && 5 === $by[8]['record']['section_id'] && null === $by[8]['record']['dob'],
 		wp_json_encode( $by[8]['warnings'] )
 	);
 	$check( 'line 9: "Form 3" without a stream goes into Form 3 A, stream to set later (note)', ! $by[9]['errors'] && 6 === $by[9]['record']['section_id'] && '' === $by[9]['stream'] && $has( 9, 'notes', 'No stream' ) );
@@ -322,6 +322,21 @@ try {
 	$one = BSA_Import::check( array( 2 => array( 'Solo Testimport' ) ), array( 'name' => 0 ), $s2, 5 );
 	$bad = BSA_Import::check( array( 2 => array( 'Solo Testimport' ) ), array( 'name' => 0 ), $s2, 999999 );
 	$check( 'class for every row: used when the list has no class; an unknown class is ignored', 5 === $one[0]['record']['section_id'] && ! $one[0]['errors'] && 0 === $bad[0]['record']['section_id'] && in_array( 'No class.', $bad[0]['errors'], true ) );
+
+	// Grade 7 subject grades (new-curriculum slip).
+	$g7map = BSA_Import::guess_mapping( array( 'Name', 'Class', 'Grade 7 English', 'Maths', 'Agric Science Tech', 'Shona', 'Social Science', 'PE Arts', 'Grade 7 units' ) );
+	$check( 'Grade 7 columns matched from slip headings', array( 'name' => 0, 'class' => 1, 'grade7_english' => 2, 'grade7_maths' => 3, 'grade7_science' => 4, 'grade7_language' => 5, 'grade7_social' => 6, 'grade7_pe_arts' => 7, 'grade7_units' => 8 ) == $g7map, wp_json_encode( $g7map ) ); // phpcs:ignore Universal.Operators.StrictComparisons
+	$g7 = BSA_Import::check(
+		array(
+			2 => array( 'Slip Testimport', 'Form 1', '1', '1', '2', '2', '1', '3', '' ),
+			3 => array( 'Sum Testimport', 'Form 1', '1', '1', '2', '2', '1', '3', '12' ),
+			4 => array( 'Bad Testimport', 'Form 1', '0', '1', '', '', '', '', '' ),
+		),
+		$g7map,
+		$s2
+	);
+	$check( 'Grade 7 grades: six grades kept and the units worked out (10)', 10 === ( $g7[0]['extra']['grade7_units'] ?? 0 ) && 3 === ( $g7[0]['extra']['grade7_pe_arts'] ?? 0 ) && ! $g7[0]['warnings'], wp_json_encode( $g7[0] ) );
+	$check( 'Grade 7 grades: units that do not add up are flagged and left empty; a grade 0 is flagged', ! isset( $g7[1]['extra']['grade7_units'] ) && (bool) preg_grep( '/do not match the six subject grades, which add up to 10/', $g7[1]['warnings'] ) && preg_grep( '/must be a whole number from 1 to 9/', $g7[2]['warnings'] ) && 1 === ( $g7[2]['extra']['grade7_maths'] ?? 0 ), wp_json_encode( array( $g7[1]['warnings'], $g7[2]['warnings'] ) ) );
 
 	// Screens.
 	wp_set_current_user( $head );
