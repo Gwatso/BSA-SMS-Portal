@@ -37,7 +37,7 @@ $get     = function ( $url, array $args = array() ) {
 $home = home_url( '/' );
 
 // 1. Anonymous HTTP.
-foreach ( array( '/', '/account/', '/help/', '/wp-login.php' ) as $path ) {
+foreach ( array( '/', '/account/', '/help/', (string) wp_parse_url( wp_login_url(), PHP_URL_PATH ) ) as $path ) {
 	$r = $get( home_url( $path ) );
 	$check( "anon: $path 200 without a PHP error", 200 === $r['code'] && ! preg_match( '/critical error|Fatal error|Warning:|Notice:|Deprecated:/', $r['body'] ), (string) $r['code'] );
 }
@@ -71,13 +71,13 @@ foreach ( array( 'wlsm-p-get-students-with-pending-invoices', 'wlsm-p-get-studen
 	$check( "ajax: $action refused to visitors", 403 === $aj['code'], (string) $aj['code'] );
 }
 $rc = $get( add_query_arg( array( 'bsa_report' => 1, 'session' => 1, 'term' => 1 ), $home ) );
-$check( 'report card link: visitors sent to sign-in', 302 === $rc['code'] && false !== strpos( $rc['location'], 'wp-login.php' ), $rc['code'] . ' ' . $rc['location'] );
+$check( 'report card link: visitors sent to sign-in', 302 === $rc['code'] && 0 === strpos( $rc['location'], wp_login_url() ), $rc['code'] . ' ' . $rc['location'] );
 foreach ( array( 'bsa_print_reports', 'bsa_save_marks', 'bsa_publish_reports', 'bsa_save_terms', 'bsa_fee_report_csv', 'bsa_admission_file', 'bsa_register_check' ) as $action ) {
 	$ap = $get( add_query_arg( 'action', $action, admin_url( 'admin-post.php' ) ) );
 	$check( "admin-post: $action does nothing for visitors", 200 !== $ap['code'] || '' === trim( $ap['body'] ), $ap['code'] . ' ' . strlen( $ap['body'] ) . 'b' );
 }
 $wa = $get( admin_url() );
-$check( 'wp-admin: visitors sent to sign-in', 302 === $wa['code'] && false !== strpos( $wa['location'], 'wp-login.php' ) );
+$check( 'staff area: visitors sent to sign-in', 302 === $wa['code'] && 0 === strpos( $wa['location'], wp_login_url() ), $wa['location'] );
 
 // 2. Screens per role over HTTP.
 $users  = array();

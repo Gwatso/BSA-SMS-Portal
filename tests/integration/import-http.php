@@ -66,7 +66,7 @@ try {
 
 	// Who gets in.
 	$r = $req( '', $page );
-	$check( 'visitor: sent to sign-in', 302 === $r['code'] && false !== strpos( $r['location'], 'wp-login.php' ), $r['code'] . ' ' . $r['location'] );
+	$check( 'visitor: sent to sign-in', 302 === $r['code'] && 0 === strpos( $r['location'], wp_login_url() ), $r['code'] . ' ' . $r['location'] );
 	$r = $req( 'teacher', $page );
 	$check( 'teacher: no Import data screen', 200 !== $r['code'] || false === strpos( $r['body'], 'bsa_import_upload' ), (string) $r['code'] );
 	$r = $req( 'teacher', admin_url( 'admin.php?page=bsa-home' ) );

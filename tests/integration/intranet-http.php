@@ -42,7 +42,7 @@ $visible_wp = function ( $html ) {
 };
 
 $r = $req( '', home_url( '/intranet' ) );
-$check( 'visitor: sent to sign-in, coming back to /intranet', 302 === $r['code'] && false !== strpos( $r['location'], 'wp-login.php' ) && false !== strpos( $r['location'], 'redirect_to=' . rawurlencode( home_url( '/intranet' ) ) . '&' ), $r['code'] . ' ' . $r['location'] );
+$check( 'visitor: sent to sign-in, coming back to /intranet', 302 === $r['code'] && 0 === strpos( $r['location'], wp_login_url() ) && false !== strpos( $r['location'], 'redirect_to=' . rawurlencode( home_url( '/intranet' ) ) . '&' ), $r['code'] . ' ' . $r['location'] );
 $r = $req( 'teacher', home_url( '/intranet/' ) );
 $check( 'old address with a slash: 301 to /intranet', 301 === $r['code'] && home_url( '/intranet' ) === $r['location'], $r['code'] . ' ' . $r['location'] );
 $r = $req( 'teacher', home_url( '/intranet/resources/?category=Templates' ) );
