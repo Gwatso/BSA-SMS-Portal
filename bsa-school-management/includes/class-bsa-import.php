@@ -419,7 +419,9 @@ class BSA_Import {
 
 	/**
 	 * Section for a class written as on school lists: "Form 3 Sciences", "F3 Sci", "3A",
-	 * "Form 1", or the form and the stream in two columns.
+	 * "Form 1", or the form and the stream in two columns. A form with one class takes
+	 * every learner of the form; the stream (Sciences or Commercials) is then a subject
+	 * choice, read with BSA_Streams::parse().
 	 *
 	 * @param string $class  Class text.
 	 * @param string $stream Stream text (optional).
@@ -449,15 +451,15 @@ class BSA_Import {
 			/* translators: %s: form. */
 			return new WP_Error( 'class', sprintf( __( '%s does not exist in School Management.', 'bsa-school-management' ), $form ) );
 		}
-		if ( $want ) {
-			if ( isset( $options[ $want ] ) ) {
-				return $options[ $want ];
-			}
-			/* translators: 1: form, 2: stream. */
-			return new WP_Error( 'class', sprintf( __( '%1$s has no %2$s stream.', 'bsa-school-management' ), $form, $want ) );
+		if ( $want && isset( $options[ $want ] ) ) {
+			return $options[ $want ];
 		}
 		if ( 1 === count( $options ) ) {
 			return reset( $options );
+		}
+		if ( $want ) {
+			/* translators: 1: form, 2: stream. */
+			return new WP_Error( 'class', sprintf( __( '%1$s has no %2$s class.', 'bsa-school-management' ), $form, $want ) );
 		}
 		/* translators: 1: form, 2: streams. */
 		return new WP_Error( 'class', sprintf( __( '%1$s has %2$s: say which stream.', 'bsa-school-management' ), $form, implode( __( ' and ', 'bsa-school-management' ), array_keys( $options ) ) ) );
@@ -641,6 +643,16 @@ class BSA_Import {
 				$errors[] = '' === $get( $row, 'class' ) ? __( 'No class.', 'bsa-school-management' ) : $section->get_error_message();
 				$section  = 0;
 			}
+			$stream = BSA_Streams::parse( $get( $row, 'class' ) . ' ' . $get( $row, 'stream' ) );
+			if ( $section && BSA_Streams::applies( $section ) ) {
+				if ( '' === $stream ) {
+					$notes[] = __( 'No stream (Sciences or Commercials): set it later on the Streams screen; every subject until then.', 'bsa-school-management' );
+				}
+			} elseif ( $section && '' !== $stream ) {
+				/* translators: %s: stream. */
+				$warnings[] = sprintf( __( 'Streams start in Form 3: "%s" ignored.', 'bsa-school-management' ), $stream );
+				$stream     = '';
+			}
 			$gender = self::parse_gender( $get( $row, 'gender' ) );
 			if ( '' === $gender ) {
 				$warnings[] = '' === $get( $row, 'gender' ) ? __( 'Sex missing.', 'bsa-school-management' ) : sprintf( /* translators: %s: value. */ __( 'Sex "%s" not recognised (use M or F).', 'bsa-school-management' ), $get( $row, 'gender' ) );
@@ -763,7 +775,7 @@ class BSA_Import {
 					return null !== $v && '' !== $v;
 				}
 			);
-			$out[]    = array( 'line' => (int) $line, 'record' => $record, 'extra' => $extra, 'errors' => $errors, 'warnings' => $warnings, 'notes' => $notes );
+			$out[]    = array( 'line' => (int) $line, 'record' => $record, 'extra' => $extra, 'stream' => $stream, 'errors' => $errors, 'warnings' => $warnings, 'notes' => $notes );
 		}
 		return $out;
 	}
@@ -848,6 +860,9 @@ class BSA_Import {
 			$ids[] = $id;
 			if ( $r['extra'] ) {
 				BSA_Admission_Records::save_record( $id, $r['extra'], $user_id );
+			}
+			if ( ! empty( $r['stream'] ) ) {
+				BSA_Streams::set( $id, (int) $rec['section_id'], $r['stream'] );
 			}
 		}
 		if ( $tx ) {
@@ -1238,7 +1253,7 @@ class BSA_Import {
 			// The guardian's phone stands in as the contact phone: shown once, with the guardian.
 			$father  = '' === $rec['father_name'] && '' !== $rec['father_phone'] && false !== strpos( $rec['note'], $rec['father_phone'] ) ? '' : trim( $rec['father_name'] . ' ' . $rec['father_phone'] );
 			$parents = implode( '; ', array_filter( array( $father, trim( $rec['mother_name'] . ' ' . $rec['mother_phone'] ), $rec['note'] ) ) );
-			echo '<tr class="' . esc_attr( $class ) . '"><td>' . esc_html( (string) $r['line'] ) . '</td><th scope="row">' . esc_html( $rec['name'] ) . ( $rec['admission_number'] ? '<br><span class="bsa-card-sub">' . esc_html( $rec['admission_number'] ) . '</span>' : '' ) . '</th><td>' . esc_html( $titles[ $rec['section_id'] ] ?? '–' ) . '</td><td>' . esc_html( trim( ucfirst( (string) $rec['gender'] ) . ' · ' . ( $rec['dob'] ? mysql2date( 'j M Y', $rec['dob'] ) : '–' ), ' ·' ) ) . '</td><td>' . esc_html( $parents ) . '</td><td>' . ( $msgs ? '<ul class="bsa-msgs">' . $msgs . '</ul>' : '<span class="dashicons dashicons-yes" aria-hidden="true"></span> ' . esc_html__( 'Ready', 'bsa-school-management' ) ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped parts.
+			echo '<tr class="' . esc_attr( $class ) . '"><td>' . esc_html( (string) $r['line'] ) . '</td><th scope="row">' . esc_html( $rec['name'] ) . ( $rec['admission_number'] ? '<br><span class="bsa-card-sub">' . esc_html( $rec['admission_number'] ) . '</span>' : '' ) . '</th><td>' . esc_html( ( $titles[ $rec['section_id'] ] ?? '–' ) . ( empty( $r['stream'] ) ? '' : ' · ' . $r['stream'] ) ) . '</td><td>' . esc_html( trim( ucfirst( (string) $rec['gender'] ) . ' · ' . ( $rec['dob'] ? mysql2date( 'j M Y', $rec['dob'] ) : '–' ), ' ·' ) ) . '</td><td>' . esc_html( $parents ) . '</td><td>' . ( $msgs ? '<ul class="bsa-msgs">' . $msgs . '</ul>' : '<span class="dashicons dashicons-yes" aria-hidden="true"></span> ' . esc_html__( 'Ready', 'bsa-school-management' ) ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped parts.
 		}
 		echo '</tbody></table></div>';
 		if ( $good ) {

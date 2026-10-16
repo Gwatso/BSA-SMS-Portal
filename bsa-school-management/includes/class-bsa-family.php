@@ -235,7 +235,7 @@ class BSA_Family {
 		$start += strlen( $open );
 		if ( self::REPORTS === $action ) {
 			$title = __( 'Report Cards', 'bsa-school-management' );
-			$body  = self::reports_table( array( $student ), true );
+			$body  = self::reports_table( BSA_Access_Guard::with_earlier_years( array( $student ) ), true );
 		} else {
 			$title = __( 'Fee Structure', 'bsa-school-management' );
 			$body  = self::fee_structure( $student );

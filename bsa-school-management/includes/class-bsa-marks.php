@@ -193,6 +193,29 @@ class BSA_Marks {
 	}
 
 	/**
+	 * Learners of a class who take a subject: those with no subjects recorded take every
+	 * subject; the others only their own (Sciences or Commercials in Forms 3–4).
+	 *
+	 * @param int $section_id Section ID.
+	 * @param int $session_id Session ID.
+	 * @param int $subject_id Subject ID.
+	 * @return object[]
+	 */
+	public static function subject_learners( $section_id, $session_id, $subject_id ) {
+		$learners = BSA_School::learners( $section_id, $session_id );
+		$taken    = BSA_Streams::subject_map( wp_list_pluck( $learners, 'ID' ) );
+		return array_values(
+			array_filter(
+				$learners,
+				static function ( $l ) use ( $taken, $subject_id ) {
+					$mine = $taken[ (int) $l->ID ] ?? array();
+					return ! $mine || in_array( (int) $subject_id, $mine, true );
+				}
+			)
+		);
+	}
+
+	/**
 	 * Marks for a set of learners in a term: [student][subject] => row.
 	 *
 	 * @param int[] $student_ids Student record IDs.
@@ -249,7 +272,7 @@ class BSA_Marks {
 			return array( 'saved' => 0, 'errors' => array( __( 'You cannot enter marks for this class and subject.', 'bsa-school-management' ) ) );
 		}
 		$learners = array();
-		foreach ( BSA_School::learners( $section_id, $session_id ) as $l ) {
+		foreach ( self::subject_learners( $section_id, $session_id, $subject_id ) as $l ) {
 			$learners[ (int) $l->ID ] = $l;
 		}
 		$admin    = BSA_School::is_school_admin( $user_id );
@@ -258,7 +281,7 @@ class BSA_Marks {
 		foreach ( $rows as $student_id => $input ) {
 			$student_id = (int) $student_id;
 			if ( ! isset( $learners[ $student_id ] ) || ! is_array( $input ) ) {
-				$errors[] = __( 'A learner in the form is not in this class.', 'bsa-school-management' );
+				$errors[] = __( 'A learner in the form is not in this class or does not take this subject.', 'bsa-school-management' );
 				continue;
 			}
 			$name   = $learners[ $student_id ]->name;
@@ -423,9 +446,10 @@ class BSA_Marks {
 		submit_button( __( 'Show', 'bsa-school-management' ), 'secondary', '', false );
 		echo '</form>';
 
-		$learners = BSA_School::learners( $s['section'], $s['session'] );
+		$all      = $s['subject'] ? count( BSA_School::learners( $s['section'], $s['session'] ) ) : 0;
+		$learners = $s['subject'] ? self::subject_learners( $s['section'], $s['session'], $s['subject'] ) : array();
 		if ( ! $learners || ! $s['subject'] ) {
-			echo '<p>' . esc_html__( 'No learners in this class for the selected year.', 'bsa-school-management' ) . '</p></div>';
+			echo '<p>' . esc_html( $all ? __( 'No learner in this class takes this subject.', 'bsa-school-management' ) : __( 'No learners in this class for the selected year.', 'bsa-school-management' ) ) . '</p></div>';
 			return;
 		}
 		$marks = self::for_learners( wp_list_pluck( $learners, 'ID' ), $s['session'], $s['term'] );
@@ -437,6 +461,10 @@ class BSA_Marks {
 		/* translators: 1: subject, 2: class, 3: term, 4: year. */
 		echo '<h2>' . esc_html( sprintf( __( '%1$s, %2$s, Term %3$d %4$s', 'bsa-school-management' ), $names[ $s['subject'] ] ?? '', $section->title, $s['term'], BSA_School::sessions()[ $s['session'] ] ) ) . '</h2>';
 		echo '<p class="description">' . esc_html__( 'Marks are percentages (0–100). Grades follow the BSA report book. The exam mark decides passes and position; leave a mark empty if the learner did not sit it.', 'bsa-school-management' ) . '</p>';
+		if ( count( $learners ) < $all ) {
+			/* translators: 1: learners taking the subject, 2: learners in the class. */
+			echo '<p class="description">' . esc_html( sprintf( __( 'Only the learners taking this subject are listed: %1$d of %2$d in the class (streams).', 'bsa-school-management' ), count( $learners ), $all ) ) . '</p>';
+		}
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="bsa_save_marks">';
 		foreach ( array( 'section', 'session', 'term', 'subject' ) as $key ) {
 			echo '<input type="hidden" name="' . esc_attr( $key ) . '" value="' . (int) $s[ $key ] . '">';

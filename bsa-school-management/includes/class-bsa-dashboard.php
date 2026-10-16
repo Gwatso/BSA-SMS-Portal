@@ -260,6 +260,14 @@ class BSA_Dashboard {
 			/* translators: 1: number of subjects, 2: forms with counts. */
 			$add( 'info', sprintf( __( '%1$d subjects have no subject teacher assigned: %2$s. Until they are assigned, only class teachers and administrators can enter those marks.', 'bsa-school-management' ), $unassigned, implode( ', ', $parts ) ), admin_url( 'admin.php?page=sm-staff-subjects' ) );
 		}
+		if ( ! empty( $state['streams_unset'] ) ) {
+			$parts = array();
+			foreach ( $state['streams_unset'] as $class => $n ) {
+				$parts[] = $class . ' (' . $n . ')';
+			}
+			/* translators: %s: classes with counts. */
+			$add( 'info', sprintf( __( 'Learners without a stream (Sciences or Commercials): %s. Until it is set they appear on every subject\'s marks sheet.', 'bsa-school-management' ), implode( ', ', $parts ) ), admin_url( 'admin.php?page=bsa-streams' ) );
+		}
 		if ( ! empty( $state['at_risk'] ) && $state['term'] ) {
 			/* translators: 1: learners, 2: term. */
 			$add( 'warning', sprintf( _n( '%1$d learner is at risk in Term %2$d.', '%1$d learners are at risk in Term %2$d.', $state['at_risk'], 'bsa-school-management' ), $state['at_risk'], $state['term']['term'] ), admin_url( 'admin.php?page=' . BSA_Results::PAGE . '&tab=risk&session=' . $state['term']['session'] . '&term=' . $state['term']['term'] ) );
@@ -312,6 +320,7 @@ class BSA_Dashboard {
 			'received_week' => self::received( gmdate( 'Y-m-d', strtotime( $today . ' -6 days' ) ), $today ),
 			'marks'         => $term ? self::marks( $session, (int) $term['term'] ) : array(),
 			'unassigned'    => self::unassigned_subjects(),
+			'streams_unset' => class_exists( 'BSA_Streams' ) ? BSA_Streams::unset_counts( $session ) : array(),
 			'accounts'      => $accounts,
 			'at_risk'       => $term ? count( BSA_Results::at_risk( array_map( 'intval', wp_list_pluck( BSA_School::sections(), 'ID' ) ), $session, (int) $term['term'] ) ) : 0,
 		);

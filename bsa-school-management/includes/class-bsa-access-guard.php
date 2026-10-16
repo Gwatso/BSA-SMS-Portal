@@ -188,7 +188,30 @@ class BSA_Access_Guard {
 		$records = self::table( 'WLSM_STUDENT_RECORDS', 'wlsm_student_records' );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$records} WHERE user_id = %d OR parent_user_id = %d", $user_id, $user_id ) );
-		return array_map( 'intval', $ids );
+		// Logins move to the new year's record at the year-end rollover; the same learner's
+		// earlier records (linked by the promotion) stay theirs, for past report cards.
+		return self::with_earlier_years( array_map( 'intval', $ids ) );
+	}
+
+	/**
+	 * Student record IDs plus the same learners' earlier records, followed through
+	 * Weblizar's promotion links (written only by staff promoting learners).
+	 *
+	 * @param int[] $ids Student record IDs.
+	 * @return int[]
+	 */
+	public static function with_earlier_years( array $ids ) {
+		global $wpdb;
+		$all      = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
+		$frontier = $all;
+		$table    = self::table( 'WLSM_PROMOTIONS', 'wlsm_promotions' );
+		for ( $i = 0; $frontier && $i < 20; $i++ ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- integer list.
+			$prev     = array_map( 'intval', $wpdb->get_col( "SELECT from_student_record FROM {$table} WHERE to_student_record IN (" . implode( ',', $frontier ) . ')' ) );
+			$frontier = array_values( array_diff( array_unique( $prev ), $all ) );
+			$all      = array_merge( $all, $frontier );
+		}
+		return $all;
 	}
 
 	/**

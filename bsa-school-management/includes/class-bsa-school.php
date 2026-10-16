@@ -25,6 +25,13 @@ class BSA_School {
 	private static $staff = array();
 
 	/**
+	 * Per-request cache of the school's sections.
+	 *
+	 * @var object[]|null
+	 */
+	private static $sections = null;
+
+	/**
 	 * The user's Weblizar staff record in the school (role, permissions, assigned section).
 	 *
 	 * @param int $user_id User ID.
@@ -53,7 +60,8 @@ class BSA_School {
 	 * Clears the per-request cache (tests).
 	 */
 	public static function flush() {
-		self::$staff = array();
+		self::$staff    = array();
+		self::$sections = null;
 	}
 
 	/**
@@ -113,12 +121,12 @@ class BSA_School {
 	}
 
 	/**
-	 * All sections of the school with their class, ordered Form 1 A … Form 4 Sciences.
+	 * All sections of the school with their class, ordered Form 1 A … Form 4 A.
 	 *
 	 * @return object[] {ID, label, class_id, class_label, title}
 	 */
 	public static function sections() {
-		static $rows = null;
+		$rows = &self::$sections;
 		if ( null === $rows ) {
 			global $wpdb;
 			$p    = $wpdb->prefix;
