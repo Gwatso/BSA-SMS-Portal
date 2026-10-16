@@ -439,7 +439,7 @@ class BSA_Rollover {
 		$to    = self::next_session( $from );
 		echo '<div class="wrap bsa-dash bsa-rollover"><h1>' . esc_html__( 'Year-end rollover', 'bsa-school-management' ) . '</h1>';
 		BSA_Dashboard::styles();
-		echo '<style>.bsa-rollover select{max-width:100%}.bsa-rollover .bsa-row-leave{background:#F6F7F7;color:#50575e}.bsa-rollover .bsa-confirm{margin:12px 0}.bsa-rollover h3{margin:20px 0 6px}</style>';
+		echo '<style>.bsa-rollover select{max-width:100%}.bsa-rollover .bsa-confirm{margin:12px 0}.bsa-rollover h3{margin:20px 0 6px}.bsa-rollover .bsa-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}@media (max-width:1100px){.bsa-rollover .bsa-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:600px){.bsa-rollover .bsa-tiles{grid-template-columns:minmax(0,1fr)}.bsa-rollover .bsa-table thead{display:none}.bsa-rollover .bsa-table tr{display:block;padding:8px 0;border-bottom:1px solid #dcdcde}.bsa-rollover .bsa-table th,.bsa-rollover .bsa-table td{display:block;border:0;padding:2px 0}.bsa-rollover .bsa-table td.bsa-st:before{content:attr(data-label);display:block;font-size:12px;color:#50575e;margin-top:4px}}</style>';
 		if ( $error ) {
 			echo '<div class="notice notice-error"><p>' . esc_html( $error ) . '</p></div>';
 		}
@@ -507,7 +507,7 @@ class BSA_Rollover {
 			/* translators: 1: class, 2: next class. */
 			echo '<h3>' . esc_html( $next ? sprintf( __( '%1$s → %2$s', 'bsa-school-management' ), $sec->title, $next->title ) : sprintf( /* translators: %s: class. */ __( '%s → completes', 'bsa-school-management' ), $sec->title ) ) . '</h3>';
 			$stream_col = ( $next && BSA_Streams::applies( (int) $next->ID ) ) || BSA_Streams::applies( (int) $section_id );
-			echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Learner', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Next year', 'bsa-school-management' ) . '</th>' . ( $stream_col ? '<th scope="col">' . esc_html__( 'Stream', 'bsa-school-management' ) . '</th>' : '' ) . '</tr></thead><tbody>';
+			echo '<div class="bsa-scroll"><table class="bsa-table"><thead><tr><th scope="col">' . esc_html__( 'Learner', 'bsa-school-management' ) . '</th><th scope="col">' . esc_html__( 'Next year', 'bsa-school-management' ) . '</th>' . ( $stream_col ? '<th scope="col">' . esc_html__( 'Stream next year', 'bsa-school-management' ) . '</th>' : '' ) . '</tr></thead><tbody>';
 			foreach ( $class['learners'] as $id => $row ) {
 				$l = $row['learner'];
 				echo '<tr><th scope="row">' . esc_html( $l->name ) . ( $l->admission_number ? '<br><span class="bsa-card-sub">' . esc_html( $l->admission_number ) . '</span>' : '' ) . '</th><td>';
@@ -528,7 +528,7 @@ class BSA_Rollover {
 					$sid = 'bsa-stream-' . (int) $id;
 					$cur = 'mixed' === $row['stream'] ? 'keep' : $row['stream'];
 					/* translators: %s: learner. */
-					echo '<td><label class="screen-reader-text" for="' . esc_attr( $sid ) . '">' . esc_html( sprintf( __( 'Stream for %s', 'bsa-school-management' ), $l->name ) ) . '</label><select id="' . esc_attr( $sid ) . '" name="stream[' . (int) $id . ']">';
+					echo '<td class="bsa-st" data-label="' . esc_attr__( 'Stream next year', 'bsa-school-management' ) . '"><label class="screen-reader-text" for="' . esc_attr( $sid ) . '">' . esc_html( sprintf( __( 'Stream for %s', 'bsa-school-management' ), $l->name ) ) . '</label><select id="' . esc_attr( $sid ) . '" name="stream[' . (int) $id . ']">';
 					if ( 'keep' === $cur ) {
 						echo '<option value="keep" selected="selected">' . esc_html__( 'Own subject choice (keep)', 'bsa-school-management' ) . '</option>';
 					}
