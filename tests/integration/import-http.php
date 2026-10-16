@@ -99,7 +99,7 @@ try {
 	$r   = $req( 'head', $page . '&' . http_build_query( array( 'step' => 'map', 'map' => $map, 'default_class' => 0 ) ) );
 	$check( 'columns: confirmed', 200 === $r['code'] && false !== strpos( $r['body'], 'location.replace' ) );
 	$chk = $req( 'head', $page . '&step=check' );
-	$check( 'check: 2 ready, 1 error ("Form 5" does not exist), "Import 2 learners"', 200 === $chk['code'] && false !== strpos( $chk['body'], 'Import 2 learners' ) && false !== strpos( $chk['body'], 'Form 5 does not exist' ) && ! $php_error( $chk['body'] ), (string) $chk['code'] );
+	$check( 'check: 2 ready, 1 error ("Form 5" not recognised), "Import 2 learners"', 200 === $chk['code'] && false !== strpos( $chk['body'], 'Import 2 learners' ) && false !== strpos( $chk['body'], 'Class &quot;Form 5&quot; not recognised' ) && ! $php_error( $chk['body'] ), (string) $chk['code'] );
 	$check( 'check: nothing saved yet', 0 === $count() );
 	$r = $req( 'head', $post, array( 'method' => 'POST', 'body' => array( 'action' => 'bsa_import_run', '_wpnonce' => 'forged' ) ) );
 	$check( 'import: a forged request is refused', 403 === $r['code'] && 0 === $count(), (string) $r['code'] );
