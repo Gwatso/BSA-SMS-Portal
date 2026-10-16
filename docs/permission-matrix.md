@@ -21,7 +21,7 @@ it uses a school address (e.g. `bsa002@bindurascienceacademy.co.zw`), which keep
 parent's email free. The **Family Accounts** screen lists learners where this is not the
 case.
 
-**Staff area.** Everyone except the owner sees a branded wp-admin with no WordPress
+**Staff area** (at /staff since plugin 0.15.0; /wp-admin addresses redirect there). Everyone except the owner sees a branded wp-admin with no WordPress
 branding or WordPress menus; menus are named Learners, Academics, Accounts, Exams,
 School and Staff; Library, Transport and Live Classes are hidden from the menu. Hiding a
 menu does not change access: each screen still checks Weblizar and BSA rights. Staff

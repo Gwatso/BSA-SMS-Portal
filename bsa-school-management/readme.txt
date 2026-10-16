@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.14.1
+Stable tag: 0.15.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -97,6 +97,12 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.15.0 =
+* Clean addresses: staff screens at /staff (BSA screens shortest, e.g. /staff/dashboard)
+  and signing in at /sign-in, through an .htaccess block put in and checked by
+  scripts/12-clean-urls.php; old /wp-admin and /wp-login.php addresses redirect.
+* Parents and learners opening a staff screen go to My Account.
 
 = 0.14.1 =
 * Staff land on their own dashboard after signing in; "My Account" in the site menu is

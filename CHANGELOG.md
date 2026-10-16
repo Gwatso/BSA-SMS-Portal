@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-10-16: Clean addresses, no "wp-admin" in the address bar (plugin 0.15.0, production)
+
+- **Staff screens are at /staff**: for example `/staff/dashboard` instead of
+  `/wp-admin/admin.php?page=bsa-dashboard`, and `/staff/results?tab=risk` instead of
+  `…?page=bsa-results&tab=risk`. Other staff screens keep their name after /staff
+  (`/staff/admin.php?page=sm-staff-invoices`).
+- **Signing in is at /sign-in** instead of `/wp-login.php`; signing out and "Lost your
+  password?" use it too.
+- **Old addresses still work**: bookmarks and typed /wp-admin or /wp-login.php addresses
+  are sent to the new ones (page visits only; forms and background requests are left
+  alone). People already signed in stay signed in.
+- **How:** WordPress's own files do not move. A labelled block in the site's .htaccess
+  maps the new addresses onto them, put in by `scripts/12-clean-urls.php` with a copy of
+  the file kept first. The script only switches clean addresses on after checking
+  /sign-in, /staff and the school administrator's /staff/dashboard over HTTP, and takes
+  the block out again if a check fails. `off` / `remove` undo it.
+- **Parents or learners who open a staff address** now go to My Account, not a
+  "Sorry, you are not allowed" page.
+
 ## 2026-10-16: Staff land on their dashboard (plugin 0.14.1, production)
 
 - After signing in, **Masango goes straight to the School Dashboard**, and teachers and
