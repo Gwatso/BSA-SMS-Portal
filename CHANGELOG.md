@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-10-16: Grade 7 entry level against results now (plugin 0.14.0, production)
+
+The owner's observation: some learners arrive with strong Grade 7 results, then struggle
+from Form 1 Term 1, and the school wants to see it early.
+
+- **Grade 7 subject grades** (ZIMSEC new-curriculum slip): English, Mathematics, Agric,
+  Science & Tech, Shona, Social Science, Physical Edu & Arts, each 1–9.
+  - Recorded on Admission Documents and in the learner import (columns such as
+    "English", "G7 Maths", "Agric Science Tech"; template updated).
+  - The total units are worked out from the six grades, and units that do not add up
+    are refused.
+  - New columns in the BSA admission table (approved by the owner; snapshot first).
+- **Same scale:** term exam marks are converted with the slip's own key
+  (1 = 85–100%, 2 = 77–84 … 9 = 0–19).
+- **Compared subject by subject:**
+  - English with English Language, Mathematics with Mathematics, Shona with Shona
+    Language.
+  - Agric, Science & Tech with the sciences.
+  - Social Science with History, Geography and Heritage Studies.
+  - Physical Edu & Arts has no exam subject to compare.
+  - With only the total units on file, the level is units ÷ 6 against the overall
+    average.
+- **Results → Grade 7 entry** (staff only):
+  - Per class and term: learners furthest below their Grade 7 level first, the level at
+    entry and now, the change in words with an icon, and each subject "entry → now".
+  - Tiles: with Grade 7 results, below, above, and the class on average.
+  - Learners with no Grade 7 results on file are listed with a link to add them.
+- **Fifth at-risk sign:** "Below Grade 7 level" when results are 2 grades or more
+  below the entry level. The number can be changed with the other rules. The sign shows
+  in Learners at risk, on the School Dashboard and on teacher home screens.
+- **Learner page:** a Grade 7 entry table (school, year, units, each subject term by
+  term, level at entry → now).
+- Families do not see the comparison (owner).
+
 ## 2026-10-16: One class per form, streams and the year-end rollover (plugin 0.13.0, production)
 
 **One Form 3 and one Form 4 class (owner).** BSA runs one class per form: one class

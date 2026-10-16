@@ -574,6 +574,39 @@ Streams and rollover screens rendered from the captured synthetic data at 1280 a
 - On phones each learner's choices stack under the name, with a "Stream next year"
   label (before, the stream column was off the screen).
 
+### Grade 7 entry vs now, plugin 0.14.0 (2026-10-16)
+
+#### Integration test: `tests/integration/entry.php` (23/23 PASS)
+Live, after the table upgrade. Five synthetic Form 1 learners in the last year: strong
+at Grade 7 but now struggling; steady; improved; units only; no Grade 7 results. Their
+Grade 7 grades and Term 1 marks are written inside a rolled-back transaction, with the
+values worked out by hand.
+
+| Area | Checks | Result |
+|---|---|---|
+| Table | Six grade columns added, schema version 2 | PASS |
+| Values | Six grades → units 10; units that do not add up refused; 10 or a letter refused; empty clears; a form without grade fields changes no grades | PASS |
+| Records | Grades saved and read back; found through the admission number on another year's record | PASS |
+| Comparison | 2.8 grades lower (1.4 → 4.2); same level; 2 higher; units only 2 lower; none without results; Mathematics 1 → 6, sciences averaged, PE & Arts not compared | PASS |
+| At risk | Sign for the two below; reason in words; the rule at 3 grades removes it; in the at-risk list | PASS |
+| Screens | Grade 7 entry tab (tiles, order, subject chips, status in words with an icon, units-only note, missing learners named, grade key); learner page (school · year · units, subjects by term, levels compared); rule field; Admission Documents grade fields; the Form 1 class teacher sees his class; families' progress has no Grade 7 comparison | PASS |
+| Rollback, notices | Nothing left; no PHP notices | PASS |
+
+#### Whole suite after the change (live)
+- entry 23/23, import 68/68 (Grade 7 columns and checks), import-http 28/28,
+  results 40/40 (five rules), dashboard 38/38.
+- staff-area 32/32 + HTTP 29/29, admission-and-portal 60/60, reports 56/56,
+  rollover 46/46 + HTTP 15/15.
+- family 29/29 + HTTP 14/14, register 53/53, accounts 19/19, intranet 36/36 + HTTP 32/32,
+  finance 49/49, access-guard 20/20, security 49/49.
+
+#### Visual check
+The tab and the learner page were rendered from the captured synthetic data at 1280 and
+390 px. Changed during the check:
+- The learner page now shows the levels actually compared each term (for example
+  1.4 → 4.2), not an average that included PE & Arts.
+- Units-only learners show "Total units only" instead of empty subject pairs.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is

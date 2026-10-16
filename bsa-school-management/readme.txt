@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.13.0
+Stable tag: 0.14.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -97,6 +97,12 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.14.0 =
+* Grade 7 entry level against results now: six slip grades (1–9) on the admission record
+  and in the import; term marks put on the slip's scale and compared subject by subject;
+  Results → Grade 7 entry tab; fifth at-risk sign "Below Grade 7 level" (adjustable);
+  Grade 7 table on the learner page. Staff only.
 
 = 0.13.0 =
 * Streams: Sciences and Commercials as subject choices inside one Form 3 and one Form 4

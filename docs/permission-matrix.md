@@ -61,7 +61,7 @@ WordPress toolbar, and are redirected away from wp-admin (`BSA_Portal`).
 | Record the weekly register check | Yes (head / deputy / T.I.C.) | — | — |
 | Admissions and learner records | Manage | — | — |
 | School Dashboard (fees, register, marks, needs attention) | Yes (owner, school administrator) | — | — |
-| Results: classes, subjects, learners at risk, progression, one learner's year | All classes; can change the at-risk rules | Class teacher: own class. Subject teacher: their subjects (no learner list) | — |
+| Results: classes, subjects, learners at risk, Grade 7 entry vs now, progression, one learner's year | All classes; can change the at-risk rules | Class teacher: own class. Subject teacher: their subjects (no learner list) | — |
 | Streams: set learners' Sciences or Commercials in Forms 3–4 | Yes (owner, school administrator; a class teacher for their own class) | — | — |
 | Streams: change which subjects belong to each stream | Yes (owner, school administrator) | — | — |
 | Year-end rollover; undo it; make the next year current | Yes (owner, school administrator) | — | — |
