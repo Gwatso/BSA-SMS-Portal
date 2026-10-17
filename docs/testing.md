@@ -650,6 +650,39 @@ accounts 19/19, admission-and-portal 61/61, landing-http 13/13, staff-area 32/32
 finance 49/49, family 29/29 + HTTP 14/14, import 68/68 + HTTP 28/28, intranet 36/36 +
 HTTP 32/32, rollover 46/46 + HTTP 15/15.
 
+### WhatsApp messages, plugin 0.16.0 (2026-10-17)
+
+`tests/integration/whatsapp.php` (36/36 PASS):
+- Tables created; Zimbabwe numbers in any form normalised to 2637…, foreign numbers with
+  +, landlines and short numbers refused; display form; wa.me link encoding.
+- Who may send what: school administrator everything; class teacher report card and
+  absence for his own class and its contacts; bursar fee reminders only; others and
+  parents no access.
+- Which families: absent today (not those present), published report cards only,
+  learners with a balance (paid in full left out).
+- Recipient: mother's number first, then father's; a landline means no number.
+- Consent:
+  - nobody can be messaged before consent is recorded;
+  - "no" is never offered;
+  - consent is kept with its date and who recorded it;
+  - a class teacher cannot save another class's contacts.
+- Wording: parent, first name, class, day and school number; report card message with
+  term, year and a link to that learner's report cards, no marks; fee message with the
+  balance.
+- Recording:
+  - refused while fee reminders are off, without consent, or outside the sender's
+    classes;
+  - logged with text, number and sender;
+  - shown as sent and no longer counted on the dashboard;
+  - the bursar's fee reminder once switched on.
+- Screens per role (tiles, links, preview-only fees, log, no Settings for teachers, no
+  contacts for the bursar, refused for a parent); rollback leaves nothing; no PHP
+  notices.
+
+With the demo data loaded, `staff-area` is 30/31: its bursar check expects the test's
+own payment and balance in the top-8 lists, which the demo data fills. Security 49/49,
+dashboard 38/38, staff-area-http 29/29, landing-http 13/13, clean-urls-http 25/25.
+
 ### Not yet tested
 - A real sign-in through the browser with a learner or parent account (none exist yet).
 - File upload through the Admission Documents screen in a browser (the upload path is
