@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.15.0
+Stable tag: 0.16.0
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -97,6 +97,11 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.16.0 =
+* WhatsApp messages (tap to send): report card ready, absent today and fee reminders
+  (off until approved), personalised per family and opened in WhatsApp from the school's
+  number; consent per family; every message logged; dashboard reminder for absences.
 
 = 0.15.0 =
 * Clean addresses: staff screens at /staff (BSA screens shortest, e.g. /staff/dashboard)

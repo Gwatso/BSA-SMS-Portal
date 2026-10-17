@@ -238,6 +238,10 @@ class BSA_Dashboard {
 				$add( 'warning', sprintf( __( 'Register not marked today: %s.', 'bsa-school-management' ), implode( ', ', $missing ) ), admin_url( 'admin.php?page=' . BSA_Register::PAGE ) );
 			}
 		}
+		if ( ! empty( $state['wa_absent'] ) ) {
+			/* translators: %d: number of learners. */
+			$add( 'info', sprintf( _n( '%d learner is absent today and the parent has not been told on WhatsApp yet.', '%d learners are absent today and their parents have not been told on WhatsApp yet.', $state['wa_absent'], 'bsa-school-management' ), $state['wa_absent'] ), admin_url( 'admin.php?page=' . BSA_WhatsApp::PAGE . '&tab=send&type=absence' ) );
+		}
 		if ( $state['term'] && current_time( 'Y-m-d' ) > $state['term']['end'] ) {
 			$unpublished = 0;
 			foreach ( $state['marks'] as $m ) {
@@ -321,6 +325,7 @@ class BSA_Dashboard {
 			'marks'         => $term ? self::marks( $session, (int) $term['term'] ) : array(),
 			'unassigned'    => self::unassigned_subjects(),
 			'streams_unset' => class_exists( 'BSA_Streams' ) ? BSA_Streams::unset_counts( $session ) : array(),
+			'wa_absent'     => class_exists( 'BSA_WhatsApp' ) && $in_term && $weekday ? BSA_WhatsApp::unsent_absences( $today ) : 0,
 			'accounts'      => $accounts,
 			'at_risk'       => $term ? count( BSA_Results::at_risk( array_map( 'intval', wp_list_pluck( BSA_School::sections(), 'ID' ) ), $session, (int) $term['term'] ) ) : 0,
 		);

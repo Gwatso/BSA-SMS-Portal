@@ -55,6 +55,7 @@ class BSA_Staff_Area {
 		'bsa-report-cards',
 		'bsa-results',
 		'bsa-fee-reports',
+		'bsa-whatsapp',
 		'sm-staff-student',
 		'sm-staff-academic',
 		'sm-staff-accounting',

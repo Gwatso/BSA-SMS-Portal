@@ -102,6 +102,18 @@ what they can do. The owner's account is the only WordPress administrator.
 created. Editing a role later does **not** change staff who already have it; update
 those staff members individually (School Management → Staff → Edit).
 
+## WhatsApp messages (plugin 0.16.0)
+
+| Who | Send | Contacts and consent | Sent log | Settings |
+|---|---|---|---|---|
+| Owner, school administrator | All messages, all classes | All classes | All | Yes |
+| Bursar | Fee reminders (once switched on) | No | Own | No |
+| Class teacher | Report card ready, absent today: own class | Own class | Own | No |
+| Others, families | No access | — | — | — |
+
+Messages go only to parents whose consent is "Yes". Nothing is sent by the server: the
+sender presses send in WhatsApp.
+
 ## Learner and parent access (My Account)
 
 | Item | Learner | Parent |

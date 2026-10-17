@@ -15,7 +15,7 @@
  * Set before running (Novamira `execute-php`, everything after the opening tag):
  *   $bsa_mode  = 'add' | 'status' | 'extend' | 'remove' | 'redo' (phase 'academics' only:
  *                marks, report cards and Grade 7 grades again)
- *   $bsa_phase = 'people' | 'academics' | 'attendance' | 'fees' | 'intranet' (mode 'add';
+ *   $bsa_phase = 'people' | 'academics' | 'attendance' | 'fees' | 'intranet' | 'whatsapp' (mode 'add';
  *                run them in this order, one call each)
  *   $bsa_keep_news = true (mode 'remove': keep the public-website news; default true)
  *
@@ -163,6 +163,12 @@ if ( 'remove' === $bsa_mode ) {
 	}
 	$r = $ids_sql( $rec );
 	$n = array();
+	if ( class_exists( 'BSA_WhatsApp' ) && get_option( 'bsa_sm_whatsapp_db_version' ) ) {
+		$n['whatsapp'] = (int) $wpdb->query( 'DELETE FROM ' . BSA_WhatsApp::log_table() . " WHERE student_record_id IN ($r)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		if ( $adm ) {
+			$n['whatsapp'] += (int) $wpdb->query( 'DELETE FROM ' . BSA_WhatsApp::contacts_table() . " WHERE admission_number IN ($in)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
+	}
 	$n['marks']    = (int) $wpdb->query( 'DELETE FROM ' . BSA_Marks::table() . " WHERE student_record_id IN ($r)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	$n['reports']  = (int) $wpdb->query( 'DELETE FROM ' . BSA_Marks::reports_table() . " WHERE student_record_id IN ($r)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	$n['grade7']   = (int) $wpdb->query( 'DELETE FROM ' . BSA_Admission_Records::table() . " WHERE student_record_id IN ($r)" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -298,9 +304,9 @@ foreach ( array( '2025', '2026', '2027' ) as $y ) {
 		return array( "School year $y not found; nothing added." );
 	}
 }
-$need = array( 'people' => array(), 'academics' => array( 'people' ), 'attendance' => array( 'academics' ), 'fees' => array( 'people' ), 'intranet' => array( 'people' ) );
+$need = array( 'people' => array(), 'academics' => array( 'people' ), 'attendance' => array( 'academics' ), 'fees' => array( 'people' ), 'intranet' => array( 'people' ), 'whatsapp' => array( 'attendance' ) );
 if ( ! isset( $need[ $bsa_phase ] ) ) {
-	return array( 'Set $bsa_phase to people, academics, attendance, fees or intranet.' );
+	return array( 'Set $bsa_phase to people, academics, attendance, fees, intranet or whatsapp.' );
 }
 foreach ( $need[ $bsa_phase ] as $before ) {
 	if ( empty( $reg['phases'][ $before ] ) ) {
@@ -1059,6 +1065,61 @@ if ( 'intranet' === $bsa_phase ) {
 	$reg['phases']['intranet'] = $now;
 	$save();
 	return array( 'news from the website' => count( $reg['news'] ), 'demo posts' => count( $reg['posts'] ), 'notices for families' => count( $reg['notices'] ) );
+}
+
+// ---------------------------------------------------------------------------------
+if ( 'whatsapp' === $bsa_phase ) {
+	if ( ! class_exists( 'BSA_WhatsApp' ) ) {
+		return array( 'The WhatsApp module (plugin 0.16.0) is not installed.' );
+	}
+	BSA_WhatsApp::maybe_migrate();
+	mt_srand( 777 );
+	$session = $sessions['2026'];
+	$rows    = array();
+	$ready   = array();
+	$k       = 0;
+	foreach ( $sections as $form => $sec ) {
+		foreach ( BSA_School::learners( $sec, $session ) as $l ) {
+			if ( ! in_array( (int) $l->ID, array_map( 'intval', $reg['records'] ), true ) ) {
+				continue; // Real learners are left alone.
+			}
+			++$k;
+			$r       = BSA_WhatsApp::recipient( $l, null );
+			$consent = in_array( $k, array( 17, 58, 96 ), true ) ? 'no' : ( 0 === $k % 13 ? '' : 'yes' );
+			$at      = '' === $consent ? null : sprintf( '2026-%02d-%02d 10:%02d:00', mt_rand( 1, 2 ), mt_rand( 13, 28 ), mt_rand( 0, 59 ) );
+			$rows[]  = array( BSA_WhatsApp::key( $l->admission_number ), $r['number'], $r['name'], $consent, $at, $head_id, $now );
+			if ( 'yes' === $consent && $r['number'] ) {
+				$ready[ (int) $l->ID ] = array( $l, $r, $sec );
+			}
+		}
+	}
+	$bulk( BSA_WhatsApp::contacts_table(), array( 'admission_number', 'number', 'name', 'consent', 'consent_at', 'updated_by', 'updated_at' ), $rows );
+	// History: Term 2 report cards (Forms 1 and 2) and last week's absences.
+	$log = array();
+	$ct  = $reg['class_teachers'];
+	foreach ( $ready as $id => $x ) {
+		list( $l, $r, $sec ) = $x;
+		if ( in_array( $sec, array( $sections['Form 1'], $sections['Form 2'] ), true ) ) {
+			$msg   = BSA_WhatsApp::message( 'report', $l, $r, array( 'term' => 2, 'session' => $session ), $session . '-2' );
+			$log[] = array( 'report', $session . '-2', $id, $l->admission_number, $r['number'], $msg, $head_id, '2026-08-08 ' . sprintf( '%02d:%02d:00', mt_rand( 9, 11 ), mt_rand( 0, 59 ) ) );
+		}
+	}
+	$days = array_slice( array_values( array_filter( $school_days( '2026', 3 ), function ( $d ) use ( $today ) { return $d < $today; } ) ), -5 );
+	if ( $ready && $days ) {
+		$in = implode( ',', array_keys( $ready ) );
+		foreach ( $wpdb->get_results( "SELECT student_record_id, attendance_date FROM {$p}wlsm_attendance WHERE status = 'a' AND subject_id IS NULL AND attendance_date IN ('" . implode( "','", array_map( 'esc_sql', $days ) ) . "') AND student_record_id IN ($in)" ) as $a ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
+			list( $l, $r, $sec ) = $ready[ (int) $a->student_record_id ];
+			$msg   = BSA_WhatsApp::message( 'absence', $l, $r, array( 'date' => $a->attendance_date ), $a->attendance_date );
+			$log[] = array( 'absence', $a->attendance_date, (int) $a->student_record_id, $l->admission_number, $r['number'], $msg, (int) ( $ct[ $sec ] ?? $head_id ), $a->attendance_date . ' 08:' . sprintf( '%02d', mt_rand( 15, 55 ) ) . ':00' );
+		}
+	}
+	if ( $log ) {
+		$bulk( BSA_WhatsApp::log_table(), array( 'type', 'context', 'student_record_id', 'admission_number', 'number', 'message', 'sent_by', 'sent_at' ), $log );
+	}
+	$reg['phases']['whatsapp'] = $now;
+	$save();
+	$c = array_count_values( array_column( $rows, 3 ) );
+	return array( 'contacts' => count( $rows ), 'consent yes' => $c['yes'] ?? 0, 'consent no' => $c['no'] ?? 0, 'not asked' => $c[''] ?? 0, 'messages in the log' => count( $log ) );
 }
 
 return array( 'Nothing done.' );

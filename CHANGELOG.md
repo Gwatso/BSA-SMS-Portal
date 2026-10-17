@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-10-17: WhatsApp messages to parents (plugin 0.16.0)
+
+The owner's observation: Zimbabwean parents use WhatsApp far more than websites. This is
+option 1, "tap to send": no cost, no approvals, nothing sent by the server.
+
+- **Staff → WhatsApp** (`/staff/whatsapp`).
+  - The portal writes each family's own message and lines the families up.
+  - One tap opens WhatsApp on that parent's number with the message filled in; the sender
+    presses send. The focus then moves to the next family.
+  - Send from the school's WhatsApp, **+263 77 260 9503** (the number on the public
+    website), on the office phone or WhatsApp on the office computer, so replies come
+    back to the school.
+- **Three messages:**
+  - **Report card ready.** Term and year with a link to that learner's report cards on
+    the portal; no marks in the message.
+  - **Absent today.** From the daily register; any day can be chosen.
+  - **Fee reminder.** The family's balance. **Off** until the school administrators
+    approve fee messages; until then the list is a preview only.
+- **Consent first.** Only parents recorded as "Yes" can be messaged (Zimbabwe's Cyber and
+  Data Protection Act). Contacts and consent are kept per admission number, so they carry
+  over each year. The number on the learner record is suggested (mother's, then
+  father's), and "Consent slips are back" sets a whole class to "Yes".
+- **Every message is logged**: who sent what, to which number, when. Families already
+  messaged are marked, so nobody is told twice by mistake.
+- **Who can send:**
+  - school administrators: everything, plus Settings (number, wording, fee reminders);
+  - the bursar: fee reminders;
+  - class teachers: report card and absence messages for their own class, and its
+    contacts.
+- **School Dashboard:** "N learners are absent today and their parents have not been told
+  on WhatsApp yet" (also in the intranet's "For you today").
+- **New tables** `bsa_wa_contacts` and `bsa_wa_log` (additive).
+- **Demo data:** phase `whatsapp` adds consent for most demo families and a history of
+  messages. Today's absences are left to send live.
+
 ## 2026-10-16: Demo data for the directors' presentation (script 13, production)
 
 Mock data so every screen has something to show before real data is entered. Added by
