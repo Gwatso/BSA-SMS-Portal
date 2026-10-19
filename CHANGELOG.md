@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-19: School OneDrive folder on the intranet (content, production)
+
+- Intranet → Resources: **"BSA shared documents (OneDrive folder)"** (category
+  Administration, all staff), linking to the school's shared folder on the personal
+  OneDrive. Opening it shows everything in the folder, so documents added there need no
+  new link. Real content: kept when the demo data is removed.
+- Who can open the files is decided by the folder's sharing in OneDrive, not by the
+  portal.
+
 ## 2026-10-17: WhatsApp messages to parents (plugin 0.16.0)
 
 The owner's observation: Zimbabwean parents use WhatsApp far more than websites. This is
