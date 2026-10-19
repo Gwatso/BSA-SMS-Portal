@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.16.0
+Stable tag: 0.16.1
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -97,6 +97,11 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.16.1 =
+* Intranet Resources page redesigned around the school's OneDrive folder: a folder card
+  with Open the folder and Copy link, "Finding a document" in three steps, and any other
+  folders or documents as cards with their kind (Folder, Word, Excel, PDF …).
 
 = 0.16.0 =
 * WhatsApp messages (tap to send): report card ready, absent today and fee reminders

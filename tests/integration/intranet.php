@@ -67,6 +67,24 @@ foreach ( $prov as $url => $label ) {
 	}
 }
 $check( 'provider: OneDrive, SharePoint, Google Docs/Sheets/Forms/Drive and plain links told apart', ! $bad, implode( ' | ', $bad ) );
+$kinds = array(
+	'https://1drv.ms/f/c/35EE27A6D0B65F82/IgAor?e=x'            => 'folder',
+	'https://1drv.ms/w/s!abc'                                     => 'word',
+	'https://1drv.ms/x/s!abc'                                     => 'excel',
+	'https://1drv.ms/p/s!abc'                                     => 'slides',
+	'https://docs.google.com/spreadsheets/d/abc/edit'             => 'excel',
+	'https://drive.google.com/drive/folders/abc'                  => 'folder',
+	'https://forms.gle/abc'                                       => 'form',
+	'https://example.org/files/Term-3-timetable.pdf'              => 'pdf',
+	'https://onedrive.live.com/edit.aspx?resid=1'                 => 'file',
+);
+$bad = array();
+foreach ( $kinds as $u => $want ) {
+	if ( BSA_Intranet::link_kind( $u )['id'] !== $want ) {
+		$bad[] = $u . ' → ' . BSA_Intranet::link_kind( $u )['id'];
+	}
+}
+$check( 'link kind: folder, Word, Excel, PowerPoint, form, PDF told apart from the link itself', ! $bad, implode( ' | ', $bad ) );
 $check( 'url: /intranet and sub-pages, no trailing slash', home_url( '/intranet' ) === BSA_Intranet::url() && home_url( '/intranet/item/5' ) === BSA_Intranet::url( 'item/5' ) && home_url( '/intranet/news' ) === BSA_Intranet::url( '/news/' ) );
 
 // Content types and rights.
@@ -193,6 +211,16 @@ try {
 	$check( 'news page: announcements filter', false !== strpos( $news_html, 'Intranet Test Old Announcement' ) && false === strpos( $news_html, 'Intranet Test News Today' ) );
 	$res_html = $render( $teacher, 'resources', array( 'category' => 'Templates' ) );
 	$check( 'resources: category filter, OneDrive badge, opens in a new tab', false !== strpos( $res_html, 'Intranet Test Lesson Plan Template' ) && false === strpos( $res_html, 'Intranet Test Bad Link' ) && false !== strpos( $res_html, 'bsi-prov-onedrive' ) && false !== strpos( $res_html, 'target="_blank" rel="noopener"' ) );
+	$folder = get_posts( array( 'post_type' => 'bsa_resource', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'date', 'order' => 'ASC' ) );
+	$folder = array_values( array_filter( $folder, function ( $p ) { return 'folder' === BSA_Intranet::link_kind( (string) get_post_meta( $p->ID, '_bsa_url', true ) )['id']; } ) );
+	$res_all = $render( $teacher, 'resources' );
+	if ( $folder ) {
+		$furl = (string) get_post_meta( $folder[0]->ID, '_bsa_url', true );
+		$check( 'resources: the school folder first, with Open the folder, Copy link and the three steps', false !== strpos( $res_all, 'class="bsi-drive"' ) && false !== strpos( $res_all, 'All school documents, in one folder' ) && false !== strpos( $res_all, 'href="' . esc_url( $furl ) . '"' ) && false !== strpos( $res_all, 'data-bsi-copy="' . esc_attr( $furl ) . '"' ) && 3 === substr_count( $res_all, 'class="bsi-step-num"' ) );
+		$check( 'resources: other links as cards below; the folder not listed twice', false !== strpos( $res_all, 'More folders and documents' ) && false !== strpos( $res_all, 'bsi-res-card bsi-kind-file' ) && false !== strpos( $res_all, 'Intranet Test Lesson Plan Template' ) && 1 === substr_count( $res_all, 'href="' . esc_url( $furl ) . '"' ) );
+	}
+	$check( 'resources: no "Add a folder or document" button for a teacher', false === strpos( $res_all, 'post-new.php?post_type=bsa_resource' ) );
+	$check( 'resources: the button for the school administrator', false !== strpos( $render( $head, 'resources' ), 'post-new.php?post_type=bsa_resource' ) );
 	$cal = $render( $teacher, 'calendar' );
 	$check( 'calendar: events by month with term end', false !== strpos( $cal, 'Intranet Test Event Soon' ) && false !== strpos( $cal, 'Term 3 ends' ) );
 	$s = $render( $teacher, 'search', array( 'q' => 'Lesson Plan' ) );

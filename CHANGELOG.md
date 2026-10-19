@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-10-19: Resources page built around the OneDrive folder (plugin 0.16.1)
+
+The owner: every school document lives in the BSA OneDrive folder.
+
+- **Intranet → Resources** now opens with the school's folder.
+  - A navy card ("All school documents, in one folder") with **Open the folder** and
+    **Copy link**, and a reminder not to forward the link outside the school.
+  - **Finding a document** in three steps: open the folder, open a subfolder or search
+    in OneDrive, open or download. Plus who to ask if OneDrive asks for access.
+  - The folder shown is the first folder link added; any further folders or documents
+    (for example department subfolders) appear below as cards, with category filter
+    and search.
+- **Cards show what a link is**, read from the link itself: Folder, Word, Excel,
+  PowerPoint, PDF, Form. Each has its own icon colour, and the whole card opens the link.
+- School administrators get **Add a folder or document** on the page.
+- **The six demo resources are removed** (they pointed at the OneDrive and Drive home
+  pages). The demo notice about the exam timetable now points to the OneDrive folder.
+- A file list from the folder itself is not possible with a personal OneDrive without a
+  Microsoft sign-in set-up (the server's anonymous request is refused), so the page
+  opens the folder instead.
+
 ## 2026-10-19: School OneDrive folder on the intranet (content, production)
 
 - Intranet → Resources: **"BSA shared documents (OneDrive folder)"** (category

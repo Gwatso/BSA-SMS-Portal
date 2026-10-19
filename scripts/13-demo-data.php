@@ -4,7 +4,8 @@
  * before real data is entered. Mock learners with Zimbabwean names (about 30 per class),
  * their parents, demo teachers and a demo bursar, Grade 7 slips, streams, marks for
  * 2025 and 2026, report cards, the daily register, fees and payments, and intranet
- * posts, so that every screen has something to show. School news from the public
+ * posts, so that every screen has something to show (documents: the school's real
+ * OneDrive folder, not demo links). School news from the public
  * website (bindurascienceacademy.co.zw) is added to the intranet as well.
  *
  * Nothing real is changed: the real learner, real staff and their logins are only
@@ -1035,7 +1036,7 @@ if ( 'intranet' === $bsa_phase ) {
 
 	// Demo staff notices, events and resources (removed with the demo).
 	$staff = array_map( 'intval', $wpdb->get_col( "SELECT user_id FROM {$p}wlsm_staff WHERE ID IN (" . $ids_sql( $reg['staff'] ) . ')' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-	$n1 = $post( 'bsa_notice', 'Term 3 examination timetable', "<p>The Term 3 examination timetable for Forms 1 to 3 is attached in Resources. Invigilation duties are on the staff-room board. Please check your slots and tell the deputy head of any clash by Wednesday.</p><p><em>Sample notice for the demonstration.</em></p>", $d( '-2', '07:15:00' ), array( 'bsa_urgency' => 'urgent', 'bsa_ack' => '1', 'bsa_until' => '2026-11-30' ) );
+	$n1 = $post( 'bsa_notice', 'Term 3 examination timetable', "<p>The Term 3 examination timetable for Forms 1 to 3 is in the BSA OneDrive folder (Intranet → Resources). Invigilation duties are on the staff-room board. Please check your slots and tell the deputy head of any clash by Wednesday.</p><p><em>Sample notice for the demonstration.</em></p>", $d( '-2', '07:15:00' ), array( 'bsa_urgency' => 'urgent', 'bsa_ack' => '1', 'bsa_until' => '2026-11-30' ) );
 	foreach ( array_slice( $staff, 0, 7 ) as $uid ) {
 		BSA_Intranet::acknowledge( $n1, $uid );
 	}
@@ -1046,17 +1047,8 @@ if ( 'intranet' === $bsa_phase ) {
 	$post( 'bsa_event', 'Forms 1 to 3: end-of-term examinations', '<p>End-of-term examinations for Forms 1 to 3.</p><p><em>Sample event.</em></p>', $d( '-7' ), array( 'bsa_date' => '2026-11-09', 'bsa_end' => '2026-11-20', 'bsa_type' => 'exam' ) );
 	$post( 'bsa_event', 'Term 3 exam marks due', '<p>Last day to enter Term 3 exam marks on the portal.</p><p><em>Sample event.</em></p>', $d( '-1' ), array( 'bsa_date' => '2026-11-20', 'bsa_type' => 'deadline' ) );
 	$post( 'bsa_event', 'Form 4 Class of 2026 celebration evening', '<p>A celebration evening for our Form 4 O\' Level Class of 2026 as they complete their secondary journey at BSA.</p><p><em>Event from the BSA website; the date is a sample.</em></p>', $d( '-10' ), array( 'bsa_date' => '2026-11-27', 'bsa_time' => '17:30', 'bsa_location' => 'School hall', 'bsa_type' => 'event' ) );
-	$res = array(
-		array( 'Term 3 examination timetable', 'Forms 1 to 3, with invigilation slots.', 'https://onedrive.live.com/', 'Assessments', 'Academic' ),
-		array( 'Scheme of work template', 'The termly scheme of work, HBC format.', 'https://onedrive.live.com/', 'Templates', 'Academic' ),
-		array( 'Mathematics past papers (ZIMSEC O Level)', 'Papers 1 and 2, 2019 to 2024.', 'https://drive.google.com/', 'Past Papers', 'Mathematics' ),
-		array( 'Staff code of conduct', 'Read with the BSA values: discipline, integrity, respect.', 'https://onedrive.live.com/', 'Policies', 'Administration' ),
-		array( 'Science laboratory safety rules', 'For Physics, Chemistry and Biology practicals.', 'https://onedrive.live.com/', 'Departments', 'Sciences' ),
-		array( 'BSA public website', 'Admissions, academics, news and contacts as parents see them.', 'https://bindurascienceacademy.co.zw/', 'Circulars', 'Administration' ),
-	);
-	foreach ( $res as $i => $r ) {
-		$post( 'bsa_resource', $r[0], '', $d( '-' . ( 3 + $i * 4 ) ), array( 'bsa_url' => $r[2], 'bsa_category' => $r[3], 'bsa_department' => $r[4] ), 'posts', $r[1] . ' (sample link)' );
-	}
+	// Resources: none. Every school document lives in the school's OneDrive folder, linked
+	// on the intranet as real content (owner, 2026-10-19).
 	// Notice board on the parents' and learners' account page.
 	foreach ( array( array( 'Admissions open for 2027', 'Applications for Form 1 and Lower Sixth 2027 are open. Collect the application form at the school campus. Places are limited.' ), array( 'Term 3 closes on 1 December', 'Term 3 closes on Tuesday 1 December 2026. Report cards will be available on this portal. (Sample notice.)' ) ) as $nt ) {
 		$wpdb->insert( "{$p}wlsm_notices", array( 'title' => $nt[0], 'description' => $nt[1], 'link_to' => 'none', 'is_active' => 1, 'school_id' => 1, 'added_by' => $head_id, 'created_at' => $now ) );

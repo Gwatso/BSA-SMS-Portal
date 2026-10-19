@@ -170,3 +170,22 @@
 		} );
 	} );
 }() );
+
+/* Resources: "Copy link" for the school's OneDrive folder (shown when the browser can copy). */
+( function () {
+	if ( ! navigator.clipboard ) {
+		return;
+	}
+	document.querySelectorAll( '[data-bsi-copy]' ).forEach( function ( btn ) {
+		btn.hidden = false;
+		btn.addEventListener( 'click', function () {
+			var label = btn.textContent;
+			navigator.clipboard.writeText( btn.getAttribute( 'data-bsi-copy' ) ).then( function () {
+				btn.textContent = btn.getAttribute( 'data-bsi-copied' );
+				setTimeout( function () {
+					btn.textContent = label;
+				}, 2000 );
+			} );
+		} );
+	} );
+}() );

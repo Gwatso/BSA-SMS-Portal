@@ -125,6 +125,43 @@ html:not(.bsi-js) .bsi-hero-controls { display: none; }
 .bsi-res { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 14px; overflow-wrap: anywhere; }
 .bsi-compact .bsi-prov { min-width: 0; }
 
+/* Resources: the school's OneDrive folder, how to find a document, more links */
+.bsi-page-head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.bsi-drive { position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; border-radius: 16px; background: linear-gradient(115deg, var(--bsi-navy-dark), var(--bsi-navy) 55%, #2A56A8); color: #fff; padding: 36px 44px; margin-bottom: 20px; box-shadow: 0 12px 32px rgba(19,38,83,.25); }
+.bsi-drive h2 { color: #fff; font-family: "Playfair Display", Georgia, serif; font-size: clamp(24px, 3vw, 34px); line-height: 1.2; margin: 14px 0 6px; }
+.bsi-drive p { margin: 0 0 6px; color: #E6ECF7; line-height: 1.55; max-width: 62ch; }
+.bsi-drive .bsi-drive-name { color: #fff; font-weight: 600; }
+.bsi-drive-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 12px; }
+.bsi-drive .bsi-drive-meta { font-size: 13px; color: #C9D3E6; margin: 0; }
+.bsi-drive-art .bsi-icon { display: block; width: 168px; height: 168px; color: rgba(255,255,255,.14); }
+.bsi-btn .bsi-icon { width: 20px; height: 20px; margin-right: 8px; flex: 0 0 auto; }
+.bsi-btn-light { background: #fff; border-color: #fff; color: var(--bsi-navy) !important; }
+.bsi-btn-light:hover, .bsi-btn-light:focus { background: var(--bsi-light); border-color: var(--bsi-light); }
+.bsi-btn-ghost { background: transparent; border-color: rgba(255,255,255,.6); color: #fff !important; }
+.bsi-btn-ghost:hover, .bsi-btn-ghost:focus { background: rgba(255,255,255,.12); }
+.bsi-drive :focus-visible { outline-color: #fff; }
+.bsi-howto { margin-bottom: 24px; }
+.bsi-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0 0 12px; padding: 0; list-style: none; }
+.bsi-steps li { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 1.5; }
+.bsi-steps strong { display: block; color: var(--bsi-ink); margin-bottom: 2px; }
+.bsi-step-num { flex: 0 0 32px; height: 32px; border-radius: 50%; background: var(--bsi-light); color: var(--bsi-navy-dark); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.bsi-more .bsi-card-head h2 { font-size: 18px; }
+.bsi-res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.bsi-res-card { position: relative; display: flex; gap: 12px; align-items: flex-start; background: #fff; border: 1px solid var(--bsi-line); border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px rgba(16,24,40,.04); transition: border-color .15s, box-shadow .15s; }
+.bsi-res-card:hover, .bsi-res-card:focus-within { border-color: var(--bsi-fill); box-shadow: 0 6px 18px rgba(19,38,83,.12); }
+.bsi-res-card a { text-decoration: none; }
+.bsi-res-card a::after { content: ""; position: absolute; inset: 0; border-radius: 12px; }
+.bsi-res-card .bsi-prov { min-width: 0; margin-right: 4px; }
+.bsi-res-icon .bsi-icon { display: block; width: 36px; height: 36px; color: var(--bsi-muted); }
+.bsi-kind-folder .bsi-icon { color: #C98A0C; }
+.bsi-kind-word .bsi-icon { color: #2B579A; }
+.bsi-kind-excel .bsi-icon { color: #217346; }
+.bsi-kind-slides .bsi-icon { color: #B7472A; }
+.bsi-kind-pdf .bsi-icon { color: #B30B00; }
+.bsi-kind-form .bsi-icon { color: #5B3FB0; }
+.bsi-res-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 14px; overflow-wrap: anywhere; }
+.bsi-res-text strong { color: var(--bsi-ink); font-size: 15px; }
+
 /* Attendance */
 .bsi-big { font-size: 44px; font-weight: 700; color: var(--bsi-ink); margin: 0; line-height: 1.1; }
 .bsi-bars { margin-top: 12px !important; }
@@ -184,4 +221,8 @@ html:not(.bsi-js) .bsi-hero-controls { display: none; }
 	.bsi-card { padding: 16px; }
 	.bsi-bars li { grid-template-columns: 1fr auto; }
 	.bsi-bar-track { grid-column: 1 / -1; grid-row: 2; }
+	.bsi-drive { grid-template-columns: minmax(0, 1fr); padding: 28px 20px; }
+	.bsi-drive-art { display: none; }
+	.bsi-drive-actions .bsi-btn { flex: 1 1 100%; }
+	.bsi-steps { grid-template-columns: minmax(0, 1fr); }
 }

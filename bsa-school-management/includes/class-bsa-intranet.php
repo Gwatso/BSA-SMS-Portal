@@ -1246,15 +1246,75 @@ class BSA_Intranet {
 	}
 
 	/**
-	 * Resources library with category filter and search.
+	 * What a document link points to, from the link itself: a OneDrive short link names
+	 * its kind (1drv.ms/f/ folder, /w/ Word, /x/ Excel, /p/ PowerPoint …); Google links
+	 * and file extensions likewise.
+	 *
+	 * @param string $url Link.
+	 * @return array{id:string,label:string}
+	 */
+	public static function link_kind( $url ) {
+		$host  = strtolower( (string) wp_parse_url( (string) $url, PHP_URL_HOST ) );
+		$path  = strtolower( (string) wp_parse_url( (string) $url, PHP_URL_PATH ) );
+		$kinds = array(
+			'folder' => __( 'Folder', 'bsa-school-management' ),
+			'word'   => __( 'Word document', 'bsa-school-management' ),
+			'excel'  => __( 'Excel workbook', 'bsa-school-management' ),
+			'slides' => __( 'Presentation', 'bsa-school-management' ),
+			'pdf'    => __( 'PDF', 'bsa-school-management' ),
+			'form'   => __( 'Form', 'bsa-school-management' ),
+			'note'   => __( 'OneNote', 'bsa-school-management' ),
+			'image'  => __( 'Picture', 'bsa-school-management' ),
+			'file'   => __( 'Document', 'bsa-school-management' ),
+		);
+		$id = 'file';
+		if ( '1drv.ms' === $host && preg_match( '#^/([a-z])/#', $path, $m ) ) {
+			$id = array( 'f' => 'folder', 'w' => 'word', 'x' => 'excel', 'p' => 'slides', 'o' => 'note', 'i' => 'image' )[ $m[1] ] ?? 'file';
+		} elseif ( 'docs.google.com' === $host && preg_match( '#^/(document|spreadsheets|presentation|forms)/#', $path, $m ) ) {
+			$id = array( 'document' => 'word', 'spreadsheets' => 'excel', 'presentation' => 'slides', 'forms' => 'form' )[ $m[1] ];
+		} elseif ( 'forms.gle' === $host || false !== strpos( $host, 'forms.office.com' ) ) {
+			$id = 'form';
+		} elseif ( preg_match( '#/drive/(u/\d+/)?folders/#', $path ) || false !== strpos( (string) $url, 'onedrive.live.com/?' ) && false !== strpos( (string) $url, 'id=' ) ) {
+			$id = 'folder';
+		} elseif ( preg_match( '/\.(docx?|xlsx?|pptx?|pdf|png|jpe?g)$/', $path, $m ) ) {
+			$id = array( 'doc' => 'word', 'docx' => 'word', 'xls' => 'excel', 'xlsx' => 'excel', 'ppt' => 'slides', 'pptx' => 'slides', 'pdf' => 'pdf', 'png' => 'image', 'jpg' => 'image', 'jpeg' => 'image' )[ $m[1] ];
+		}
+		return array( 'id' => $id, 'label' => $kinds[ $id ] );
+	}
+
+	/**
+	 * Icon for a kind of document (decorative).
+	 *
+	 * @param string $kind From link_kind().
+	 * @return string SVG.
+	 */
+	public static function kind_icon( $kind ) {
+		if ( 'folder' === $kind ) {
+			return '<svg class="bsi-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h3.9c.6 0 1.2.3 1.6.7l1.3 1.3h6.2A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z" fill="currentColor"/></svg>';
+		}
+		$letter = array( 'word' => 'W', 'excel' => 'X', 'slides' => 'P', 'pdf' => 'PDF', 'form' => 'F', 'note' => 'N', 'image' => '' )[ $kind ] ?? '';
+		return '<svg class="bsi-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 2h7.6L20 7.9V19.5A2.5 2.5 0 0 1 17.5 22h-11A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" fill="currentColor"/><path d="M14 2v4.5A1.5 1.5 0 0 0 15.5 8H20" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.2"/>' . ( '' !== $letter ? '<text x="12" y="17.2" text-anchor="middle" font-size="' . ( strlen( $letter ) > 1 ? '5.6' : '7.5' ) . '" font-weight="700" fill="#fff" font-family="Arial, sans-serif">' . esc_html( $letter ) . '</text>' : '' ) . '</svg>';
+	}
+
+	/**
+	 * Resources: the school's OneDrive folder first (the place every document lives),
+	 * how to find a document, then any other folders and documents as cards.
 	 *
 	 * @param array $get Query parameters.
 	 * @return string
 	 */
 	public static function render_resources( array $get ) {
-		$cat  = sanitize_text_field( (string) ( $get['category'] ?? '' ) );
-		$cat  = in_array( $cat, self::RESOURCE_CATEGORIES, true ) ? $cat : '';
-		$q    = sanitize_text_field( (string) ( $get['rq'] ?? '' ) );
+		$cat     = sanitize_text_field( (string) ( $get['category'] ?? '' ) );
+		$cat     = in_array( $cat, self::RESOURCE_CATEGORIES, true ) ? $cat : '';
+		$q       = sanitize_text_field( (string) ( $get['rq'] ?? '' ) );
+		$all     = self::posts( array( 'bsa_resource' ), array( 'posts_per_page' => 200, 'orderby' => 'date', 'order' => 'ASC' ) );
+		$primary = null;
+		foreach ( $all as $p ) {
+			if ( 'folder' === self::link_kind( (string) get_post_meta( $p->ID, '_bsa_url', true ) )['id'] ) {
+				$primary = $p; // The first folder linked: the school's main folder.
+				break;
+			}
+		}
 		$args = array( 'posts_per_page' => 200, 'orderby' => 'title', 'order' => 'ASC' );
 		if ( $cat ) {
 			$args['meta_query'] = array( array( 'key' => '_bsa_category', 'value' => $cat ) ); // phpcs:ignore WordPress.DB.SlowDBQuery
@@ -1262,14 +1322,85 @@ class BSA_Intranet {
 		if ( '' !== $q ) {
 			$args['s'] = $q;
 		}
-		$res = self::posts( array( 'bsa_resource' ), $args );
-		$out = '<div class="bsi-page-head"><h1>' . esc_html__( 'Resources', 'bsa-school-management' ) . '</h1><p class="bsi-muted">' . esc_html__( 'Templates, policies, registers and other documents. They open in OneDrive or Google Drive.', 'bsa-school-management' ) . '</p></div>';
-		$out .= '<form class="bsi-res-filter" method="get" action="' . esc_url( self::url( 'resources' ) ) . '"><label for="bsi-cat">' . esc_html__( 'Category', 'bsa-school-management' ) . '</label> <select id="bsi-cat" name="category"><option value="">' . esc_html__( 'All', 'bsa-school-management' ) . '</option>';
-		foreach ( self::RESOURCE_CATEGORIES as $c ) {
-			$out .= '<option value="' . esc_attr( $c ) . '"' . selected( $cat, $c, false ) . '>' . esc_html( $c ) . '</option>';
+		$res = array_values(
+			array_filter(
+				self::posts( array( 'bsa_resource' ), $args ),
+				function ( $p ) use ( $primary ) {
+					return ! $primary || $p->ID !== $primary->ID;
+				}
+			)
+		);
+		$can_add = current_user_can( 'edit_bsa_intranet_items' );
+		$add     = $can_add ? '<a class="bsi-btn bsi-btn-outline" href="' . esc_url( admin_url( 'post-new.php?post_type=bsa_resource' ) ) . '">' . esc_html__( 'Add a folder or document', 'bsa-school-management' ) . '</a>' : '';
+
+		$out = '<div class="bsi-page-head bsi-page-head-row"><div><h1>' . esc_html__( 'Resources', 'bsa-school-management' ) . '</h1><p class="bsi-muted">' . esc_html__( 'School documents live in the BSA OneDrive. Open them from here.', 'bsa-school-management' ) . '</p></div>' . $add . '</div>';
+
+		if ( $primary ) {
+			$url  = (string) get_post_meta( $primary->ID, '_bsa_url', true );
+			$prov = self::provider( $url );
+			$out .= '<section class="bsi-drive" aria-labelledby="bsi-drive-title"><div class="bsi-drive-body">';
+			$out .= '<p class="bsi-kind">' . esc_html( $prov['label'] . ' · ' . __( 'Folder', 'bsa-school-management' ) ) . '</p>';
+			$out .= '<h2 id="bsi-drive-title">' . esc_html__( 'All school documents, in one folder', 'bsa-school-management' ) . '</h2>';
+			$out .= '<p class="bsi-drive-name">' . esc_html( get_the_title( $primary ) ) . '</p>';
+			if ( '' !== trim( $primary->post_excerpt ) ) {
+				$out .= '<p>' . esc_html( $primary->post_excerpt ) . '</p>';
+			}
+			$out .= '<div class="bsi-drive-actions"><a class="bsi-btn bsi-btn-light" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . self::kind_icon( 'folder' ) . esc_html__( 'Open the folder', 'bsa-school-management' ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens OneDrive in a new tab)', 'bsa-school-management' ) . '</span></a>';
+			$out .= '<button type="button" class="bsi-btn bsi-btn-ghost" data-bsi-copy="' . esc_attr( $url ) . '" data-bsi-copied="' . esc_attr__( 'Link copied', 'bsa-school-management' ) . '" aria-live="polite" hidden>' . esc_html__( 'Copy link', 'bsa-school-management' ) . '</button></div>';
+			$out .= '<p class="bsi-drive-meta">' . esc_html__( 'Opens in OneDrive in a new tab. For BSA staff: please do not forward the link outside the school.', 'bsa-school-management' ) . '</p>';
+			$out .= '</div><div class="bsi-drive-art" aria-hidden="true">' . self::kind_icon( 'folder' ) . '</div></section>';
+
+			$steps = array(
+				array( __( 'Open the folder', 'bsa-school-management' ), __( 'Use the button above. The folder opens in OneDrive, on a phone or a computer.', 'bsa-school-management' ) ),
+				array( __( 'Find the document', 'bsa-school-management' ), __( 'Open a subfolder, or use the search box at the top of OneDrive to find a document by name.', 'bsa-school-management' ) ),
+				array( __( 'Open or download', 'bsa-school-management' ), __( 'Documents open in Word, Excel or PowerPoint online. Use Download to keep a copy or to print.', 'bsa-school-management' ) ),
+			);
+			$out .= '<section class="bsi-card bsi-howto"><h2>' . esc_html__( 'Finding a document', 'bsa-school-management' ) . '</h2><ol class="bsi-steps">';
+			foreach ( $steps as $i => $st ) {
+				$out .= '<li><span class="bsi-step-num" aria-hidden="true">' . ( $i + 1 ) . '</span><span><strong>' . esc_html( $st[0] ) . '</strong><span class="bsi-muted">' . esc_html( $st[1] ) . '</span></span></li>';
+			}
+			$out .= '</ol><p class="bsi-muted bsi-small">' . esc_html__( 'If OneDrive asks you to sign in or to request access, or a document you need is not there, ask the school office.', 'bsa-school-management' ) . '</p></section>';
 		}
-		$out .= '</select> <label for="bsi-rq">' . esc_html__( 'Find', 'bsa-school-management' ) . '</label> <input id="bsi-rq" type="search" name="rq" value="' . esc_attr( $q ) . '"> <button type="submit" class="bsi-btn">' . esc_html__( 'Show', 'bsa-school-management' ) . '</button></form>';
-		return $out . '<section class="bsi-card">' . ( $res ? self::resource_list( $res ) : '<p class="bsi-muted">' . esc_html__( 'No documents match.', 'bsa-school-management' ) . '</p>' ) . '</section>';
+
+		if ( $res || $cat || '' !== $q ) {
+			$out .= '<section class="bsi-more"><div class="bsi-card-head"><h2>' . esc_html( $primary ? __( 'More folders and documents', 'bsa-school-management' ) : __( 'Folders and documents', 'bsa-school-management' ) ) . '</h2></div>';
+			$out .= '<form class="bsi-res-filter" method="get" action="' . esc_url( self::url( 'resources' ) ) . '"><label for="bsi-cat">' . esc_html__( 'Category', 'bsa-school-management' ) . '</label> <select id="bsi-cat" name="category"><option value="">' . esc_html__( 'All', 'bsa-school-management' ) . '</option>';
+			foreach ( self::RESOURCE_CATEGORIES as $c ) {
+				$out .= '<option value="' . esc_attr( $c ) . '"' . selected( $cat, $c, false ) . '>' . esc_html( $c ) . '</option>';
+			}
+			$out .= '</select> <label for="bsi-rq">' . esc_html__( 'Find', 'bsa-school-management' ) . '</label> <input id="bsi-rq" type="search" name="rq" value="' . esc_attr( $q ) . '"> <button type="submit" class="bsi-btn">' . esc_html__( 'Show', 'bsa-school-management' ) . '</button></form>';
+			$out .= $res ? self::resource_cards( $res ) : '<section class="bsi-card"><p class="bsi-muted">' . esc_html__( 'No documents match.', 'bsa-school-management' ) . '</p></section>';
+			$out .= '</section>';
+		} elseif ( ! $primary ) {
+			$out .= '<section class="bsi-card"><p class="bsi-muted">' . esc_html__( 'No documents linked yet.', 'bsa-school-management' ) . ( $can_add ? ' ' . esc_html__( 'Add the school\'s OneDrive folder with "Add a folder or document".', 'bsa-school-management' ) : '' ) . '</p></section>';
+		}
+		return $out;
+	}
+
+	/**
+	 * Resource cards (each opens its folder or document).
+	 *
+	 * @param WP_Post[] $posts Resources.
+	 * @return string
+	 */
+	public static function resource_cards( array $posts ) {
+		$out = '<ul class="bsi-res-grid">';
+		foreach ( $posts as $p ) {
+			$url  = (string) get_post_meta( $p->ID, '_bsa_url', true );
+			$prov = self::provider( $url );
+			$kind = self::link_kind( $url );
+			$cat  = (string) get_post_meta( $p->ID, '_bsa_category', true );
+			$dep  = (string) get_post_meta( $p->ID, '_bsa_department', true );
+			$out .= '<li class="bsi-res-card bsi-kind-' . esc_attr( $kind['id'] ) . '"><span class="bsi-res-icon">' . self::kind_icon( $kind['id'] ) . '</span><span class="bsi-res-text">';
+			$out .= '<strong>' . ( $url ? '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html( get_the_title( $p ) ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'bsa-school-management' ) . '</span></a>' : esc_html( get_the_title( $p ) ) ) . '</strong>';
+			if ( '' !== trim( $p->post_excerpt ) ) {
+				$out .= '<span>' . esc_html( $p->post_excerpt ) . '</span>';
+			}
+			/* translators: %s: date. */
+			$out .= '<span class="bsi-muted bsi-small"><span class="bsi-prov bsi-prov-' . esc_attr( $prov['id'] ) . '">' . esc_html( $prov['label'] ) . '</span> ' . esc_html( implode( ' · ', array_filter( array( $kind['label'], $cat, $dep, sprintf( __( 'updated %s', 'bsa-school-management' ), mysql2date( 'j M Y', $p->post_modified ) ) ) ) ) ) . '</span>';
+			$out .= '</span></li>';
+		}
+		return $out . '</ul>';
 	}
 
 	/**
