@@ -53,15 +53,29 @@ class BSA_Portal {
 	}
 
 	/**
-	 * For staff, the site menu's "My Account" becomes "My Dashboard", to their dashboard.
+	 * Site menu by who is signed in: for staff "My Account" becomes "My Dashboard", to their
+	 * dashboard; for signed-in learners and parents the Intranet link is left out.
 	 *
 	 * @param object[] $items Menu items.
 	 * @return object[]
 	 */
 	public static function staff_menu( $items ) {
 		$user_id = get_current_user_id();
-		if ( ! self::is_staff_user( $user_id ) ) {
+		if ( ! $user_id ) {
 			return $items;
+		}
+		if ( ! self::is_staff_user( $user_id ) ) {
+			// The intranet is for staff: signed-in learners and parents do not see its link
+			// (visitors do, so staff can tap it and sign in).
+			$intranet = untrailingslashit( home_url( '/intranet' ) );
+			return array_values(
+				array_filter(
+					$items,
+					function ( $item ) use ( $intranet ) {
+						return untrailingslashit( (string) $item->url ) !== $intranet;
+					}
+				)
+			);
 		}
 		$account = untrailingslashit( self::account_url() );
 		foreach ( $items as $item ) {

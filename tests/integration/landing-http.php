@@ -2,7 +2,8 @@
 /**
  * Over-HTTP checks of where people land (plugin 0.14.1, owner request 2026-10-16): after
  * signing in, staff go straight to their own dashboard and the site menu's "My Account"
- * is "My Dashboard" for them; learners and parents go to My Account. Run through
+ * is "My Dashboard" for them; learners and parents go to My Account. Also the menu's
+ * Intranet link (plugin 0.16.4): staff and visitors see it, signed-in parents do not. Run through
  * Novamira `execute-php` (send everything after the opening tag). Sign-in sessions are
  * created for the run and destroyed afterwards; the real sign-in form is posted only
  * for the sample parent with a throwaway password that is restored at the end.
@@ -45,6 +46,17 @@ try {
 	$check( 'parent: sent to My Account after signing in', $account === BSA_Portal::login_redirect( admin_url(), '', get_userdata( $users['parent'] ) ) );
 	$r = $req( 'parent', $account );
 	$check( 'parent: My Account opens with their child, menu still says My Account', 200 === $r['code'] && false !== strpos( $r['body'], 'Trish' ) && false === strpos( $r['body'], 'My Dashboard' ) && false === strpos( $r['body'], 'There is no student or parent record' ), (string) $r['code'] );
+
+	// The Intranet link in the site menu (plugin 0.16.4): staff and visitors, not families.
+	$in_menu = function ( $html ) {
+		return (bool) preg_match( '#<li[^>]*menu-item[^>]*>\s*<a[^>]*href="' . preg_quote( esc_url( home_url( '/intranet' ) ), '#' ) . '"#', $html );
+	};
+	$r = $req( 'teacher', home_url( '/' ) );
+	$check( 'menu: Intranet for staff', $in_menu( $r['body'] ) );
+	$r = wp_remote_get( home_url( '/' ), array( 'timeout' => 30, 'sslverify' => false ) );
+	$check( 'menu: Intranet for visitors (staff tap it and sign in)', $in_menu( (string) wp_remote_retrieve_body( $r ) ) );
+	$r = $req( 'parent', $account );
+	$check( 'menu: no Intranet for a signed-in parent', 200 === $r['code'] && ! $in_menu( $r['body'] ) && false !== strpos( $r['body'], 'My Account' ) );
 
 	// The real sign-in form, as the sample parent, with a throwaway password.
 	$u    = get_userdata( $users['parent'] );

@@ -2,7 +2,7 @@
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.16.3
+Stable tag: 0.16.4
 License: GPL-2.0-or-later
 
 BSA-specific security hardening and extensions for the Weblizar School Management plugin.
@@ -97,6 +97,10 @@ Filter `bsa_sm_staff_only_ajax_actions` changes which Weblizar AJAX actions are
 staff-only (e.g. to re-enable online admissions).
 
 == Changelog ==
+
+= 0.16.4 =
+* Site menu: Intranet link (added by scripts/14-menu-intranet.php) left out for signed-in
+  learners and parents; staff and visitors see it.
 
 = 0.16.3 =
 * Intranet search box: white with dark text, a navy cursor and a magnifier icon; stays

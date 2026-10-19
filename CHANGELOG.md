@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-19: Intranet in the site menu (plugin 0.16.4, script 14)
+
+- The portal's top menu (landing page and every portal page) now reads **Home, My
+  Dashboard / My Account, Intranet, Help, School website**.
+- **Who sees "Intranet":** staff, and visitors who are not signed in (a teacher on the
+  home page taps it and signs in). Signed-in learners and parents do not see it: the
+  intranet is for staff and would only turn them away.
+- The link is a normal menu item (Appearance → Menus → Portal menu), added by
+  `scripts/14-menu-intranet.php`.
+
 ## 2026-10-19: Intranet search box readable when typing (plugin 0.16.3)
 
 - The search box in the intranet bar is now **white with dark text**, a **navy cursor**,
