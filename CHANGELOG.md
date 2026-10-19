@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-10-19: Resources page built around the OneDrive folder (plugin 0.16.1)
+## 2026-10-19: Resources page built around the OneDrive folder (plugin 0.16.1, 0.16.2)
 
 The owner: every school document lives in the BSA OneDrive folder.
 
@@ -17,6 +17,9 @@ The owner: every school document lives in the BSA OneDrive folder.
 - School administrators get **Add a folder or document** on the page.
 - **The six demo resources are removed** (they pointed at the OneDrive and Drive home
   pages). The demo notice about the exam timetable now points to the OneDrive folder.
+- 0.16.2: the folder card's buttons kept the intranet's navy button style (it comes later
+  in the stylesheet); they are now white and outlined as intended. Checked in screenshots
+  at 1280 and 390 px, with no sideways scrolling.
 - A file list from the folder itself is not possible with a personal OneDrive without a
   Microsoft sign-in set-up (the server's anonymous request is refused), so the page
   opens the folder instead.

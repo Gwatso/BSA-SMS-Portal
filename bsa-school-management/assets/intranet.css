@@ -135,10 +135,10 @@ html:not(.bsi-js) .bsi-hero-controls { display: none; }
 .bsi-drive .bsi-drive-meta { font-size: 13px; color: #C9D3E6; margin: 0; }
 .bsi-drive-art .bsi-icon { display: block; width: 168px; height: 168px; color: rgba(255,255,255,.14); }
 .bsi-btn .bsi-icon { width: 20px; height: 20px; margin-right: 8px; flex: 0 0 auto; }
-.bsi-btn-light { background: #fff; border-color: #fff; color: var(--bsi-navy) !important; }
-.bsi-btn-light:hover, .bsi-btn-light:focus { background: var(--bsi-light); border-color: var(--bsi-light); }
-.bsi-btn-ghost { background: transparent; border-color: rgba(255,255,255,.6); color: #fff !important; }
-.bsi-btn-ghost:hover, .bsi-btn-ghost:focus { background: rgba(255,255,255,.12); }
+.bsi-drive .bsi-btn-light { background: #fff; border-color: #fff; color: var(--bsi-navy) !important; }
+.bsi-drive .bsi-btn-light:hover, .bsi-drive .bsi-btn-light:focus { background: var(--bsi-light); border-color: var(--bsi-light); }
+.bsi-drive .bsi-btn-ghost { background: transparent; border-color: rgba(255,255,255,.6); color: #fff !important; }
+.bsi-drive .bsi-btn-ghost:hover, .bsi-drive .bsi-btn-ghost:focus { background: rgba(255,255,255,.12); }
 .bsi-drive :focus-visible { outline-color: #fff; }
 .bsi-howto { margin-bottom: 24px; }
 .bsi-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0 0 12px; padding: 0; list-style: none; }
