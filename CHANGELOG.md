@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-19: Intranet search box readable when typing (plugin 0.16.3)
+
+- The search box in the intranet bar is now **white with dark text**, a **navy cursor**,
+  a magnifier icon and a light focus ring. When selected, the theme had turned it dark
+  navy, which hid the cursor and the typed text. Checked selected and typing at 1280
+  and 390 px.
+
 ## 2026-10-19: Resources page built around the OneDrive folder (plugin 0.16.1, 0.16.2)
 
 The owner: every school document lives in the BSA OneDrive folder.

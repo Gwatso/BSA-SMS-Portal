@@ -40,8 +40,21 @@
 .bsi-nav a:hover, .bsi-nav a:focus { background: rgba(255,255,255,.12); color: #fff !important; }
 .bsi-nav a[aria-current="page"] { background: #fff; color: var(--bsi-navy) !important; }
 .bsi-search { margin-left: auto; }
-.bsi-search input { height: 36px; border-radius: 18px; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.1); color: #fff; padding: 0 14px; width: 180px; font: inherit; font-size: 14px; }
-.bsi-search input::placeholder { color: #C9D3E6; }
+.bsi .bsi-search input[type="search"] {
+	/* White field on the navy bar: dark text and a navy caret, so typing is easy to see.
+	   Written strongly enough to override the theme's own field colours (also on focus). */
+	--theme-form-field-background-initial-color: #fff;
+	--theme-form-field-background-focus-color: #fff;
+	--theme-form-field-border-initial-color: #fff;
+	--theme-form-field-border-focus-color: #fff;
+	height: 36px; width: 200px; margin: 0; padding: 0 14px 0 36px; border-radius: 18px;
+	border: 1px solid #fff !important; background-color: #fff !important; color: var(--bsi-ink) !important; caret-color: var(--bsi-navy);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6170' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") !important;
+	background-repeat: no-repeat !important; background-position: 12px 50% !important; background-size: 16px 16px !important;
+	box-shadow: none; font: inherit; font-size: 14px;
+}
+.bsi .bsi-search input[type="search"]::placeholder { color: var(--bsi-muted); opacity: 1; }
+.bsi .bsi-search input[type="search"]:focus, .bsi .bsi-search input[type="search"]:focus-visible { outline: 3px solid var(--bsi-light); outline-offset: 2px; box-shadow: none !important; }
 .bsi-work { color: #fff !important; font-size: 14px; font-weight: 600; text-decoration: none; padding: 8px 12px; border: 1px solid rgba(255,255,255,.4); border-radius: 6px; }
 .bsi-work:hover, .bsi-work:focus { background: #fff; color: var(--bsi-navy) !important; }
 
@@ -211,7 +224,7 @@ html:not(.bsi-js) .bsi-hero-controls { display: none; }
 @media (max-width: 782px) {
 	.bsi-bar { position: static; }
 	.bsi-search { margin-left: 0; flex: 1 1 140px; }
-	.bsi-search input { width: 100%; }
+	.bsi .bsi-search input[type="search"] { width: 100%; }
 	.bsi-nav { order: 3; width: 100%; overflow-x: auto; }
 	.bsi-nav ul { flex-wrap: nowrap; }
 	.bsi-nav a { white-space: nowrap; }
